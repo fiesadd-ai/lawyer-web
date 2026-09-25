@@ -387,31 +387,34 @@ const DEFAULT_SITE_SETTINGS = {
   services_province_note: '📢 "กรณีออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น"',
   services_price_out_note: 'พิจารณาตามระยะทาง ค่าพาหนะเดินทาง และจำนวนนัดพิจารณาคดีจริง',
 
-  // บริการ 5 หมวดคดีหลัก
+  // บริการ 5 หมวดคดีหลัก (รายการมาตรฐาน 10 ข้อต่อหมวด)
   services_cat1_title: 'คดีแพ่งและพาณิชย์',
   services_cat1_sub: 'Civil & Commercial Cases',
   services_cat1_desc: 'รับว่าความฟ้องร้องและแก้ต่างข้อพิพาททางแพ่ง บังคับตามสัญญา เรียกเงินกู้ยืม ติดตามหนี้สิน ละเมิด และบังคับคดี',
-  services_cat1_items: 'ฟ้องคดีสัญญากู้ยืมเงิน สัญญาจะซื้อจะขาย และเช็คเด้ง\nคดีฟ้องขับไล่ ข้อพิพาทเรื่องกรรมสิทธิ์ที่ดิน และภาระจำยอม\nคดีละเมิด อุบัติเหตุจราจร เรียกค่าสินไหมทดแทน\nสืบทรัพย์ บังคับคดี ยึดทรัพย์ และอายัดบัญชี',
+  services_cat1_items: 'ฟ้องคดีสัญญากู้ยืมเงิน สัญญาจะซื้อจะขาย และเช็คเด้ง\nคดีฟ้องขับไล่ ข้อพิพาทเรื่องกรรมสิทธิ์ที่ดิน และภาระจำยอม\nคดีละเมิด อุบัติเหตุจราจร เรียกค่าสินไหมทดแทน\nสืบทรัพย์ บังคับคดี ยึดทรัพย์ และอายัดบัญชีเงินฝาก\nคดีผิดสัญญาจ้างทำของ สัญญาเช่าซื้อ และเช่าทรัพย์สิน\nข้อพิพาทการเวนคืนที่ดินและสิทธิครอบครอง\nคดีตั๋วเงิน ค้ำประกัน จำนำ จำนอง และหนี้สินทางธุรกิจ\nร้องขอครอบครองปรปักษ์ที่ดินมีโฉนด\nฟ้องเพิกถอนนิติกรรมฉ้อฉลและนิติกรรมอำพราง\nประนอมหนี้ เจรจาไกล่เกลี่ย และจัดทำสัญญาประนีประนอมยอมความ',
 
   services_cat2_title: 'คดีอาญาทุกประเภท',
   services_cat2_sub: 'Criminal Defense & Prosecution',
   services_cat2_desc: 'ดำเนินคดีอาญาอย่างมืออาชีพ ทั้งในฐานะทนายโจทก์ฟ้องคดี และทนายจำเลยแก้ต่างเพื่อพิสูจน์ความบริสุทธิ์',
-  services_cat2_items: 'คดียักยอก ฉ้อโกง บุกรุก เอกสารเท็จ\nคดีทำร้ายร่างกาย ประมาทเป็นเหตุให้ผู้อื่นถึงแก่ความตาย\nยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัว) ในชั้นสอบสวนและศาล\nคดีความผิดตาม พ.ร.บ.คอมพิวเตอร์ และหมิ่นประมาท',
+  services_cat2_items: 'คดียักยอก ฉ้อโกง บุกรุก และทำลายเอกสาร\nคดีทำร้ายร่างกาย ประมาทเป็นเหตุให้ผู้อื่นถึงแก่ความตาย\nยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัว) ในชั้นสอบสวนและศาล\nคดีความผิดตาม พ.ร.บ.คอมพิวเตอร์ และหมิ่นประมาท\nว่าความคดีฟ้องเท็จ เบิกความเท็จ และแจ้งความเท็จ\nต่อสู้คดียาเสพติดให้โทษและพิสูจน์ความบริสุทธิ์\nคดีลักทรัพย์ วิ่งราว ชิงทรัพย์ ปล้นทรัพย์ และรับของโจร\nคดีความผิดต่อชีวิต ร่างกาย และเสรีภาพ\nทนายความร่วมในชั้นสอบสวนของพนักงานสอบสวน\nอุทธรณ์และฎีกาคดีอาญา พร้อมจัดทำคำร้องขอทุเลาการบังคับคดี',
 
   services_cat3_title: 'คดีมรดกและพินัยกรรม',
   services_cat3_sub: 'Inheritance & Wills',
   services_cat3_desc: 'จัดการเรื่องทรัพย์สินมรดกให้ถูกต้องเรียบร้อย ยื่นคำร้องตั้งผู้จัดการมรดก และระงับข้อพิพาทระหว่างทายาท',
-  services_cat3_items: 'ยื่นคำร้องขอตั้งผู้จัดการมรดกทั่วราชอาณาจักร (รวดเร็ว)\nฟ้องแบ่งทรัพย์มรดก ฟ้องเพิกถอนนิติกรรมโอนมรดกมิชอบ\nร่างพินัยกรรมแบบเขียนเอง หรือพินัยกรรมฝ่ายเมือง\nไกล่เกลี่ยประนีประนอมแบ่งมรดกในครอบครัว',
+  services_cat3_items: 'ยื่นคำร้องขอตั้งผู้จัดการมรดกทั่วราชอาณาจักร (รวดเร็ว)\nฟ้องแบ่งทรัพย์มรดก ฟ้องเพิกถอนนิติกรรมโอนมรดกมิชอบ\nร่างพินัยกรรมแบบเขียนเอง หรือพินัยกรรมฝ่ายเมือง\nไกล่เกลี่ยประนีประนอมแบ่งมรดกในครอบครัว\nร้องขอถอดถอนผู้จัดการมรดกที่ประพฤติมิชอบ\nตรวจสอบบัญชีทรัพย์สินมรดกและติดตามทรัพย์ที่สูญหาย\nคดีทายาทถูกตัดมิให้รับมรดกหรือถูกกำจัดมิให้รับมรดก\nปรึกษาวางแผนส่งต่อทรัพย์สินและธุรกิจครอบครัว\nแก้ต่างคดีถูกทายาทฟ้องร้องเรื่องการจัดการมรดก\nร้องขอจัดการทรัพย์มรดกไม่มีผู้รับและจัดการภาระหนี้กองมรดก',
 
   services_cat4_title: 'คดีครอบครัวและเยาวชน',
   services_cat4_sub: 'Family Law Cases',
   services_cat4_desc: 'ดำเนินคดีด้วยความเข้าใจ ละเอียดอ่อน และเน้นประโยชน์สูงสุดของบุตรผู้เยาว์และสิทธิอันชอบธรรม',
-  services_cat4_items: 'คดีฟ้องหย่า เรียกค่าเลี้ยงดู ค่าอุปการะเลี้ยงดูบุตร\nฟ้องแบ่งสินสมรส และหนี้สินระหว่างสมรส\nคดีขอใช้อำนาจปกครองบุตรแต่เพียงผู้เดียว และรับรองบุตร\nจัดทำบันทึกข้อตกลงการหย่าแนบท้ายทะเบียนหย่า',
+  services_cat4_items: 'คดีฟ้องหย่า เรียกค่าเลี้ยงดู ค่าอุปการะเลี้ยงดูบุตร\nฟ้องแบ่งสินสมรส และหนี้สินระหว่างสมรส\nคดีขอใช้อำนาจปกครองบุตรแต่เพียงผู้เดียว และรับรองบุตร\nจัดทำบันทึกข้อตกลงการหย่าแนบท้ายทะเบียนหย่า\nคดีฟ้องเรียกค่าทดแทนจากชู้หรือบุคคลภายนอก\nร้องขอให้เป็นคนไร้ความสามารถหรือเสมือนไร้ความสามารถ\nคดีเพิกถอนอำนาจปกครองบุตรที่ใช้อำนาจในทางมิชอบ\nร้องขออนุญาตทำนิติกรรมแทนผู้เยาว์ต่อศาล\nดำเนินคดีเยาวชนและครอบครัวและมาตรการคุ้มครองสวัสดิภาพ\nไกล่เกลี่ยข้อพิพาทครอบครัวเพื่อประโยชน์สูงสุดของเด็ก',
 
   services_cat5_title: 'นิติกรรมสัญญาและที่ปรึกษาธุรกิจ',
   services_cat5_sub: 'Contracts & Legal Advisor',
   services_cat5_desc: 'ร่างและตรวจสัญญาเพื่อปิดช่องโหว่ความเสี่ยงทางกฎหมาย ออกหนังสือบอกกล่าวทวงถาม และรับเป็นที่ปรึกษาประจำ',
-  services_cat5_items: 'ตรวจและร่างสัญญาจะซื้อจะขาย สัญญาเช่า สัญญาจ้าง\nทำหนังสือบอกกล่าวทวงถาม (Notice) ก่อนฟ้องคดี\nบริการที่ปรึกษากฎหมายประจำสำนักงานและห้างหุ้นส่วน\nเจรจาต่อรองระงับข้อพิพาททางธุรกิจ',
+  services_cat5_items: 'ตรวจและร่างสัญญาจะซื้อจะขาย สัญญาเช่า สัญญาจ้าง\nทำหนังสือบอกกล่าวทวงถาม (Notice) ก่อนฟ้องคดี\nบริการที่ปรึกษากฎหมายประจำสำนักงานและห้างหุ้นส่วน\nเจรจาต่อรองระงับข้อพิพาททางธุรกิจ\nร่างสัญญาความร่วมมือทางธุรกิจ (MOU / Joint Venture)\nสัญญาจ้างแรงงาน ข้อบังคับการทำงาน และระเบียบบริษัท\nสัญญาไม่เปิดเผยข้อมูลความลับ (NDA) และคุ้มครองทรัพย์สินทางปัญญา\nตรวจสอบเอกสารสิทธิ์ที่ดินและสถานะทางกฎหมายก่อนทำธุรกรรม (Due Diligence)\nร่างหนังสือมอบอำนาจ หนังสือยินยอม และคำแถลงทางกฎหมาย\nให้ความเห็นทางกฎหมาย (Legal Opinion) และวางแนวทางป้องกันความเสี่ยง',
+
+  // ข้อความหมายเหตุสำคัญท้ายรายการบริการ
+  services_notice_text: 'หากไม่มีคดีใน 10 หัวข้อนี้ สามารถสอบถามทนายความโดยตรงได้ เนื่องจากรายการนี้เป็นเพียงตัวอย่างเบื้องต้นเท่านั้น ทางทนายความรับดูแลมากกว่า 20 คดี โปรดมาพูดคุยรายละเอียดเพิ่มเติม',
 
   // 5. หน้าติดต่อเรา (Contact Page)
   contact_note: 'สำนักงานตั้งอยู่ในเขตพื้นที่จังหวัดปัตตานี พร้อมดูแลคดีในพื้นที่ปัตตานี นราธิวาส สงขลา หาดใหญ่ และยะลา',
@@ -456,6 +459,16 @@ function getSiteSettings() {
     }
     if (!parsed.home_start_price || !parsed.home_start_price.trim()) {
       parsed.home_start_price = DEFAULT_SITE_SETTINGS.home_start_price;
+    }
+    // อัปเกรดรายการบริการ 5 หมวดคดีให้เป็น 10 ข้อแบบจัดเต็มอัตโนมัติหากพบข้อมูลเดิมที่มีเพียง 4 ข้อ
+    ['cat1', 'cat2', 'cat3', 'cat4', 'cat5'].forEach(cat => {
+      const key = `services_${cat}_items`;
+      if (parsed[key] && parsed[key].split('\n').map(l => l.trim()).filter(Boolean).length <= 4) {
+        parsed[key] = DEFAULT_SITE_SETTINGS[key];
+      }
+    });
+    if (!parsed.services_notice_text || !parsed.services_notice_text.trim()) {
+      parsed.services_notice_text = DEFAULT_SITE_SETTINGS.services_notice_text;
     }
     return { ...DEFAULT_SITE_SETTINGS, ...parsed };
   } catch (e) {
@@ -629,6 +642,99 @@ function applySiteSettings(customSettings) {
 
   // 5. แสดงผลแถบเมนูนำทางแบบจัดลำดับไดนามิก (Dynamic Navbar)
   renderDynamicNavbar(settings);
+
+  // 6. ระบบแสดงผลแบบทยอยโชว์รายการบริการ 5 หมวดคดี (Load More / Show More)
+  initServiceCategoryLoadMore();
+}
+
+// ระบบแสดงผลแบบทยอยโชว์รายการบริการ 5 หมวดคดีหลัก (Load More / Show More - ครั้งละ 3 ข้อ)
+function initServiceCategoryLoadMore() {
+  if (typeof document === 'undefined') return;
+  const cards = document.querySelectorAll('.service-card, .services-category-grid .service-card, .category-card');
+  if (!cards || cards.length === 0) return;
+
+  cards.forEach((card, cardIndex) => {
+    const list = card.querySelector('.service-list');
+    if (!list) return;
+
+    const items = Array.from(list.querySelectorAll('li'));
+    const totalItems = items.length;
+
+    // หากมีไม่เกิน 3 ข้อ ไม่ต้องมีปุ่มดูเพิ่มเติม
+    if (totalItems <= 3) {
+      const existingWrap = card.querySelector('.service-more-wrap');
+      if (existingWrap) existingWrap.remove();
+      items.forEach(li => { li.style.display = ''; });
+      return;
+    }
+
+    // ตรวจสอบสถานะการเปิดรายการปัจจุบันของการ์ดนี้ (ค่าเริ่มต้น 3 ข้อ)
+    let visibleCount = parseInt(card.getAttribute('data-visible-count'), 10);
+    if (isNaN(visibleCount) || visibleCount < 3) {
+      visibleCount = 3;
+    }
+    visibleCount = Math.min(visibleCount, totalItems);
+    card.setAttribute('data-visible-count', visibleCount);
+
+    function renderState(animateNew = false) {
+      items.forEach((li, idx) => {
+        if (idx < visibleCount) {
+          if (li.style.display === 'none' && animateNew) {
+            li.classList.add('item-reveal');
+          }
+          li.style.display = '';
+        } else {
+          li.style.display = 'none';
+          li.classList.remove('item-reveal');
+        }
+      });
+
+      // ดึงหรือสร้างคอนเทนเนอร์ปุ่ม
+      let wrap = card.querySelector('.service-more-wrap');
+      if (!wrap) {
+        wrap = document.createElement('div');
+        wrap.className = 'service-more-wrap';
+        list.insertAdjacentElement('afterend', wrap);
+      }
+
+      const isAllShown = visibleCount >= totalItems;
+      const nextStep = Math.min(3, totalItems - visibleCount);
+
+      wrap.innerHTML = `
+        <button type="button" class="btn-service-more ${isAllShown ? 'is-expanded' : ''}" aria-expanded="${isAllShown}" id="btnServiceMoreCat${cardIndex + 1}">
+          <span>${isAllShown ? 'ย่อรายการกลับ' : `ดูเพิ่มเติม (+${nextStep} ข้อ)`}</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            ${isAllShown 
+              ? '<polyline points="18 15 12 9 6 15"></polyline>' 
+              : '<polyline points="6 9 12 15 18 9"></polyline>'}
+          </svg>
+        </button>
+        <span class="service-item-count">
+          ${isAllShown ? `แสดงครบทั้งหมด ${totalItems} รายการ` : `แสดง ${visibleCount} จาก ${totalItems} รายการ`}
+        </span>
+      `;
+
+      const btn = wrap.querySelector('.btn-service-more');
+      btn.onclick = () => {
+        if (visibleCount < totalItems) {
+          visibleCount = Math.min(totalItems, visibleCount + 3);
+          card.setAttribute('data-visible-count', visibleCount);
+          renderState(true);
+          if (typeof logActivity === 'function') {
+            const catTitle = card.querySelector('h3') ? card.querySelector('h3').textContent.trim() : `หมวดที่ ${cardIndex + 1}`;
+            logActivity('ดูข้อความบริการเพิ่มเติม', `กดดูเพิ่มใน "${catTitle}" (แสดง ${visibleCount}/${totalItems})`, 'click', '📂');
+          }
+        } else {
+          visibleCount = 3;
+          card.setAttribute('data-visible-count', visibleCount);
+          renderState(false);
+          card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+      };
+    }
+
+    renderState(false);
+  });
 }
 
 // ฟังก์ชันเรนเดอร์เมนู Navbar ตามลำดับที่ตั้งค่าไว้

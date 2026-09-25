@@ -827,26 +827,188 @@ img {
 
 .service-list {
   list-style: none;
-  margin-bottom: 24px;
+  margin-bottom: 12px;
   flex-grow: 1;
 }
 
-.service-list li {
+/* Load More / Show More within Service Cards */
+.service-more-wrap {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  font-size: 0.9rem;
-  color: var(--text-main);
-  padding: 6px 0;
-  line-height: 1.5;
+  margin-top: 6px;
+  margin-bottom: 20px;
+  padding: 8px 12px;
+  background: rgba(82, 183, 136, 0.08);
+  border: 1px dashed rgba(82, 183, 136, 0.35);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
 }
 
-.service-list li svg {
-  width: 16px;
-  height: 16px;
-  stroke: var(--primary);
+.service-more-wrap:hover {
+  background: rgba(82, 183, 136, 0.14);
+  border-color: var(--primary);
+}
+
+.btn-service-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ffffff;
+  color: var(--primary-dark);
+  border: 1.5px solid rgba(82, 183, 136, 0.45);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.btn-service-more:hover {
+  background: var(--primary);
+  color: #ffffff;
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 8px rgba(82, 183, 136, 0.25);
+}
+
+.btn-service-more.is-expanded {
+  background: #f1f5f9;
+  color: #475569;
+  border-color: #cbd5e1;
+}
+
+.btn-service-more.is-expanded:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+}
+
+.btn-service-more svg {
+  transition: transform 0.2s ease;
+}
+
+.service-item-count {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+@keyframes serviceItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.service-list li.item-reveal {
+  animation: serviceItemFadeIn 0.25s ease-out forwards;
+}
+
+/* Services Notice Box (กล่องข้อความแจ้งเตือนท้ายรายการบริการ 5 หมวดคดี) */
+.services-notice-box {
+  margin-top: 40px;
+  background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+  border: 1.5px solid #86efac;
+  border-radius: var(--radius-lg);
+  padding: 24px 28px;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  box-shadow: 0 4px 16px rgba(16, 185, 129, 0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.services-notice-box::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 5px;
+  background: var(--primary);
+}
+
+.notice-icon-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #dcfce7;
+  color: #166534;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  margin-top: 3px;
+  border: 2px solid #bbf7d0;
+}
+
+.notice-icon-badge svg {
+  width: 26px;
+  height: 26px;
+}
+
+.notice-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice-badge {
+  display: inline-block;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #166534;
+  background: #dcfce7;
+  padding: 3px 12px;
+  border-radius: var(--radius-full);
+  margin-bottom: 8px;
+  border: 1px solid #bbf7d0;
+}
+
+.notice-text {
+  font-size: 0.96rem;
+  color: #14532d;
+  line-height: 1.65;
+  margin: 0;
+  font-weight: 500;
+}
+
+.notice-actions {
+  flex-shrink: 0;
+}
+
+.notice-btn {
+  white-space: nowrap;
+  padding: 11px 20px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 8px rgba(27, 67, 50, 0.2);
+}
+
+@media (max-width: 768px) {
+  .services-notice-box {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 18px 20px;
+    gap: 16px;
+  }
+  .notice-actions {
+    width: 100%;
+  }
+  .notice-btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .service-card .btn {

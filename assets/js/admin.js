@@ -906,6 +906,7 @@ async function loadAllSettingsToForm() {
   setVal('cmsServicesCat5Sub', settings.services_cat5_sub || '');
   setVal('cmsServicesCat5Desc', settings.services_cat5_desc || '');
   setVal('cmsServicesCat5Items', settings.services_cat5_items || '');
+  setVal('cmsServicesNoticeText', settings.services_notice_text || '');
 
   // 2.4 หน้าติดต่อเรา (Contact)
   setVal('cmsContactOfficeName', settings.office_name || '');
@@ -1168,6 +1169,7 @@ async function handleSaveCmsSettings(event) {
     services_cat5_sub: getVal('cmsServicesCat5Sub'),
     services_cat5_desc: getVal('cmsServicesCat5Desc'),
     services_cat5_items: getVal('cmsServicesCat5Items'),
+    services_notice_text: getVal('cmsServicesNoticeText'),
 
     // 4. หน้าติดต่อเรา (Contact)
     office_name: getVal('cmsContactOfficeName'),
