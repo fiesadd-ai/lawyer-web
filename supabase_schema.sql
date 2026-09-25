@@ -34,7 +34,7 @@ ALTER TABLE site_settings ADD COLUMN IF NOT EXISTS settings_json TEXT DEFAULT '{
 INSERT INTO site_settings (id, hotline, business_hours, settings_json)
 VALUES (
     'main',
-    '073-xxx-xxx, 081-234-5678 (เบอร์กลางสำนักงาน)',
+    '080-712-9907 , 093-694-0350 (เบอร์กลางสำนักงาน)',
     'เปิดทุกวัน 06:00 - 18:00 น. (หมายเหตุ: นอกจากไม่ว่างหรือติดธุระส่วนตัวข้างนอก สำนักงานจะปิด)',
     '{"maps_url":"https://maps.app.goo.gl/2ukUyWUSAMQPn3DYA","maps_embed":"https://maps.google.com/maps?q=6.8506101,101.2548708&hl=th&z=17&output=embed","office_phone":"073-xxx-xxx","line_id":"@lawyer1th","office_address":"ทนายความ รอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี"}'
 )

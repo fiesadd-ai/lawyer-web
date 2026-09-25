@@ -850,7 +850,7 @@ async function loadAllSettingsToForm() {
   setVal('cmsHomeCtaTitle', settings.home_cta_title || 'มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?');
   setVal('cmsHomeCtaDesc', settings.home_cta_desc || 'จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์');
   setVal('cmsHomeCtaBtnText', settings.home_cta_btn_text || 'จองคิวออนไลน์ตอนนี้');
-  setVal('cmsHomeCtaPhone', settings.home_cta_phone || 'โทรด่วน 081-234-5678');
+  setVal('cmsHomeCtaPhone', settings.home_cta_phone || 'โทรด่วน 080-712-9907');
   updateHomeCtaLivePreview();
 
   // 2.2 หน้าเกี่ยวกับเรา (About)
@@ -955,7 +955,7 @@ function updateHomeCtaLivePreview() {
   const title = getVal('cmsHomeCtaTitle') || 'มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?';
   const desc = getVal('cmsHomeCtaDesc') || 'จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์';
   const btnText = getVal('cmsHomeCtaBtnText') || 'จองคิวออนไลน์ตอนนี้';
-  const phone = getVal('cmsHomeCtaPhone') || 'โทรด่วน 081-234-5678';
+  const phone = getVal('cmsHomeCtaPhone') || 'โทรด่วน 080-712-9907';
 
   updateText('previewHomeCtaTitle', title);
   updateText('previewHomeCtaDesc', desc);

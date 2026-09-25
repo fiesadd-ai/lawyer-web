@@ -309,7 +309,7 @@ function showToast(message, type = 'success') {
 const SETTINGS_STORAGE_KEY = 'lawyer_site_settings';
 const DEFAULT_SITE_SETTINGS = {
   // 1. ระบบจัดการเบอร์โทรและช่องทางติดต่อ (ปลอดภัยสำหรับทนาย)
-  hotline: '073-xxx-xxx, 081-234-5678 (เบอร์กลางสำนักงาน)',
+  hotline: '080-712-9907 , 093-694-0350 (เบอร์กลางสำนักงาน)',
   business_hours: 'เปิดทุกวัน 06:00 - 18:00 น. (หมายเหตุ: นอกจากไม่ว่างหรือติดธุระส่วนตัวข้างนอก สำนักงานจะปิด)',
   office_phone: '073-xxx-xxx',
   line_id: '@lawyer1th',
@@ -319,7 +319,7 @@ const DEFAULT_SITE_SETTINGS = {
   office_name: 'สำนักงานทนายความ รอสนั่น อีซอ (ทนายความชั้น 1 อาวุโส)',
   office_lawyer_name: 'ทนายความ รอสนั่น อีซอ',
   office_address: 'ทนายความ รอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี (เน้นรับดูแลคดีในพื้นที่ ปัตตานี, นราธิวาส, สงขลา, หาดใหญ่ และยะลา)',
-  visit_note: '🚗 พื้นที่รับงานและการเข้าพบ: ทนายความตั้งมั่นรับงานในเขตปัตตานีและ 4 จังหวัดข้างเคียง เพื่อดูแลคดีอย่างใกล้ชิดและทั่วถึง สำหรับท่านที่ต้องการเดินทางมาปรึกษาที่สำนักงาน กรุณานัดหมายคิวล่วงหน้าเพื่อเตรียมเอกสาร',
+  visit_note: 'กรุณานัดหมายคิวล่วงหน้าเพื่อเตรียมเอกสารและอำนวยความสะดวกก่อนเดินทางมายังสำนักงาน',
   maps_url: 'https://maps.app.goo.gl/2ukUyWUSAMQPn3DYA',
   maps_embed: 'https://maps.google.com/maps?q=6.8506101,101.2548708&hl=th&z=17&output=embed',
   maps_gps_text: 'พิกัด GPS: 6.8506101, 101.2548708 • ทนายความ รอสนั่น อีซอ',
@@ -333,6 +333,9 @@ const DEFAULT_SITE_SETTINGS = {
   home_start_price: 'เริ่มต้น 7,000 ฿',
   home_price_note: '* ค่าบริการเริ่มต้นที่ 7,000 บาท (ขึ้นอยู่กับประเภทและความยากง่ายของคดี ซึ่งบางคดีราคานี้เป็นไปได้)',
   home_exp_years: 'กว่า 35 - 40 ปี',
+  home_area_tag: '📍 ประจำจังหวัดปัตตานี • รับว่าความ 4 จังหวัดและทั่วประเทศ',
+  home_license_card_title: 'ใบอนุญาตทนายความชั้น 1',
+  home_license_number: 'ประเภทตลอดชีพ (สภาทนายความฯ)',
   home_license_issuer: 'สภาทนายความ ในพระบรมราชูปถัมภ์',
   home_license_lawyer_title: 'ทนายความผู้ดำเนินคดีประจำสำนักงาน',
   home_license_lawyer_qual: 'นิติศาสตรบัณฑิต, เนติบัณฑิตไทย (น.บ.ท.)',
@@ -354,14 +357,14 @@ const DEFAULT_SITE_SETTINGS = {
   home_cta_title: 'มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?',
   home_cta_desc: 'จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์',
   home_cta_btn_text: 'จองคิวออนไลน์ตอนนี้',
-  home_cta_phone: 'โทรด่วน 081-234-5678',
+  home_cta_phone: 'โทรด่วน 080-712-9907',
 
   // 3. หน้าเกี่ยวกับเรา (About Page)
   about_title: 'ความน่าเชื่อถือและจรรยาบรรณวิชาชีพ',
   about_desc: 'ดำเนินงานโดยทนายความชั้น 1 อาวุโส ผู้มีใบอนุญาตว่าความประเภทตลอดชีพ ประสบการณ์ทำงานด้านกฎหมายยาวนานกว่า 35 ถึงเกือบ 40 ปี',
   about_section_title: 'ทนายความชั้น 1 อาวุโส ประจำสำนักงาน',
   about_section_desc: 'ประสบการณ์ว่าความและที่ปรึกษากฎหมายยาวนานกว่า 35 ถึงเกือบ 40 ปี เปี่ยมด้วยความเชี่ยวชาญและจริยธรรม',
-  about_lawyer_name: 'ทนายความ ธนบดี นิติสิริ',
+  about_lawyer_name: 'ทนายความ รอสนั่น อีซอ',
   about_lawyer_title: 'ทนายความชั้น 1 อาวุโส (ประเภทตลอดชีพ)',
   about_lawyer_exp: '⚖️ ประสบการณ์ 35+ ถึงเกือบ 40 ปี',
   about_lawyer_image: '',
@@ -432,7 +435,19 @@ function getSiteSettings() {
   const data = localStorage.getItem(SETTINGS_STORAGE_KEY);
   if (!data) return { ...DEFAULT_SITE_SETTINGS };
   try {
-    return { ...DEFAULT_SITE_SETTINGS, ...JSON.parse(data) };
+    const parsed = JSON.parse(data);
+    // อัปเกรดค่าเริ่มต้นเก่า (Auto-migrate) ให้ตรงกับข้อมูลจริงของสำนักงาน
+    if (parsed.hotline && (parsed.hotline.includes('081-234-5678') || parsed.hotline === '073-xxx-xxx, 081-234-5678 (เบอร์กลางสำนักงาน)')) {
+      parsed.hotline = DEFAULT_SITE_SETTINGS.hotline;
+      parsed.home_cta_phone = DEFAULT_SITE_SETTINGS.home_cta_phone;
+    }
+    if (parsed.visit_note && (parsed.visit_note.includes('🚗') || parsed.visit_note.includes('พื้นที่รับงานและการเข้าพบ'))) {
+      parsed.visit_note = DEFAULT_SITE_SETTINGS.visit_note;
+    }
+    if (parsed.about_lawyer_name === 'ทนายความ ธนบดี นิติสิริ') {
+      parsed.about_lawyer_name = DEFAULT_SITE_SETTINGS.about_lawyer_name;
+    }
+    return { ...DEFAULT_SITE_SETTINGS, ...parsed };
   } catch (e) {
     console.error('Error parsing site settings', e);
     return { ...DEFAULT_SITE_SETTINGS };
@@ -561,10 +576,10 @@ function applySiteSettings(customSettings) {
   });
 
   // 4.4 ระบบจัดการเบอร์โทรศัพท์จุดเดียวทั้งเว็บไซต์ (Centralized Universal Phone System)
-  const phoneSource = settings.hotline || settings.office_phone || '081-234-5678';
+  const phoneSource = settings.hotline || settings.office_phone || '080-712-9907 , 093-694-0350 (เบอร์กลางสำนักงาน)';
   const phoneDigitsMatch = phoneSource.match(/0[0-9]{1,2}-?[0-9]{3}-?[0-9]{4}|0[0-9]{8,9}/);
-  const cleanPhone = phoneDigitsMatch ? phoneDigitsMatch[0].replace(/[^0-9]/g, '') : '0812345678';
-  const displayPhone = phoneDigitsMatch ? phoneDigitsMatch[0] : '081-234-5678';
+  const cleanPhone = phoneDigitsMatch ? phoneDigitsMatch[0].replace(/[^0-9]/g, '') : '0807129907';
+  const displayPhone = phoneDigitsMatch ? phoneDigitsMatch[0] : '080-712-9907';
 
   // อัปเดตทุกลิงก์โทรศัพท์ที่เป็น href="tel:..." ให้โทรติดเบอร์จริงทันที
   document.querySelectorAll('a[href^="tel:"], [data-cms-tel]').forEach(link => {
