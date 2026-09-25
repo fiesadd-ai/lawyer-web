@@ -474,24 +474,39 @@ img {
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
+  gap: 20px;
   padding-top: 24px;
   border-top: 1px solid rgba(82, 183, 136, 0.25);
-  align-items: flex-start;
+  align-items: stretch;
 }
 
 .stat-item {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  justify-content: flex-start;
+  position: relative;
+}
+
+/* เส้นคั่นแนวตั้งระหว่างคอลัมน์บนจอคอมพิวเตอร์ เพื่อความสมดุล สวยงาม และเป็นระเบียบ */
+.stat-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  right: -10px;
+  top: 15%;
+  height: 70%;
+  width: 1px;
+  background: rgba(82, 183, 136, 0.3);
+  pointer-events: none;
 }
 
 .stat-item h3 {
-  font-size: clamp(1.22rem, 1.8vw, 1.48rem);
+  font-size: clamp(1.15rem, 1.65vw, 1.45rem);
   font-weight: 700;
   color: var(--primary-dark);
   line-height: 1.25;
-  margin-bottom: 4px;
+  margin-bottom: 6px;
+  min-height: 1.25em;
   white-space: nowrap;
   letter-spacing: -0.2px;
 }
@@ -1776,6 +1791,15 @@ textarea.form-control {
   .stats-grid {
     grid-template-columns: repeat(2, 1fr);
   }
+  .hero-stats {
+    gap: 16px;
+  }
+  .stat-item h3 {
+    font-size: 1.18rem;
+  }
+  .stat-item p {
+    font-size: 0.82rem;
+  }
   .site-header {
     position: sticky;
     top: 0;
@@ -1968,6 +1992,40 @@ textarea.form-control {
   .site-settings-form {
     grid-template-columns: 1fr !important;
   }
+  .hero-stats {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding-top: 20px;
+    margin-top: 4px;
+  }
+  .stat-item {
+    background: #ffffff;
+    border: 1px solid rgba(82, 183, 136, 0.28);
+    border-radius: var(--radius-md);
+    padding: 12px 6px;
+    text-align: center;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+  .stat-item:not(:last-child)::after {
+    display: none;
+  }
+  .stat-item h3 {
+    font-size: 1.02rem;
+    line-height: 1.25;
+    margin-bottom: 4px;
+    white-space: normal;
+    text-align: center;
+    word-break: keep-all;
+    min-height: auto;
+  }
+  .stat-item p {
+    font-size: 0.74rem;
+    line-height: 1.35;
+    white-space: normal;
+    text-align: center;
+    color: var(--text-muted);
+  }
 }
 
 @media (max-width: 576px) {
@@ -1980,6 +2038,22 @@ textarea.form-control {
   .brand-icon {
     width: 36px;
     height: 36px;
+  }
+  .hero-stats {
+    gap: 6px;
+    padding-top: 14px;
+  }
+  .stat-item {
+    padding: 10px 4px;
+    border-radius: var(--radius-sm);
+  }
+  .stat-item h3 {
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+  .stat-item p {
+    font-size: 0.68rem;
+    line-height: 1.3;
   }
   .brand-icon svg {
     width: 18px;

@@ -333,6 +333,7 @@ const DEFAULT_SITE_SETTINGS = {
   home_start_price: 'เริ่มต้น 7,000 ฿',
   home_price_note: '* ค่าบริการเริ่มต้นที่ 7,000 บาท (ขึ้นอยู่กับประเภทและความยากง่ายของคดี ซึ่งบางคดีราคานี้เป็นไปได้)',
   home_exp_years: 'กว่า 35 - 40 ปี',
+  home_area_stat: 'ปัตตานี & 4 จว.',
   home_area_tag: '📍 ประจำจังหวัดปัตตานี • รับว่าความ 4 จังหวัดและทั่วประเทศ',
   home_license_card_title: 'ใบอนุญาตทนายความชั้น 1',
   home_license_number: 'ประเภทตลอดชีพ (สภาทนายความฯ)',
@@ -447,6 +448,15 @@ function getSiteSettings() {
     if (parsed.about_lawyer_name === 'ทนายความ ธนบดี นิติสิริ') {
       parsed.about_lawyer_name = DEFAULT_SITE_SETTINGS.about_lawyer_name;
     }
+    if (!parsed.home_area_stat || !parsed.home_area_stat.trim() || parsed.home_area_stat.includes('📍')) {
+      parsed.home_area_stat = DEFAULT_SITE_SETTINGS.home_area_stat;
+    }
+    if (!parsed.home_exp_years || !parsed.home_exp_years.trim()) {
+      parsed.home_exp_years = DEFAULT_SITE_SETTINGS.home_exp_years;
+    }
+    if (!parsed.home_start_price || !parsed.home_start_price.trim()) {
+      parsed.home_start_price = DEFAULT_SITE_SETTINGS.home_start_price;
+    }
     return { ...DEFAULT_SITE_SETTINGS, ...parsed };
   } catch (e) {
     console.error('Error parsing site settings', e);
@@ -551,6 +561,15 @@ function applySiteSettings(customSettings) {
       });
     }
   });
+
+  // 4.2.1 ป้องกันสถิติ 3 ช่องหน้าแรกว่างเปล่าหรือหลุดเลย์เอาต์ (Hero Stats Strict Safeguard)
+  const safeExpYears = (settings.home_exp_years && settings.home_exp_years.trim()) ? settings.home_exp_years : 'กว่า 35 - 40 ปี';
+  const safeAreaStat = (settings.home_area_stat && settings.home_area_stat.trim() && !settings.home_area_stat.includes('📍')) ? settings.home_area_stat : 'ปัตตานี & 4 จว.';
+  const safeStartPrice = (settings.home_start_price && settings.home_start_price.trim()) ? settings.home_start_price : 'เริ่มต้น 7,000 ฿';
+
+  document.querySelectorAll('[data-cms="home_exp_years"]').forEach(el => { el.textContent = safeExpYears; });
+  document.querySelectorAll('[data-cms="home_area_stat"], .stat-item [data-cms="home_area_tag"]').forEach(el => { el.textContent = safeAreaStat; });
+  document.querySelectorAll('[data-cms="home_start_price"]').forEach(el => { el.textContent = safeStartPrice; });
 
   // 4.3 อัปเดตรูปภาพทนายความในหน้าเกี่ยวกับเรา (Lawyer Profile Photo)
   const lawyerImgUrl = settings.about_lawyer_image && typeof settings.about_lawyer_image === 'string' ? settings.about_lawyer_image.trim() : '';

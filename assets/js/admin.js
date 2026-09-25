@@ -832,6 +832,7 @@ async function loadAllSettingsToForm() {
   setVal('cmsHomeStartPrice', settings.home_start_price);
   setVal('cmsHomePriceNote', settings.home_price_note);
   setVal('cmsHomeExpYears', settings.home_exp_years);
+  setVal('cmsHomeAreaStat', settings.home_area_stat || 'ปัตตานี & 4 จว.');
   setVal('cmsHomeAreaTag', settings.home_area_tag || '');
 
   setVal('cmsHomeLicenseTitle', settings.home_license_card_title || '');
@@ -1095,6 +1096,7 @@ async function handleSaveCmsSettings(event) {
     home_start_price: getVal('cmsHomeStartPrice'),
     home_price_note: getVal('cmsHomePriceNote'),
     home_exp_years: getVal('cmsHomeExpYears'),
+    home_area_stat: getVal('cmsHomeAreaStat') || 'ปัตตานี & 4 จว.',
     home_area_tag: getVal('cmsHomeAreaTag'),
 
     home_license_card_title: getVal('cmsHomeLicenseTitle'),

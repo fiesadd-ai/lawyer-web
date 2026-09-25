@@ -542,14 +542,24 @@
                 <textarea id="cmsHomeHeroDesc" class="form-control" rows="2" required></textarea>
               </div>
 
-              <div class="cms-grid-2" style="margin-bottom: 18px;">
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="cmsHomeStartPrice">ข้อความเรทราคาเริ่มต้น:</label>
-                  <input type="text" id="cmsHomeStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 ฿" required>
-                </div>
-                <div class="form-group" style="margin: 0;">
-                  <label class="form-label" for="cmsHomeExpYears">จำนวนปีประสบการณ์:</label>
-                  <input type="text" id="cmsHomeExpYears" class="form-control" placeholder="เช่น กว่า 35 - 40 ปี" required>
+              <!-- สถิติเด่น 3 ช่องบนหน้าแรก (Hero 3-Column Stats) -->
+              <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; border-radius: var(--radius-md); padding: 18px; margin-bottom: 22px;">
+                <h4 style="font-size: 0.98rem; color: #166534; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>📊</span> ตัวเลขสถิติเด่น 3 ช่องหน้าแรก (Hero Stats):
+                </h4>
+                <div class="cms-grid-3">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeExpYears">1. ประสบการณ์ว่าความจริง:</label>
+                    <input type="text" id="cmsHomeExpYears" class="form-control" placeholder="เช่น กว่า 35 - 40 ปี" required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeAreaStat">2. พื้นที่ดูแลคดีอย่างใกล้ชิด:</label>
+                    <input type="text" id="cmsHomeAreaStat" class="form-control" placeholder="เช่น ปัตตานี & 4 จว." required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeStartPrice">3. ค่าบริการเริ่มต้นคดีทั่วไป:</label>
+                    <input type="text" id="cmsHomeStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 ฿" required>
+                  </div>
                 </div>
               </div>
 
