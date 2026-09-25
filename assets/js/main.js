@@ -544,12 +544,116 @@ function renderDynamicNavbar(settings) {
       li.appendChild(a);
       navMenu.appendChild(li);
 
-      // รองรับการปิดเมนูบนมือถือเมื่อคลิก
+      // รองรับการปิดเมนูบนมือถือเมื่อคลิกเลือกลิงก์
       a.addEventListener('click', () => {
-        navMenu.classList.remove('active');
+        if (typeof window.closeMobileNavbar === 'function') {
+          window.closeMobileNavbar();
+        } else {
+          navMenu.classList.remove('active');
+          const toggle = document.querySelector('.menu-toggle');
+          if (toggle) toggle.classList.remove('active');
+        }
       });
     });
+
+    // เพิ่มปุ่มจองคิวขนาดใหญ่สำหรับมือถือในกล่องดรอปดาวน์
+    if (!isInsideAdmin) {
+      const ctaLi = document.createElement('li');
+      ctaLi.className = 'mobile-cta-item';
+      const ctaUrl = isInsideAdmin ? '../booking.html' : 'booking.html';
+      ctaLi.innerHTML = `
+        <a href="${ctaUrl}" class="btn-mobile-nav-cta">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+          <span>จองคิวปรึกษาคดีความ</span>
+        </a>
+      `;
+      const ctaLink = ctaLi.querySelector('a');
+      if (ctaLink) {
+        ctaLink.addEventListener('click', () => {
+          if (typeof window.closeMobileNavbar === 'function') {
+            window.closeMobileNavbar();
+          } else {
+            navMenu.classList.remove('active');
+          }
+        });
+      }
+      navMenu.appendChild(ctaLi);
+    }
   });
+}
+
+// ฟังก์ชันควบคุมการเปิด-ปิดเมนูบนหน้าจอมือถือ (Responsive Mobile Navbar Controller)
+function initMobileNavbar() {
+  const menuToggles = document.querySelectorAll('.menu-toggle');
+  const navMenus = document.querySelectorAll('.nav-menu');
+  if (menuToggles.length === 0 || navMenus.length === 0) return;
+
+  function openMenu() {
+    navMenus.forEach(m => m.classList.add('active'));
+    menuToggles.forEach(btn => {
+      btn.classList.add('active');
+      btn.setAttribute('aria-expanded', 'true');
+    });
+    if (typeof logActivity === 'function') {
+      logActivity('เปิดเมนูนำทางบนมือถือ', 'ผู้ใช้คลิกเปิดเมนูดรอปดาวน์', 'click', '📱');
+    }
+  }
+
+  function closeMenu() {
+    navMenus.forEach(m => m.classList.remove('active'));
+    menuToggles.forEach(btn => {
+      btn.classList.remove('active');
+      btn.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  function toggleMenu() {
+    const isAnyActive = Array.from(navMenus).some(m => m.classList.contains('active'));
+    if (isAnyActive) {
+      closeMenu();
+    } else {
+      openMenu();
+    }
+  }
+
+  // 1. คลิกปุ่มแฮมเบอร์เกอร์เพื่อสลับ เปิด/ปิด
+  menuToggles.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      toggleMenu();
+    });
+  });
+
+  // 2. คลิกพื้นที่ด้านนอก (Outside click) ให้ปิดเมนูดรอปดาวน์อัตโนมัติ
+  document.addEventListener('click', (e) => {
+    const isClickInsideMenu = Array.from(navMenus).some(m => m.contains(e.target));
+    const isClickInsideToggle = Array.from(menuToggles).some(btn => btn.contains(e.target));
+    if (!isClickInsideMenu && !isClickInsideToggle) {
+      closeMenu();
+    }
+  });
+
+  // 3. ปิดเมนูเมื่อกดปุ่ม ESC บนคีย์บอร์ด
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+      closeMenu();
+    }
+  });
+
+  // 4. หากปรับขนาดหน้าจอขยายกลับเป็น Desktop (> 992px) ให้ปิดสถานะ active
+  window.addEventListener('resize', () => {
+    if (window.innerWidth > 992) {
+      closeMenu();
+    }
+  });
+
+  window.closeMobileNavbar = closeMenu;
+  window.openMobileNavbar = openMenu;
 }
 
 // ระบบติดตามการเข้าชมและการคลิกความเคลื่อนไหวอัตโนมัติ
@@ -585,6 +689,9 @@ document.addEventListener('DOMContentLoaded', () => {
   // เริ่มระบบติดตามความเคลื่อนไหว
   initActivityAutoTracker();
 
+  // ติดตั้งระบบควบคุม Navbar บนมือถือ
+  initMobileNavbar();
+
   // นำค่าการตั้งค่ามาแสดงผลทันทีเมื่อเปิดหน้า
   applySiteSettings();
 
@@ -593,15 +700,6 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchSiteSettingsFromSupabase().then(() => {
       applySiteSettings();
     }).catch(() => {});
-  }
-
-  const menuToggle = document.querySelector('.menu-toggle');
-  const navMenu = document.querySelector('.nav-menu');
-
-  if (menuToggle && navMenu) {
-    menuToggle.addEventListener('click', () => {
-      navMenu.classList.toggle('active');
-    });
   }
 });
 
