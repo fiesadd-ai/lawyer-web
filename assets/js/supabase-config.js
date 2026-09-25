@@ -3,20 +3,56 @@
  * สำนักงานทนายความชั้น 1 (รับว่าความทั่วราชอาณาจักร)
  * 
  * รองรับการทำงาน 2 โหมดแบบไร้รอยต่อ (100% Zero-Error Architecture):
- * 1. โหมด Supabase Cloud จริง: เมื่อระบุ Project URL และ Key
- * 2. โหมด Local Database Engine: ทำงานอัตโนมัติ 100% ไม่มี Error หรือสีแดงใดๆ
+ * 1. โหมด Supabase Cloud จริง: ทำงานกับ Supabase Database บนคลาวด์จริง 100%
+ * 2. โหมด Local Database Engine: ทำงานอัตโนมัติ 100% สำรองข้อมูลใน LocalStorage ทันที ไม่มี Error
+ * 3. ระบบ Real-time Cross-tab Sync: แจ้งเตือนทุกแท็บหน้าบ้านให้อัปเดตทันทีที่แอดมินบันทึก
  */
 
 // โหลดค่า Project URL และ Key จาก LocalStorage หรือใช้ค่าเริ่มต้น
 const SUPABASE_CONFIG = {
   // ผู้ใช้สามารถระบุ Project URL เช่น https://xxxx.supabase.co
-  url: localStorage.getItem('supabase_project_url') || '',
+  url: (typeof localStorage !== 'undefined' ? localStorage.getItem('supabase_project_url') : '') || '',
   // Publishable Key ที่ได้รับจาก Supabase
-  publishableKey: localStorage.getItem('supabase_publishable_key') || 'sb_publishable_JPYOtwszq1Alcx7ec3Uong_4PLEXijR'
+  publishableKey: (typeof localStorage !== 'undefined' ? localStorage.getItem('supabase_publishable_key') : '') || 'sb_publishable_JPYOtwszq1Alcx7ec3Uong_4PLEXijR'
 };
 
 // ตัวแปรเก็บ Instance ของ Supabase Client
 let supabaseClient = null;
+
+// ช่องทางการส่งสัญญาณซิงค์ข้ามแท็บ (BroadcastChannel API)
+let syncChannel = null;
+try {
+  if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+    syncChannel = new BroadcastChannel('lawyer_sync_channel');
+    syncChannel.onmessage = (event) => {
+      if (event.data && event.data.type === 'SETTINGS_UPDATED') {
+        if (typeof applySiteSettings === 'function') {
+          applySiteSettings();
+        }
+      } else if (event.data && event.data.type === 'APPOINTMENTS_UPDATED') {
+        if (typeof renderAppointmentsTable === 'function') {
+          renderAppointmentsTable();
+        }
+      }
+    };
+  }
+} catch (e) {}
+
+/**
+ * ส่งสัญญาณแจ้งเตือนทุกแท็บให้ซิงค์ข้อมูลใหม่ทันที
+ */
+function broadcastSync(type, payload = null) {
+  try {
+    if (syncChannel) {
+      syncChannel.postMessage({ type, payload, timestamp: Date.now() });
+    }
+  } catch (e) {}
+  try {
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('lawyer_data_synced', { detail: { type, payload } }));
+    }
+  } catch (e) {}
+}
 
 /**
  * Local Database Engine ที่จำลอง Supabase Client 100%
@@ -71,8 +107,15 @@ function createFallbackSupabaseClient() {
         update: function(updates) {
           return {
             eq: async function(field, val) {
-              if (tableName === 'appointments' && updates.status && typeof updateBookingStatus === 'function') {
-                updateBookingStatus(val, updates.status);
+              if (tableName === 'appointments' && typeof getBookings === 'function') {
+                const list = getBookings();
+                const idx = list.findIndex(b => b[field] === val);
+                if (idx !== -1) {
+                  list[idx] = { ...list[idx], ...updates };
+                  if (typeof STORAGE_KEY !== 'undefined') {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+                  }
+                }
               }
               return { data: updates, error: null };
             }
@@ -112,12 +155,12 @@ function getSupabaseClient() {
   const key = (localStorage.getItem('supabase_publishable_key') || SUPABASE_CONFIG.publishableKey || '').trim();
 
   // ตรวจสอบว่ามีการระบุ URL คลาวด์จริงและ SDK พร้อมทำงานหรือไม่
-  if (url && !url.includes('your-project-ref') && window.supabase && typeof window.supabase.createClient === 'function') {
+  if (url && !url.includes('your-project-ref') && typeof window !== 'undefined' && window.supabase && typeof window.supabase.createClient === 'function') {
     try {
       supabaseClient = window.supabase.createClient(url, key);
       return supabaseClient;
     } catch (err) {
-      // หากเกิดข้อผิดพลาดในการต่อ ให้ใช้ Local Engine รองรับทันที
+      console.warn('Supabase createClient failed, falling back to local engine:', err);
     }
   }
 
@@ -182,9 +225,11 @@ async function fetchAppointmentsFromSupabase() {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
       }
       return data;
+    } else if (error) {
+      console.warn('Fetch appointments from Supabase returned error:', error);
     }
   } catch (e) {
-    // ปลอดภัย ไม่หยุดการทำงาน
+    console.warn('Exception during fetchAppointmentsFromSupabase:', e);
   }
 
   return typeof getBookings === 'function' ? getBookings() : [];
@@ -201,18 +246,24 @@ async function insertAppointmentToSupabase(bookingData) {
 
   const record = {
     id: id,
-    fullname: bookingData.fullname || '',
-    phone: bookingData.phone || '',
-    email: bookingData.email || '-',
+    fullname: (bookingData.fullname || '').trim(),
+    phone: (bookingData.phone || '').trim(),
+    email: (bookingData.email || '-').trim(),
     case_type: bookingData.case_type || 'คดีทั่วไป',
     consult_type: bookingData.consult_type || 'office',
-    booking_date: bookingData.booking_date || '',
-    booking_time: bookingData.booking_time || '',
-    details: bookingData.details || '-',
+    booking_date: bookingData.booking_date || new Date().toISOString().slice(0, 10),
+    booking_time: bookingData.booking_time || '09:30 - 10:30',
+    details: (bookingData.details || '-').trim(),
     status: bookingData.status || 'pending',
-    created_at: now
+    created_at: bookingData.created_at || now
   };
 
+  // 1. บันทึกลง Local Cache ทันทีเพื่อความรวดเร็วและป้องกันข้อมูลหาย
+  if (typeof addBooking === 'function') {
+    addBooking(record);
+  }
+
+  // 2. บันทึกลง Supabase Cloud จริง
   try {
     const client = getSupabaseClient();
     const { data, error } = await client
@@ -220,20 +271,61 @@ async function insertAppointmentToSupabase(bookingData) {
       .insert([record])
       .select();
 
-    if (!error && data && data[0]) {
-      if (typeof addBooking === 'function') addBooking(record);
+    if (error) {
+      console.warn('Supabase insert appointment warning:', error);
+    } else if (data && data[0]) {
+      broadcastSync('APPOINTMENTS_UPDATED', data[0]);
       return data[0];
     }
   } catch (err) {
-    // ปลอดภัย ไม่หยุดการทำงาน
+    console.warn('Supabase insert appointment exception:', err);
   }
 
-  if (typeof addBooking === 'function') addBooking(record);
+  broadcastSync('APPOINTMENTS_UPDATED', record);
   return record;
 }
 
 /**
- * อัปเดตสถานะนัดหมายลงใน Supabase ตาราง appointments
+ * อัปเดตข้อมูลนัดหมายเต็มรูปแบบ (Full Update) ลงใน Supabase ตาราง appointments
+ */
+async function updateAppointmentInSupabase(id, updatedFields) {
+  // 1. อัปเดตใน Local Cache
+  if (typeof getBookings === 'function') {
+    const bookings = getBookings();
+    const idx = bookings.findIndex(b => b.id === id);
+    if (idx !== -1) {
+      bookings[idx] = { ...bookings[idx], ...updatedFields };
+      if (typeof STORAGE_KEY !== 'undefined') {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
+      }
+    }
+  }
+
+  // 2. อัปเดตบน Supabase Cloud
+  try {
+    const client = getSupabaseClient();
+    const { data, error } = await client
+      .from('appointments')
+      .update(updatedFields)
+      .eq('id', id)
+      .select();
+
+    if (error) {
+      console.warn('Supabase update appointment error:', error);
+    } else if (data && data[0]) {
+      broadcastSync('APPOINTMENTS_UPDATED', data[0]);
+      return data[0];
+    }
+  } catch (err) {
+    console.warn('Supabase update exception:', err);
+  }
+
+  broadcastSync('APPOINTMENTS_UPDATED', { id, ...updatedFields });
+  return { id, ...updatedFields };
+}
+
+/**
+ * อัปเดตเฉพาะสถานะนัดหมายลงใน Supabase ตาราง appointments
  */
 async function updateAppointmentStatusInSupabase(id, newStatus) {
   if (typeof updateBookingStatus === 'function') {
@@ -242,13 +334,19 @@ async function updateAppointmentStatusInSupabase(id, newStatus) {
 
   try {
     const client = getSupabaseClient();
-    await client
+    const { error } = await client
       .from('appointments')
       .update({ status: newStatus })
       .eq('id', id);
+
+    if (error) {
+      console.warn('Supabase updateStatus error:', error);
+    }
   } catch (err) {
-    // ปลอดภัย ไม่หยุดการทำงาน
+    console.warn('Supabase updateStatus exception:', err);
   }
+
+  broadcastSync('APPOINTMENTS_UPDATED', { id, status: newStatus });
   return true;
 }
 
@@ -262,13 +360,19 @@ async function deleteAppointmentFromSupabase(id) {
 
   try {
     const client = getSupabaseClient();
-    await client
+    const { error } = await client
       .from('appointments')
       .delete()
       .eq('id', id);
+
+    if (error) {
+      console.warn('Supabase delete error:', error);
+    }
   } catch (err) {
-    // ปลอดภัย ไม่หยุดการทำงาน
+    console.warn('Supabase delete exception:', err);
   }
+
+  broadcastSync('APPOINTMENTS_UPDATED', { id, deleted: true });
   return true;
 }
 
@@ -305,9 +409,11 @@ async function fetchSiteSettingsFromSupabase() {
         saveSiteSettings(mergedSettings);
       }
       return mergedSettings;
+    } else if (error) {
+      console.warn('Supabase fetch site_settings error:', error);
     }
   } catch (e) {
-    // ดึงจาก local settings อัตโนมัติ
+    console.warn('fetchSiteSettingsFromSupabase exception:', e);
   }
 
   return typeof getSiteSettings === 'function' ? getSiteSettings() : {};
@@ -319,21 +425,28 @@ async function fetchSiteSettingsFromSupabase() {
 async function saveSiteSettingsToSupabase(newSettings) {
   const saved = typeof saveSiteSettings === 'function' ? saveSiteSettings(newSettings) : newSettings;
 
+  // ส่งสัญญาณให้ทุกหน้าเว็บอัปเดตทันที
+  broadcastSync('SETTINGS_UPDATED', saved);
+
   try {
     const client = getSupabaseClient();
     const payload = {
       id: 'main',
-      hotline: saved.hotline,
-      business_hours: saved.business_hours,
+      hotline: saved.hotline || '',
+      business_hours: saved.business_hours || '',
       settings_json: JSON.stringify(saved),
       updated_at: new Date().toISOString()
     };
 
-    await client
+    const { error } = await client
       .from('site_settings')
       .upsert(payload);
+
+    if (error) {
+      console.warn('Supabase site_settings upsert error:', error);
+    }
   } catch (e) {
-    // ข้อมูลบันทึกลง LocalStorage เรียบร้อย
+    console.warn('saveSiteSettingsToSupabase exception:', e);
   }
 
   return saved;
@@ -342,9 +455,9 @@ async function saveSiteSettingsToSupabase(newSettings) {
 // ซิงค์การตั้งค่าอัตโนมัติเมื่อเปิดหน้าเว็บ
 if (typeof window !== 'undefined') {
   const triggerAutoSync = () => {
-    fetchSiteSettingsFromSupabase().then(() => {
+    fetchSiteSettingsFromSupabase().then((settings) => {
       if (typeof applySiteSettings === 'function') {
-        applySiteSettings();
+        applySiteSettings(settings);
       }
     }).catch(() => {});
   };

@@ -418,8 +418,9 @@
       const emailVal = (emailInput.value || '').trim();
       const passwordVal = (passwordInput.value || '');
 
-      // ตรวจสอบ: พิมพ์อีเมลใดๆ ก็ได้ และรหัสผ่านถูกต้องตาม Fee-065702
-      if (emailVal && passwordVal === ADMIN_PASSWORD) {
+      // ตรวจสอบ: พิมพ์อีเมลใดๆ ก็ได้ และรหัสผ่านถูกต้องตาม Fee-065702 หรือรหัสผ่านใหม่ที่ตั้งไว้
+      const expectedPassword = localStorage.getItem('lawyer_admin_custom_password') || ADMIN_PASSWORD;
+      if (emailVal && passwordVal === expectedPassword) {
         // สำเร็จ
         alertBox.className = 'login-alert alert-success';
         alertIcon.textContent = '✅';

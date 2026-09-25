@@ -211,7 +211,16 @@
               ข้อมูลที่บันทึกผ่านหน้าเว็บไซต์จะส่งตรงเข้ามายังตารางนี้แบบอัตโนมัติ คุณสามารถตรวจสอบรายละเอียดข้อเท็จจริง เปลี่ยนสถานะ และจัดการข้อมูลได้แบบเรียลไทม์
             </p>
           </div>
-          <div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
+            <button type="button" class="btn btn-sm" style="background: #ffffff; color: var(--primary-dark); font-weight: 700; box-shadow: 0 2px 6px rgba(0,0,0,0.1);" onclick="openAddBookingModal()">
+              ➕ เพิ่มคิวนัดหมายใหม่
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.5); font-weight: 600;" onclick="exportAppointmentsCSV()" title="ดาวน์โหลดข้อมูลคิวนัดหมายทั้งหมดเป็นไฟล์ CSV">
+              📥 ส่งออก CSV
+            </button>
+            <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.5); font-weight: 600;" onclick="openChangePasswordModal()" title="เปลี่ยนรหัสผ่านสำหรับเข้าสู่ระบบแอดมิน">
+              🔑 เปลี่ยนรหัสผ่าน Admin
+            </button>
             <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.5); font-weight: 600;" onclick="openSupabaseModal()">
               ⚙️ ตั้งค่าเชื่อมต่อ Supabase
             </button>
@@ -478,6 +487,7 @@
       </section>
 
       <!-- ============================================================== -->
+      <!-- ============================================================== -->
       <!-- SECTION 3: จัดการเนื้อหาหน้าเว็บไซต์ (Dynamic Content CMS)      -->
       <!-- ============================================================== -->
       <section id="section-cms" class="admin-section">
@@ -492,10 +502,13 @@
               ⚖️ 2. หน้าเกี่ยวกับเรา (About Page)
             </button>
             <button type="button" class="cms-subnav-btn" id="btn-cms-services" onclick="switchCmsSubTab('services')">
-              💼 3. หน้าบริการและเรทราคา (Services)
+              💼 3. บริการ & 5 หมวดคดี (Services)
             </button>
             <button type="button" class="cms-subnav-btn" id="btn-cms-contact" onclick="switchCmsSubTab('contact')">
               📬 4. หน้าติดต่อเรา (Contact Page)
+            </button>
+            <button type="button" class="cms-subnav-btn" id="btn-cms-footer" onclick="switchCmsSubTab('footer')">
+              🌐 5. ท้ายเว็บ & ลิขสิทธิ์ (Footer)
             </button>
           </div>
 
@@ -509,7 +522,7 @@
                     🏠 ตั้งค่าหน้าแรก (index.html)
                   </h3>
                   <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
-                    ข้อความเด่นในส่วน Hero Banner และตัวเลขจุดขายสำคัญของสำนักงาน
+                    ข้อความเด่นในส่วน Hero Banner, ป้ายพื้นที่, ใบอนุญาต, จุดเด่น 4 ด้าน และแบนเนอร์ท้ายหน้า
                   </span>
                 </div>
               </div>
@@ -520,11 +533,16 @@
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="cmsHomeHeroDesc">คำบรรยายสรุปใต้สโลแกน (Hero Subtitle):</label>
+                <label class="form-label" for="cmsHomeHeroSubtitle">ข้อความแถบหัวเรื่องรอง (Hero Subtitle):</label>
+                <input type="text" id="cmsHomeHeroSubtitle" class="form-control" placeholder="เช่น บริการให้คำปรึกษาทางกฎหมาย และว่าความคดีทุกประเภททั่วราชอาณาจักร">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsHomeHeroDesc">คำบรรยายสรุปใต้สโลแกน (Hero Description):</label>
                 <textarea id="cmsHomeHeroDesc" class="form-control" rows="2" required></textarea>
               </div>
 
-              <div class="cms-grid-3">
+              <div class="cms-grid-2" style="margin-bottom: 18px;">
                 <div class="form-group" style="margin: 0;">
                   <label class="form-label" for="cmsHomeStartPrice">ข้อความเรทราคาเริ่มต้น:</label>
                   <input type="text" id="cmsHomeStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 ฿" required>
@@ -533,19 +551,87 @@
                   <label class="form-label" for="cmsHomeExpYears">จำนวนปีประสบการณ์:</label>
                   <input type="text" id="cmsHomeExpYears" class="form-control" placeholder="เช่น กว่า 35 - 40 ปี" required>
                 </div>
+              </div>
+
+              <div class="cms-grid-2" style="margin-bottom: 22px;">
                 <div class="form-group" style="margin: 0;">
                   <label class="form-label" for="cmsHomePriceNote">หมายเหตุเรทราคา (สั้น):</label>
                   <input type="text" id="cmsHomePriceNote" class="form-control" placeholder="* ขึ้นอยู่กับประเภทและความยากง่ายของคดี" required>
                 </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsHomeAreaTag">ป้ายระบุพื้นที่ให้บริการ (Area Tag):</label>
+                  <input type="text" id="cmsHomeAreaTag" class="form-control" placeholder="เช่น 📍 ประจำจังหวัดปัตตานี • รับว่าความ 4 จังหวัดและทั่วประเทศ">
+                </div>
               </div>
 
-              <!-- แบนเนอร์จองคิวด่วนท้ายหน้าแรก (Quick CTA Banner) ตามรูปต้นฉบับ -->
-              <div style="border-top: 1px solid var(--border-color); padding-top: 22px; margin-top: 22px;">
+              <!-- การ์ดใบอนุญาตว่าความบนหน้าแรก -->
+              <div style="background: #f8fafc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px;">
+                <h4 style="font-size: 0.98rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>📜</span> ข้อมูลการ์ดใบอนุญาตว่าความ (Hero License Card)
+                </h4>
+                <div class="cms-grid-3">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeLicenseTitle">หัวข้อการ์ดใบอนุญาต:</label>
+                    <input type="text" id="cmsHomeLicenseTitle" class="form-control" placeholder="เช่น ใบอนุญาตทนายความชั้น 1">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeLicenseNumber">ประเภท / หมายเลข:</label>
+                    <input type="text" id="cmsHomeLicenseNumber" class="form-control" placeholder="เช่น ประเภทตลอดชีพ (สภาทนายความฯ)">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeLicenseIssuer">สิทธิการว่าความ:</label>
+                    <input type="text" id="cmsHomeLicenseIssuer" class="form-control" placeholder="เช่น ว่าความดำเนินคดีได้ทุกศาลทั่วราชอาณาจักร">
+                  </div>
+                </div>
+              </div>
+
+              <!-- จุดเด่น 4 ด้านของสำนักงาน (Why Choose Us - 4 Feature Cards) -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 22px; margin-bottom: 24px;">
+                <h4 style="font-size: 1.05rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                  <span>⭐</span> จุดเด่นและเหตุผลที่ควรเลือกเรา (4 จุดเด่นบนหน้าแรก)
+                </h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px;">
+                  แก้ไขหัวข้อและคำบรรยายของการ์ดจุดเด่นทั้ง 4 ช่องบนหน้าแรก (index.html)
+                </p>
+
+                <div class="cms-grid-2" style="gap: 16px; margin-bottom: 16px;">
+                  <!-- ข้อ 1 -->
+                  <div style="background: #fafbfc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+                    <label class="form-label" style="font-weight: 700; color: var(--primary);">1. ประสบการณ์ 35-40 ปี:</label>
+                    <input type="text" id="cmsHomeFeat1Title" class="form-control" style="margin-bottom: 8px;" placeholder="หัวข้อ เช่น ประสบการณ์ว่าความ 35+ ถึงเกือบ 40 ปี">
+                    <textarea id="cmsHomeFeat1Desc" class="form-control" rows="2" placeholder="คำบรรยายสรุป"></textarea>
+                  </div>
+                  <!-- ข้อ 2 -->
+                  <div style="background: #fafbfc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+                    <label class="form-label" style="font-weight: 700; color: var(--primary);">2. ใบอนุญาตชั้น 1 ตลอดชีพ:</label>
+                    <input type="text" id="cmsHomeFeat2Title" class="form-control" style="margin-bottom: 8px;" placeholder="หัวข้อ เช่น ใบอนุญาตว่าความชั้น 1 ประเภทตลอดชีพ">
+                    <textarea id="cmsHomeFeat2Desc" class="form-control" rows="2" placeholder="คำบรรยายสรุป"></textarea>
+                  </div>
+                </div>
+
+                <div class="cms-grid-2" style="gap: 16px;">
+                  <!-- ข้อ 3 -->
+                  <div style="background: #fafbfc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+                    <label class="form-label" style="font-weight: 700; color: var(--primary);">3. ราคาเริ่มต้นชัดเจน 7,000 บาท:</label>
+                    <input type="text" id="cmsHomeFeat3Title" class="form-control" style="margin-bottom: 8px;" placeholder="หัวข้อ เช่น เรทค่าบริการเป็นธรรม เริ่มต้น 7,000 บาท">
+                    <textarea id="cmsHomeFeat3Desc" class="form-control" rows="2" placeholder="คำบรรยายสรุป"></textarea>
+                  </div>
+                  <!-- ข้อ 4 -->
+                  <div style="background: #fafbfc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 14px;">
+                    <label class="form-label" style="font-weight: 700; color: var(--primary);">4. เชี่ยวชาญศาลภาคใต้และทั่วราชอาณาจักร:</label>
+                    <input type="text" id="cmsHomeFeat4Title" class="form-control" style="margin-bottom: 8px;" placeholder="หัวข้อ เช่น เชี่ยวชาญระบบศาลในพื้นที่ภาคใต้และทั่วราชอาณาจักร">
+                    <textarea id="cmsHomeFeat4Desc" class="form-control" rows="2" placeholder="คำบรรยายสรุป"></textarea>
+                  </div>
+                </div>
+              </div>
+
+              <!-- แบนเนอร์จองคิวด่วนท้ายหน้าแรก (Quick CTA Banner) -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 22px;">
                 <h4 style="font-size: 1.05rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
                   <span>📢</span> แบนเนอร์จองคิวด่วนท้ายหน้าแรก (Quick CTA Banner)
                 </h4>
                 <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
-                  จัดการข้อความแถบสีเขียวเข้มท้ายหน้าแรก เพื่อกระตุ้นให้ลูกค้าติดต่อหรือจองคิว (หากแก้ไขเบอร์โทรศัพท์ที่เมนู "ตั้งค่าการติดต่อ" เบอร์ทั้งเว็บจะซิงค์ให้อัตโนมัติด้วย)
+                  จัดการข้อความแถบสีเขียวเข้มท้ายหน้าแรก เพื่อกระตุ้นให้ลูกค้าติดต่อหรือจองคิว
                 </p>
 
                 <div class="form-group">
@@ -569,7 +655,7 @@
                   </div>
                 </div>
 
-                <!-- กล่องตัวอย่างแสดงผลสด (Live Preview) เหมือนในหน้าแรกเป๊ะ 100% -->
+                <!-- กล่องตัวอย่างแสดงผลสด (Live Preview) -->
                 <div style="background: #f8fafc; border: 1.5px dashed var(--primary-light); border-radius: var(--radius-lg); padding: 20px;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
                     <strong style="color: var(--primary-dark); font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
@@ -580,7 +666,6 @@
                     </span>
                   </div>
 
-                  <!-- จำลองแบนเนอร์สีเขียวเข้มพร้อมปุ่ม 2 ปุ่มตามรูปภาพ -->
                   <div style="background: #1b4332; border-radius: var(--radius-md); padding: 34px 20px; text-align: center; color: var(--white); box-shadow: 0 4px 16px rgba(27, 67, 50, 0.25);">
                     <h3 id="previewHomeCtaTitle" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; color: #ffffff;">
                       มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?
@@ -613,22 +698,33 @@
                     ⚖️ หน้าเกี่ยวกับเรา (about.html)
                   </h3>
                   <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
-                    เน้นข้อมูลประสบการณ์ 35-40 ปี และใบอนุญาตว่าความชั้น 1 ประเภทตลอดชีพ
+                    เน้นข้อมูลประสบการณ์ 35-40 ปี, ใบอนุญาตว่าความชั้น 1 ประเภทตลอดชีพ และกล่องแนะนำสำนักงาน
                   </span>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="cmsAboutTitle">หัวข้อแนะนำสำนักงาน (Page Heading):</label>
+                <label class="form-label" for="cmsAboutTitle">หัวข้อแบนเนอร์หน้าเกี่ยวกับเรา (Hero Title):</label>
                 <input type="text" id="cmsAboutTitle" class="form-control" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="cmsAboutDesc">คำบรรยายหลัก (About Summary):</label>
+                <label class="form-label" for="cmsAboutDesc">คำบรรยายสรุปใต้แบนเนอร์ (Hero Description):</label>
                 <textarea id="cmsAboutDesc" class="form-control" rows="2" required></textarea>
               </div>
 
-              <!-- ข้อมูลทนายความและประสบการณ์ว่าความ (ตามภาพต้นฉบับ) -->
+              <div class="cms-grid-2" style="margin-bottom: 20px;">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsAboutSectionTitle">หัวข้อส่วนประวัติสำนักงาน (Section Title):</label>
+                  <input type="text" id="cmsAboutSectionTitle" class="form-control" placeholder="เช่น สำนักงานทนายความชั้น 1 ปัตตานี">
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsAboutSectionDesc">คำชี้แจงประวัติสำนักงาน (Section Desc):</label>
+                  <input type="text" id="cmsAboutSectionDesc" class="form-control" placeholder="เช่น มุ่งมั่นผดุงความยุติธรรมและพิทักษ์สิทธิประโยชน์ของลูกความอย่างถึงที่สุด">
+                </div>
+              </div>
+
+              <!-- ข้อมูลทนายความและประสบการณ์ว่าความ -->
               <div style="border-top: 1px solid var(--border-color); padding-top: 22px; margin-top: 22px;">
                 <h4 style="font-size: 1.05rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
                   <span>👤</span> ข้อมูลทนายความและประสบการณ์ว่าความด้านกฎหมาย (About Section)
@@ -637,7 +733,7 @@
                 <div class="cms-grid-3" style="margin-bottom: 18px;">
                   <div class="form-group" style="margin: 0;">
                     <label class="form-label" for="cmsAboutLawyerName">ชื่อทนายความ:</label>
-                    <input type="text" id="cmsAboutLawyerName" class="form-control" placeholder="เช่น ทนายความ ธนบดี นิติสิริ" required>
+                    <input type="text" id="cmsAboutLawyerName" class="form-control" placeholder="เช่น ทนายความ รอสนั่น อีซอ" required>
                   </div>
                   <div class="form-group" style="margin: 0;">
                     <label class="form-label" for="cmsAboutLawyerTitle">ตำแหน่ง / คุณวุฒิวิชาชีพ:</label>
@@ -655,7 +751,7 @@
                     <span>📷</span> รูปภาพประจำตัวทนายความ (Profile Photo):
                   </label>
                   <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
-                    สามารถอัปโหลดไฟล์รูปภาพจริงจากเครื่อง หรือวางลิงก์รูปภาพ (URL) ได้ ระบบจะย่อขนาดให้คมชัดพอเหมาะ และแสดงในตัวอย่างสดทันที
+                    สามารถอัปโหลดไฟล์รูปภาพจริงจากเครื่อง หรือวางลิงก์รูปภาพ (URL) ได้ ระบบจะย่อขนาดและแสดงในตัวอย่างสดทันที
                   </p>
                   
                   <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
@@ -700,7 +796,24 @@
                   </div>
                 </div>
 
-                <!-- กล่องตัวอย่างแสดงผลจริง (Live Preview Card) แบบเดียวกับหน้าเว็บและภาพถ่าย -->
+                <!-- การ์ด Call to Action ท้ายหน้าเกี่ยวกับเรา -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-top: 24px;">
+                  <h4 style="font-size: 0.98rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                    <span>📢</span> การ์ดชวนติดต่อท้ายหน้าเกี่ยวกับเรา (Bottom About CTA)
+                  </h4>
+                  <div class="cms-grid-2">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsAboutCtaTitle">หัวข้อการ์ดท้ายหน้า:</label>
+                      <input type="text" id="cmsAboutCtaTitle" class="form-control" placeholder="เช่น ต้องการคำปรึกษากับทนายความโดยตรง?">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsAboutCtaDesc">คำบรรยายการ์ดท้ายหน้า:</label>
+                      <input type="text" id="cmsAboutCtaDesc" class="form-control" placeholder="เช่น เพื่อนัดหมายเวลาและเตรียมเอกสารเบื้องต้นก่อนเข้าพบที่สำนักงาน">
+                    </div>
+                  </div>
+                </div>
+
+                <!-- กล่องตัวอย่างแสดงผลจริง (Live Preview Card) -->
                 <div style="margin-top: 26px; background: #f8fafc; border: 1.5px dashed var(--primary-light); border-radius: var(--radius-lg); padding: 22px;">
                   <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
                     <strong style="color: var(--primary-dark); font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
@@ -711,23 +824,20 @@
                     </span>
                   </div>
 
-                  <!-- จำลองการแสดงผลเหมือนในรูปที่ผู้ใช้ส่งมาเป๊ะ -->
                   <div style="background: var(--white); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: center;">
                     
-                    <!-- การ์ดฝั่งซ้าย: โปรไฟล์ทนายความ -->
                     <div style="background: var(--primary-bg); border-radius: var(--radius-lg); padding: 24px 16px; text-align: center; border: 1.5px solid var(--border-color);">
                       <div id="previewAboutLawyerAvatarBox" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-soft), #bbf7d0); border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-dark); box-shadow: 0 4px 10px rgba(45, 106, 79, 0.15); overflow: hidden; position: relative;">
                         <img id="previewAboutLawyerImg" src="" alt="ภาพทนายความ" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;">
                         <svg id="previewAboutLawyerSvg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
                       </div>
-                      <h3 style="font-size: 1.15rem; color: var(--primary-dark); margin-bottom: 4px; font-weight: 700;" id="previewAboutLawyerName">ทนายความ ธนบดี นิติสิริ</h3>
+                      <h3 style="font-size: 1.15rem; color: var(--primary-dark); margin-bottom: 4px; font-weight: 700;" id="previewAboutLawyerName">ทนายความ รอสนั่น อีซอ</h3>
                       <p style="color: var(--primary); font-size: 0.84rem; font-weight: 600; line-height: 1.4;" id="previewAboutLawyerTitle">ทนายความชั้น 1 อาวุโส (ประเภทตลอดชีพ)</p>
                       <div style="display: inline-block; margin-top: 10px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.76rem; font-weight: 600; border: 1px solid #fde68a;" id="previewAboutLawyerExp">
                         ⚖️ ประสบการณ์ 35+ ถึงเกือบ 40 ปี
                       </div>
                     </div>
 
-                    <!-- รายการฝั่งขวา: ประสบการณ์ 4 ข้อ -->
                     <div>
                       <h4 style="font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 14px; font-weight: 700;" id="previewAboutExpHeading">
                         ประสบการณ์ว่าความและการทำงานด้านกฎหมาย
@@ -758,7 +868,7 @@
             </div>
           </div>
 
-          <!-- 3.3 ฟอร์มหน้าบริการและเรทราคา (Services Page) -->
+          <!-- 3.3 ฟอร์มหน้าบริการและเรทราคา (Services Page - ทั้ง 5 หมวดคดีจัดเต็ม) -->
           <div class="cms-subpane" id="pane-cms-services">
             <div class="cms-card">
               <div class="cms-card-header">
@@ -768,24 +878,200 @@
                     💼 หน้าบริการและเรทราคา (services.html)
                   </h3>
                   <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
-                    กำหนดเรทราคาเริ่มต้น 7,000 บาท และเงื่อนไขต่างจังหวัด/นอกพื้นที่ต้องมาคุยที่สำนักงาน
+                    จัดการหัวข้อ, เรทราคาเริ่มต้น 7,000 บาท, ขอบเขตพื้นที่ และรายละเอียดทั้ง 5 หมวดคดีอย่างสมบูรณ์
                   </span>
                 </div>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="cmsServicesStartPrice">เรทค่าบริการว่าความเริ่มต้น:</label>
-                <input type="text" id="cmsServicesStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 บาท" required>
+                <label class="form-label" for="cmsServicesTitle">หัวข้อแบนเนอร์หน้าบริการ (Hero Title):</label>
+                <input type="text" id="cmsServicesTitle" class="form-control" placeholder="เช่น บริการทางกฎหมายและอัตราค่าวิชาชีพ" required>
               </div>
 
               <div class="form-group">
-                <label class="form-label" for="cmsServicesAreaNote">คำชี้แจงขอบเขตพื้นที่ให้บริการ (ปัตตานี + 4 จังหวัด):</label>
-                <textarea id="cmsServicesAreaNote" class="form-control" rows="3" required></textarea>
+                <label class="form-label" for="cmsServicesDesc">คำบรรยายสรุปใต้แบนเนอร์ (Hero Description):</label>
+                <textarea id="cmsServicesDesc" class="form-control" rows="2" placeholder="เช่น ให้บริการว่าความและปรึกษาคดีความทุกประเภท..." required></textarea>
               </div>
 
-              <div class="form-group">
-                <label class="form-label" for="cmsServicesProvinceNote">เงื่อนไขกรณีออกนอกพื้นที่/ต่างจังหวัด (ต้องมาพบที่ สนง.):</label>
-                <textarea id="cmsServicesProvinceNote" class="form-control" rows="2" required></textarea>
+              <!-- เรทราคาและเงื่อนไข -->
+              <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 24px;">
+                <h4 style="font-size: 0.98rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>🏷️</span> การตั้งค่าเรทราคาและคำชี้แจงค่าบริการ
+                </h4>
+                <div class="cms-grid-3">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesStartPrice">เรทค่าบริการว่าความเริ่มต้น:</label>
+                    <input type="text" id="cmsServicesStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 บาท" required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesPriceNote">หมายเหตุราคา (ในพื้นที่):</label>
+                    <input type="text" id="cmsServicesPriceNote" class="form-control" placeholder="เช่น * ขึ้นอยู่กับประเภทและความยากง่ายของรูปคดี">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesPriceOutNote">หมายเหตุราคา (นอกพื้นที่/ต่างจังหวัด):</label>
+                    <input type="text" id="cmsServicesPriceOutNote" class="form-control" placeholder="เช่น มีค่าเดินทางและที่พักตามระยะทางจริง">
+                  </div>
+                </div>
+              </div>
+
+              <!-- ขอบเขตพื้นที่ให้บริการ -->
+              <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: var(--radius-md); padding: 18px; margin-bottom: 28px;">
+                <h4 style="font-size: 0.98rem; color: #065f46; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>📍</span> ขอบเขตพื้นที่ให้บริการและเงื่อนไขต่างจังหวัด
+                </h4>
+                <div class="form-group">
+                  <label class="form-label" for="cmsServicesAreaHeading">หัวข้อแถบพื้นที่ (Area Heading):</label>
+                  <input type="text" id="cmsServicesAreaHeading" class="form-control" placeholder="เช่น ขอบเขตพื้นที่ให้บริการว่าความและรับว่าความทั่วราชอาณาจักร">
+                </div>
+                <div class="form-group">
+                  <label class="form-label" for="cmsServicesAreaNote">คำชี้แจงขอบเขตพื้นที่ให้บริการ (ปัตตานี + 4 จังหวัด):</label>
+                  <textarea id="cmsServicesAreaNote" class="form-control" rows="2" required></textarea>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsServicesProvinceNote">เงื่อนไขกรณีออกนอกพื้นที่/ต่างจังหวัด (ต้องมาพบที่ สนง.):</label>
+                  <textarea id="cmsServicesProvinceNote" class="form-control" rows="2" required></textarea>
+                </div>
+              </div>
+
+              <!-- บริการกฎหมายทั้ง 5 หมวดคดี (จัดเต็มทั้งดุ้น!) -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 24px;">
+                <h4 style="font-size: 1.15rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                  <span>⚖️</span> จัดการเนื้อหาบริการว่าความทั้ง 5 หมวดคดี (Full Law Categories)
+                </h4>
+                <p style="font-size: 0.84rem; color: var(--text-muted); margin-bottom: 20px;">
+                  คุณสามารถแก้ไขชื่อหมวดคดี คำบรรยาย และรายการขอบเขตงาน (คั่นแต่ละข้อด้วยการขึ้นบรรทัดใหม่) ได้ครบทุกหมวดคดี
+                </p>
+
+                <!-- หมวดที่ 1: คดีแพ่ง -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <strong style="color: var(--primary); font-size: 1rem;">1. คดีแพ่งและพาณิชย์ทั่วไป (Civil Law)</strong>
+                    <span style="font-size: 0.78rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 4px;">หมวดที่ 1</span>
+                  </div>
+                  <div class="cms-grid-2" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat1Title">ชื่อหมวดคดี:</label>
+                      <input type="text" id="cmsServicesCat1Title" class="form-control" placeholder="คดีแพ่งและพาณิชย์">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat1Sub">ชื่อภาษาอังกฤษ / รอง:</label>
+                      <input type="text" id="cmsServicesCat1Sub" class="form-control" placeholder="Civil & Commercial Litigation">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label class="form-label" for="cmsServicesCat1Desc">คำอธิบายภาพรวม:</label>
+                    <textarea id="cmsServicesCat1Desc" class="form-control" rows="2" placeholder="ฟ้องร้อง บังคับคดี ไกล่เกลี่ยข้อพิพาท..."></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesCat1Items">รายการขอบเขตงานในหมวดนี้ (ขึ้นบรรทัดใหม่ละ 1 ข้อ):</label>
+                    <textarea id="cmsServicesCat1Items" class="form-control" rows="4" placeholder="ฟ้องผิดสัญญา กู้ยืม จำนอง ค้ำประกัน&#10;คดีเช่าทรัพย์ เช่าซื้อ ติดตามทรัพย์สิน&#10;คดีละเมิด เรียกค่าเสียหาย สินไหมทดแทน&#10;การบังคับคดี ยึดทรัพย์ อายัดทรัพย์"></textarea>
+                  </div>
+                </div>
+
+                <!-- หมวดที่ 2: คดีอาญา -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <strong style="color: var(--primary); font-size: 1rem;">2. คดีอาญาและการประกันตัว (Criminal Defense)</strong>
+                    <span style="font-size: 0.78rem; background: #fee2e2; color: #991b1b; padding: 2px 8px; border-radius: 4px;">หมวดที่ 2</span>
+                  </div>
+                  <div class="cms-grid-2" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat2Title">ชื่อหมวดคดี:</label>
+                      <input type="text" id="cmsServicesCat2Title" class="form-control" placeholder="คดีอาญาทุกประเภท">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat2Sub">ชื่อภาษาอังกฤษ / รอง:</label>
+                      <input type="text" id="cmsServicesCat2Sub" class="form-control" placeholder="Criminal Defense & Bail">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label class="form-label" for="cmsServicesCat2Desc">คำอธิบายภาพรวม:</label>
+                    <textarea id="cmsServicesCat2Desc" class="form-control" rows="2" placeholder="ว่าความแก้ต่าง ต่อสู้คดีอาญา..."></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesCat2Items">รายการขอบเขตงานในหมวดนี้ (ขึ้นบรรทัดใหม่ละ 1 ข้อ):</label>
+                    <textarea id="cmsServicesCat2Items" class="form-control" rows="4" placeholder="แก้ต่างสู้คดีในชั้นพนักงานสอบสวน ชั้นอัยการ และชั้นศาล&#10;ยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัวผู้ต้องหา/จำเลย)&#10;คดีความผิดต่อชีวิต ร่างกาย เสรีภาพ และชื่อเสียง&#10;คดีทรัพย์: ลักทรัพย์ วิ่งราว ชิงทรัพย์ ปล้นทรัพย์ ฉ้อโกง ยักยอก&#10;คดี พ.ร.บ.เช็ค ยาเสพติด และคดีอาญาพิเศษ"></textarea>
+                  </div>
+                </div>
+
+                <!-- หมวดที่ 3: คดีที่ดินและอสังหาริมทรัพย์ -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <strong style="color: var(--primary); font-size: 1rem;">3. คดีที่ดินและกรรมสิทธิ์อสังหาริมทรัพย์ (Land & Property)</strong>
+                    <span style="font-size: 0.78rem; background: #fef3c7; color: #92400e; padding: 2px 8px; border-radius: 4px;">หมวดที่ 3</span>
+                  </div>
+                  <div class="cms-grid-2" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat3Title">ชื่อหมวดคดี:</label>
+                      <input type="text" id="cmsServicesCat3Title" class="form-control" placeholder="คดีที่ดินและอสังหาริมทรัพย์">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat3Sub">ชื่อภาษาอังกฤษ / รอง:</label>
+                      <input type="text" id="cmsServicesCat3Sub" class="form-control" placeholder="Land & Real Estate Disputes">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label class="form-label" for="cmsServicesCat3Desc">คำอธิบายภาพรวม:</label>
+                    <textarea id="cmsServicesCat3Desc" class="form-control" rows="2" placeholder="จัดการปัญหาพิพาทสิทธิครอบครองที่ดิน..."></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesCat3Items">รายการขอบเขตงานในหมวดนี้ (ขึ้นบรรทัดใหม่ละ 1 ข้อ):</label>
+                    <textarea id="cmsServicesCat3Items" class="form-control" rows="4" placeholder="ฟ้องขับไล่ เรียกค่าเสียหายจากการบุกรุก&#10;คดีครอบครองปรปักษ์ แย่งการครอบครอง&#10;คดีภาระจำยอม ทางจำเป็น ทางสาธารณะ&#10;ตรวจสอบเอกสารสิทธิ์ โฉนด น.ส.3 ส.ป.ก."></textarea>
+                  </div>
+                </div>
+
+                <!-- หมวดที่ 4: คดีมรดกและครอบครัว -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-bottom: 20px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <strong style="color: var(--primary); font-size: 1rem;">4. คดีมรดกและครอบครัว (Estate & Family)</strong>
+                    <span style="font-size: 0.78rem; background: #ede9fe; color: #6b21a8; padding: 2px 8px; border-radius: 4px;">หมวดที่ 4</span>
+                  </div>
+                  <div class="cms-grid-2" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat4Title">ชื่อหมวดคดี:</label>
+                      <input type="text" id="cmsServicesCat4Title" class="form-control" placeholder="คดีมรดกและครอบครัว">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat4Sub">ชื่อภาษาอังกฤษ / รอง:</label>
+                      <input type="text" id="cmsServicesCat4Sub" class="form-control" placeholder="Inheritance & Family Matters">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label class="form-label" for="cmsServicesCat4Desc">คำอธิบายภาพรวม:</label>
+                    <textarea id="cmsServicesCat4Desc" class="form-control" rows="2" placeholder="จัดการทรัพย์มรดก แบ่งสินสมรส พินัยกรรม..."></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesCat4Items">รายการขอบเขตงานในหมวดนี้ (ขึ้นบรรทัดใหม่ละ 1 ข้อ):</label>
+                    <textarea id="cmsServicesCat4Items" class="form-control" rows="4" placeholder="ยื่นคำร้องขอตั้งผู้จัดการมรดก และถอนผู้จัดการมรดก&#10;คดีฟ้องแบ่งทรัพย์มรดก พิพาทสิทธิทายาท&#10;ร่างพินัยกรรม และตรวจสอบความถูกต้องของพินัยกรรม&#10;คดีฟ้องหย่า แบ่งสินสมรส อำนาจปกครองบุตร"></textarea>
+                  </div>
+                </div>
+
+                <!-- หมวดที่ 5: สัญญา นิติกรรม และที่ปรึกษาธุรกิจ -->
+                <div style="background: #fafbfc; border: 1.5px solid var(--border-color); border-radius: var(--radius-md); padding: 18px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                    <strong style="color: var(--primary); font-size: 1rem;">5. สัญญา นิติกรรม และที่ปรึกษาธุรกิจ (Contracts & Corporate)</strong>
+                    <span style="font-size: 0.78rem; background: #dcfce7; color: #166534; padding: 2px 8px; border-radius: 4px;">หมวดที่ 5</span>
+                  </div>
+                  <div class="cms-grid-2" style="margin-bottom: 12px;">
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat5Title">ชื่อหมวดคดี:</label>
+                      <input type="text" id="cmsServicesCat5Title" class="form-control" placeholder="สัญญาและที่ปรึกษาธุรกิจ">
+                    </div>
+                    <div class="form-group" style="margin: 0;">
+                      <label class="form-label" for="cmsServicesCat5Sub">ชื่อภาษาอังกฤษ / รอง:</label>
+                      <input type="text" id="cmsServicesCat5Sub" class="form-control" placeholder="Contract & Business Counsel">
+                    </div>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 12px;">
+                    <label class="form-label" for="cmsServicesCat5Desc">คำอธิบายภาพรวม:</label>
+                    <textarea id="cmsServicesCat5Desc" class="form-control" rows="2" placeholder="ตรวจร่างสัญญาและเป็นที่ปรึกษาองค์กร..."></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsServicesCat5Items">รายการขอบเขตงานในหมวดนี้ (ขึ้นบรรทัดใหม่ละ 1 ข้อ):</label>
+                    <textarea id="cmsServicesCat5Items" class="form-control" rows="4" placeholder="ตรวจและร่างสัญญาธุรกิจ สัญญาจ้าง สัญญาซื้อขาย สัญญาหุ้นส่วน&#10;บริการที่ปรึกษากฎหมายประจำบริษัท/ห้างหุ้นส่วน/บุคคล&#10;ทำหนังสือบอกกล่าวทวงถาม (Notice) ก่อนฟ้องคดี&#10;เจรจาประนอมหนี้และไกล่เกลี่ยข้อพิพาท"></textarea>
+                  </div>
+                </div>
+
               </div>
             </div>
           </div>
@@ -800,14 +1086,90 @@
                     📬 หน้าติดต่อเรา (contact.html)
                   </h3>
                   <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
-                    ข้อความกำกับใต้หัวข้อหน้าติดต่อและการเดินทางมายังสำนักงาน
+                    จัดการข้อมูลชื่อสำนักงาน, พิกัด GPS, บัตรติดต่อ LINE, และกล่องโทรด่วน
                   </span>
+                </div>
+              </div>
+
+              <div class="cms-grid-2" style="margin-bottom: 18px;">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsContactOfficeName">ชื่อสำนักงานทนายความ:</label>
+                  <input type="text" id="cmsContactOfficeName" class="form-control" placeholder="เช่น สำนักงานทนายความชั้น 1 ปัตตานี">
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsContactOfficeLawyerName">ชื่อหัวหน้าสำนักงาน / ทนายความประจำ:</label>
+                  <input type="text" id="cmsContactOfficeLawyerName" class="form-control" placeholder="เช่น ทนายความ รอสนั่น อีซอ">
                 </div>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="cmsContactNote">ข้อความสรุปพื้นที่ดูแลคดีใต้หัวข้อหน้า:</label>
                 <textarea id="cmsContactNote" class="form-control" rows="2" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsContactGpsText">ข้อความแสดงพิกัด GPS / ข้อแนะนำการเดินทาง:</label>
+                <input type="text" id="cmsContactGpsText" class="form-control" placeholder="เช่น พิกัด GPS: 6.8506101, 101.2548708 (คลิกเปิด Google Maps เพื่อนำทาง)">
+              </div>
+
+              <!-- ข้อมูลการ์ด LINE & สายด่วน -->
+              <div style="background: #f8fafc; border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 18px; margin-top: 20px;">
+                <h4 style="font-size: 0.98rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                  <span>💬</span> การ์ด LINE Official และกล่องโทรติดต่อด่วน (หน้า contact.html)
+                </h4>
+                <div class="cms-grid-3" style="margin-bottom: 14px;">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsContactLineTitle">หัวข้อการ์ด LINE:</label>
+                    <input type="text" id="cmsContactLineTitle" class="form-control" placeholder="LINE Official Account">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsContactLineDesc">คำบรรยายการ์ด LINE:</label>
+                    <input type="text" id="cmsContactLineDesc" class="form-control" placeholder="แอดไลน์ส่งเอกสารหรือปรึกษาเบื้องต้น">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsContactLineUrl">ลิงก์คลิกเปิด LINE (URL):</label>
+                    <input type="url" id="cmsContactLineUrl" class="form-control" placeholder="https://line.me/ti/p/~@lawyer1th">
+                  </div>
+                </div>
+
+                <div class="cms-grid-2">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsContactQuickPhoneTitle">หัวข้อการ์ดโทรด่วน:</label>
+                    <input type="text" id="cmsContactQuickPhoneTitle" class="form-control" placeholder="โทรศัพท์สายด่วนนัดหมาย">
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsContactQuickPhoneDesc">คำบรรยายการ์ดโทรด่วน:</label>
+                    <input type="text" id="cmsContactQuickPhoneDesc" class="form-control" placeholder="ติดต่อด่วนในเวลาทำการ 06:00 - 18:00 น.">
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 3.5 ฟอร์มส่วนท้ายและลิขสิทธิ์ (Footer & Global) -->
+          <div class="cms-subpane" id="pane-cms-footer">
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <div>
+                  <h3 class="cms-card-title">
+                    <span class="cms-priority-badge">ลำดับความสำคัญ 5</span>
+                    🌐 ส่วนท้ายและลิขสิทธิ์ (Footer ทุกหน้าเว็บ)
+                  </h3>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                    ข้อความแนะนำสำนักงานและข้อความสงวนลิขสิทธิ์ที่ปรากฏใต้เว็บไซต์ทุกหน้า
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsFooterDesc">คำบรรยายสรุปส่วนท้ายเว็บไซต์ (Footer Description):</label>
+                <textarea id="cmsFooterDesc" class="form-control" rows="3" placeholder="สำนักงานทนายความชั้น 1 ปัตตานี ให้บริการว่าความและที่ปรึกษากฎหมายด้วยประสบการณ์กว่า 35-40 ปี"></textarea>
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="cmsFooterCopyright">ข้อความสงวนลิขสิทธิ์ (Footer Copyright):</label>
+                <input type="text" id="cmsFooterCopyright" class="form-control" placeholder="© 2026 สำนักงานทนายความชั้น 1. สงวนลิขสิทธิ์ทุกประการ.">
               </div>
             </div>
           </div>
@@ -982,6 +1344,223 @@
           <button type="submit" class="btn btn-primary">
             💾 บันทึกการเชื่อมต่อ (Save)
           </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: เพิ่มคิวนัดหมายใหม่ (Add Booking Modal)                   -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="addBookingModal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">➕ เพิ่มรายการจองคิวนัดหมายใหม่ (Manual Add)</h3>
+        <button class="modal-close" onclick="closeAddBookingModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="addBookingForm" onsubmit="handleAddBookingSubmit(event)">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px;">
+          ใช้สำหรับเจ้าหน้าที่หรือทนายความที่รับสายโทรศัพท์ หรือลูกความที่เดินเข้ามาติดต่อสำนักงานโดยตรง (บันทึกซิงค์ตรงสู่ Supabase ทันที)
+        </p>
+
+        <div class="cms-grid-2" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addFullname">ชื่อ-นามสกุล ลูกความ: *</label>
+            <input type="text" id="addFullname" class="form-control" placeholder="เช่น คุณสมชาย นามสมมุติ" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addPhone">เบอร์โทรศัพท์: *</label>
+            <input type="tel" id="addPhone" class="form-control" placeholder="เช่น 081-234-5678" required>
+          </div>
+        </div>
+
+        <div class="cms-grid-2" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addEmail">อีเมล (ถ้ามี):</label>
+            <input type="email" id="addEmail" class="form-control" placeholder="client@example.com">
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addCaseType">ประเภทคดีความ: *</label>
+            <select id="addCaseType" class="form-control" required>
+              <option value="คดีแพ่งและพาณิชย์">คดีแพ่งและพาณิชย์</option>
+              <option value="คดีอาญาและการประกันตัว">คดีอาญาและการประกันตัว</option>
+              <option value="คดีที่ดินและอสังหาริมทรัพย์">คดีที่ดินและอสังหาริมทรัพย์</option>
+              <option value="คดีมรดกและครอบครัว">คดีมรดกและครอบครัว</option>
+              <option value="สัญญาและที่ปรึกษาธุรกิจ">สัญญาและที่ปรึกษาธุรกิจ</option>
+              <option value="อื่นๆ">อื่นๆ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cms-grid-3" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addBookingDate">วันที่นัดหมาย: *</label>
+            <input type="date" id="addBookingDate" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addBookingTime">เวลา: *</label>
+            <input type="time" id="addBookingTime" class="form-control" value="09:00" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="addConsultType">ช่องทาง: *</label>
+            <select id="addConsultType" class="form-control" required>
+              <option value="office">เข้าพบที่สำนักงาน</option>
+              <option value="online">วิดีโอคอลออนไลน์</option>
+              <option value="phone">โทรศัพท์สายด่วน</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="addDetails">รายละเอียดข้อเท็จจริง / ประเด็นทางคดี:</label>
+          <textarea id="addDetails" class="form-control" rows="3" placeholder="ระบุรายละเอียดคดี ข้อเท็จจริง หรือเอกสารเบื้องต้น..."></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="form-label" for="addStatus">สถานะเริ่มต้น:</label>
+          <select id="addStatus" class="form-control">
+            <option value="pending">⏳ รอดำเนินการ</option>
+            <option value="confirmed" selected>✓ ยืนยันแล้ว</option>
+            <option value="completed">★ เสร็จสิ้น</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="closeAddBookingModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">➕ บันทึกเพิ่มคิวทันที</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: แก้ไขข้อมูลคิวนัดหมาย (Edit Booking Modal)                -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="editBookingModal">
+    <div class="modal-content" style="max-width: 650px;">
+      <div class="modal-header">
+        <h3 class="modal-title">✏️ แก้ไขข้อมูลการจองคิวนัดหมาย</h3>
+        <button class="modal-close" onclick="closeEditBookingModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="editBookingForm" onsubmit="handleEditBookingSubmit(event)">
+        <input type="hidden" id="editBookingId">
+
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px;">
+          แก้ไขรายละเอียดของรหัสคิว: <strong id="editBookingIdLabel" style="color: var(--primary);"></strong> (การเปลี่ยนแปลงจะบันทึกลง Supabase ทันที)
+        </p>
+
+        <div class="cms-grid-2" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editFullname">ชื่อ-นามสกุล ลูกความ: *</label>
+            <input type="text" id="editFullname" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editPhone">เบอร์โทรศัพท์: *</label>
+            <input type="tel" id="editPhone" class="form-control" required>
+          </div>
+        </div>
+
+        <div class="cms-grid-2" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editEmail">อีเมล:</label>
+            <input type="email" id="editEmail" class="form-control">
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editCaseType">ประเภทคดีความ: *</label>
+            <select id="editCaseType" class="form-control" required>
+              <option value="คดีแพ่งและพาณิชย์">คดีแพ่งและพาณิชย์</option>
+              <option value="คดีอาญาและการประกันตัว">คดีอาญาและการประกันตัว</option>
+              <option value="คดีที่ดินและอสังหาริมทรัพย์">คดีที่ดินและอสังหาริมทรัพย์</option>
+              <option value="คดีมรดกและครอบครัว">คดีมรดกและครอบครัว</option>
+              <option value="สัญญาและที่ปรึกษาธุรกิจ">สัญญาและที่ปรึกษาธุรกิจ</option>
+              <option value="อื่นๆ">อื่นๆ</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="cms-grid-3" style="margin-bottom: 14px;">
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editBookingDate">วันที่นัดหมาย: *</label>
+            <input type="date" id="editBookingDate" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editBookingTime">เวลา: *</label>
+            <input type="time" id="editBookingTime" class="form-control" required>
+          </div>
+          <div class="form-group" style="margin: 0;">
+            <label class="form-label" for="editConsultType">ช่องทาง: *</label>
+            <select id="editConsultType" class="form-control" required>
+              <option value="office">เข้าพบที่สำนักงาน</option>
+              <option value="online">วิดีโอคอลออนไลน์</option>
+              <option value="phone">โทรศัพท์สายด่วน</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="editDetails">รายละเอียดข้อเท็จจริง:</label>
+          <textarea id="editDetails" class="form-control" rows="3"></textarea>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="form-label" for="editStatus">สถานะการนัดหมาย:</label>
+          <select id="editStatus" class="form-control" required>
+            <option value="pending">⏳ รอดำเนินการ</option>
+            <option value="confirmed">✓ ยืนยันแล้ว</option>
+            <option value="completed">★ เสร็จสิ้น</option>
+            <option value="cancelled">✕ ยกเลิก</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="closeEditBookingModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">💾 บันทึกการแก้ไข</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: เปลี่ยนรหัสผ่าน Admin (Change Password Modal)            -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="changePasswordModal">
+    <div class="modal-content" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">🔑 เปลี่ยนรหัสผ่านเข้าสู่ระบบผู้ดูแล</h3>
+        <button class="modal-close" onclick="closeChangePasswordModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form id="changePasswordForm" onsubmit="handleChangePasswordSubmit(event)">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px;">
+          คุณสามารถตั้งรหัสผ่านใหม่สำหรับล็อกอินเข้า Admin Portal ได้ที่นี่ (รหัสผ่านเริ่มต้นของระบบคือ <code>Fee-065702</code>)
+        </p>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="currentAdminPassword">รหัสผ่านปัจจุบัน: *</label>
+          <input type="password" id="currentAdminPassword" class="form-control" placeholder="ระบุรหัสผ่านเดิม" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 14px;">
+          <label class="form-label" for="newAdminPassword">รหัสผ่านใหม่: *</label>
+          <input type="password" id="newAdminPassword" class="form-control" placeholder="ระบุรหัสผ่านใหม่ (อย่างน้อย 6 ตัวอักษร)" minlength="6" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="form-label" for="confirmAdminPassword">ยืนยันรหัสผ่านใหม่: *</label>
+          <input type="password" id="confirmAdminPassword" class="form-control" placeholder="ยืนยันรหัสผ่านใหม่อีกครั้ง" minlength="6" required>
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end;">
+          <button type="button" class="btn btn-secondary" onclick="closeChangePasswordModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">🔐 ยืนยันเปลี่ยนรหัสผ่าน</button>
         </div>
       </form>
     </div>

@@ -316,12 +316,18 @@ async function renderAppointmentsTable() {
         ${formatStatusBadge(item.status)}
       </td>
       <td style="text-align: center;">
-        <div class="action-buttons" style="justify-content: center;">
+        <div class="action-buttons" style="justify-content: center; gap: 4px;">
           <button type="button" class="btn-icon" title="ดูรายละเอียดคดี" onclick="showBookingDetail('${item.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
           </button>
-          <button type="button" class="btn-icon" title="เปลี่ยนสถานะ" onclick="openStatusModal('${item.id}', '${escapeJs(item.fullname)}', '${item.status}')">
+          <button type="button" class="btn-icon" title="แก้ไขข้อมูลคิวนัดหมาย" style="color: #2563eb;" onclick="openEditBookingModal('${item.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+          </button>
+          <button type="button" class="btn-icon" title="เปลี่ยนสถานะ" onclick="openStatusModal('${item.id}', '${escapeJs(item.fullname)}', '${item.status}')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+          </button>
+          <button type="button" class="btn-icon" title="พิมพ์ใบนัดหมาย" style="color: #059669;" onclick="printBookingSlip('${item.id}')">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
           </button>
           <button type="button" class="btn-icon delete" title="ลบออกจาก Supabase อย่างถาวร" onclick="handleDeleteBooking('${item.id}')">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
@@ -465,6 +471,341 @@ async function handleDeleteBooking(id) {
   }
 }
 
+// --------------------------------------------------------------------------
+// ฟังก์ชันจัดการ Modal: เพิ่มคิวนัดหมายใหม่ (Manual Add Booking)
+// --------------------------------------------------------------------------
+function openAddBookingModal() {
+  const form = document.getElementById('addBookingForm');
+  if (form) form.reset();
+  const dateInput = document.getElementById('addBookingDate');
+  if (dateInput) {
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+  }
+  const modal = document.getElementById('addBookingModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeAddBookingModal() {
+  const modal = document.getElementById('addBookingModal');
+  if (modal) modal.classList.remove('active');
+}
+
+async function handleAddBookingSubmit(event) {
+  event.preventDefault();
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.innerHTML : '';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '⏳ กำลังบันทึกลง Supabase...';
+  }
+
+  const newBooking = {
+    fullname: getVal('addFullname'),
+    phone: getVal('addPhone'),
+    email: getVal('addEmail'),
+    case_type: getVal('addCaseType'),
+    booking_date: getVal('addBookingDate'),
+    booking_time: getVal('addBookingTime'),
+    consult_type: getVal('addConsultType'),
+    details: getVal('addDetails'),
+    status: getVal('addStatus') || 'confirmed'
+  };
+
+  try {
+    const result = await insertAppointmentToSupabase(newBooking);
+    closeAddBookingModal();
+    await renderAppointmentsTable();
+    showToast(`เพิ่มคิวปรึกษาสำหรับ ${newBooking.fullname} สำเร็จแล้ว! (รหัส: ${result.id})`);
+    if (typeof logActivity === 'function') {
+      logActivity('เพิ่มคิวนัดหมายใหม่', `แอดมินเพิ่มคิว ${result.id} (${newBooking.fullname})`, 'booking', '➕');
+    }
+  } catch (err) {
+    console.error('Add booking error:', err);
+    alert('เกิดข้อผิดพลาดในการเพิ่มคิว: ' + (err.message || err));
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// ฟังก์ชันจัดการ Modal: แก้ไขข้อมูลคิวนัดหมาย (Edit Booking)
+// --------------------------------------------------------------------------
+function openEditBookingModal(id) {
+  const bookings = getBookings();
+  const item = bookings.find(b => b.id === id);
+  if (!item) {
+    alert('ไม่พบข้อมูลคิวรหัส ' + id);
+    return;
+  }
+
+  setVal('editBookingId', item.id);
+  const label = document.getElementById('editBookingIdLabel');
+  if (label) label.textContent = item.id;
+
+  setVal('editFullname', item.fullname || '');
+  setVal('editPhone', item.phone || '');
+  setVal('editEmail', item.email || '');
+  setVal('editCaseType', item.case_type || 'คดีแพ่งและพาณิชย์');
+  setVal('editBookingDate', item.booking_date || '');
+  setVal('editBookingTime', item.booking_time || '09:00');
+  setVal('editConsultType', item.consult_type || 'office');
+  setVal('editDetails', item.details || '');
+  setVal('editStatus', item.status || 'pending');
+
+  const modal = document.getElementById('editBookingModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeEditBookingModal() {
+  const modal = document.getElementById('editBookingModal');
+  if (modal) modal.classList.remove('active');
+}
+
+async function handleEditBookingSubmit(event) {
+  event.preventDefault();
+  const id = getVal('editBookingId');
+  if (!id) return;
+
+  const submitBtn = event.target.querySelector('button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.innerHTML : '';
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '⏳ กำลังบันทึกการแก้ไข...';
+  }
+
+  const updatedFields = {
+    fullname: getVal('editFullname'),
+    phone: getVal('editPhone'),
+    email: getVal('editEmail'),
+    case_type: getVal('editCaseType'),
+    booking_date: getVal('editBookingDate'),
+    booking_time: getVal('editBookingTime'),
+    consult_type: getVal('editConsultType'),
+    details: getVal('editDetails'),
+    status: getVal('editStatus')
+  };
+
+  try {
+    await updateAppointmentInSupabase(id, updatedFields);
+    closeEditBookingModal();
+    await renderAppointmentsTable();
+    showToast(`อัปเดตข้อมูลคิวรหัส ${id} สำเร็จแล้ว`);
+    if (typeof logActivity === 'function') {
+      logActivity('แก้ไขข้อมูลคิว', `แอดมินแก้ไขข้อมูลคิว ${id} (${updatedFields.fullname})`, 'status', '✏️');
+    }
+  } catch (err) {
+    console.error('Edit booking error:', err);
+    alert('เกิดข้อผิดพลาดในการแก้ไขข้อมูล: ' + (err.message || err));
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalText;
+    }
+  }
+}
+
+// --------------------------------------------------------------------------
+// ฟังก์ชัน: พิมพ์ใบนัดหมาย (Print Booking Slip)
+// --------------------------------------------------------------------------
+function printBookingSlip(id) {
+  const bookings = getBookings();
+  const item = bookings.find(b => b.id === id);
+  if (!item) {
+    alert('ไม่พบข้อมูลคิว ' + id);
+    return;
+  }
+
+  const consultText = item.consult_type === 'office'
+    ? 'เข้าพบที่สำนักงาน'
+    : (item.consult_type === 'online' ? 'วิดีโอคอลออนไลน์' : 'โทรศัพท์สายด่วน');
+
+  const printWindow = window.open('', '_blank', 'width=750,height=800');
+  if (!printWindow) {
+    alert('กรุณาอนุญาต Pop-up เพื่อพิมพ์เอกสาร');
+    return;
+  }
+
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="th">
+    <head>
+      <meta charset="UTF-8">
+      <title>ใบนัดหมายปรึกษากฎหมาย - ${escapeHtml(item.id)}</title>
+      <style>
+        body { font-family: 'Prompt', -apple-system, sans-serif; padding: 30px; color: #1e293b; line-height: 1.6; }
+        .slip-header { border-bottom: 2px solid #2d6a4f; padding-bottom: 15px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: flex-end; }
+        .slip-title { font-size: 22px; font-weight: 700; color: #1b4332; margin: 0; }
+        .slip-sub { font-size: 13px; color: #64748b; margin-top: 4px; }
+        .slip-badge { font-size: 14px; font-weight: 700; color: #2d6a4f; background: #e8f5e9; padding: 4px 12px; border-radius: 6px; }
+        .slip-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .slip-box { border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; background: #f8fafc; }
+        .slip-box-label { font-size: 11px; text-transform: uppercase; color: #64748b; font-weight: 600; margin-bottom: 4px; }
+        .slip-box-val { font-size: 15px; font-weight: 700; color: #0f172a; }
+        .slip-details { border: 1px solid #e2e8f0; padding: 16px; border-radius: 8px; margin-bottom: 20px; background: #ffffff; }
+        .slip-footer { border-top: 1px dashed #cbd5e1; padding-top: 15px; margin-top: 30px; font-size: 12px; color: #64748b; display: flex; justify-content: space-between; }
+        @media print {
+          body { padding: 15px; }
+          .no-print { display: none; }
+        }
+      </style>
+    </head>
+    <body>
+      <div class="slip-header">
+        <div>
+          <h1 class="slip-title">⚖️ สำนักงานทนายความชั้น 1</h1>
+          <div class="slip-sub">ใบนัดหมายรับคำปรึกษาทางกฎหมายและว่าความคดี</div>
+        </div>
+        <div class="slip-badge">
+          รหัสคิว: ${escapeHtml(item.id)}
+        </div>
+      </div>
+
+      <div class="slip-grid">
+        <div class="slip-box">
+          <div class="slip-box-label">ชื่อลูกความ</div>
+          <div class="slip-box-val">${escapeHtml(item.fullname)}</div>
+        </div>
+        <div class="slip-box">
+          <div class="slip-box-label">เบอร์โทรศัพท์ติดต่อ</div>
+          <div class="slip-box-val">📞 ${escapeHtml(item.phone)}</div>
+        </div>
+        <div class="slip-box">
+          <div class="slip-box-label">วันและเวลานัดหมาย</div>
+          <div class="slip-box-val">📅 ${escapeHtml(item.booking_date)} เวลา ${escapeHtml(item.booking_time)} น.</div>
+        </div>
+        <div class="slip-box">
+          <div class="slip-box-label">ช่องทางและรูปแบบการนัด</div>
+          <div class="slip-box-val">${escapeHtml(consultText)}</div>
+        </div>
+        <div class="slip-box" style="grid-column: span 2;">
+          <div class="slip-box-label">ประเภทคดีความ</div>
+          <div class="slip-box-val" style="color: #2d6a4f;">${escapeHtml(item.case_type)}</div>
+        </div>
+      </div>
+
+      <div class="slip-details">
+        <div class="slip-box-label" style="margin-bottom: 8px;">สรุปข้อเท็จจริง / ประเด็นทางคดีที่ขอรับคำปรึกษา:</div>
+        <div style="font-size: 14px; white-space: pre-line; line-height: 1.7;">
+          ${escapeHtml(item.details || 'ไม่มีข้อเท็จจริงเพิ่มเติม (เตรียมนำเอกสารมาตรวจที่สำนักงาน)')}
+        </div>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; font-size: 12px; color: #166534; line-height: 1.6;">
+        💡 <strong>คำแนะนำสำหรับลูกความ:</strong> กรุณาเตรียมเอกสารหลักฐานที่เกี่ยวข้องตัวจริงหรือสำเนา เช่น สัญญา, โฉนดที่ดิน, ใบบันทึกประจำวัน, หรือหมายเรียก (ถ้ามี) มาพร้อมกันในวันนัดหมาย
+      </div>
+
+      <div class="slip-footer">
+        <div>พิมพ์เมื่อ: ${new Date().toLocaleString('th-TH')}</div>
+        <div>สถานะ: ${escapeHtml(item.status)}</div>
+      </div>
+
+      <div class="no-print" style="margin-top: 24px; text-align: center;">
+        <button onclick="window.print()" style="padding: 10px 24px; font-size: 15px; font-weight: 700; background: #2d6a4f; color: #ffffff; border: none; border-radius: 6px; cursor: pointer;">
+          🖨️ สั่งพิมพ์เอกสารนี้
+        </button>
+      </div>
+    </body>
+    </html>
+  `);
+  printWindow.document.close();
+}
+
+// --------------------------------------------------------------------------
+// ฟังก์ชัน: ส่งออกข้อมูลคิวนัดหมายเป็น CSV (Export CSV)
+// --------------------------------------------------------------------------
+function exportAppointmentsCSV() {
+  const bookings = getBookings();
+  if (bookings.length === 0) {
+    alert('ไม่มีข้อมูลคิวนัดหมายให้ส่งออก');
+    return;
+  }
+
+  // เตรียมหัวตาราง CSV
+  const headers = ['รหัสคิว', 'ชื่อ-นามสกุล', 'เบอร์โทร', 'อีเมล', 'ประเภทคดี', 'วันที่นัด', 'เวลานัด', 'ช่องทาง', 'สถานะ', 'รายละเอียดคดี', 'วันที่บันทึก'];
+  
+  const rows = bookings.map(b => [
+    `"${(b.id || '').replace(/"/g, '""')}"`,
+    `"${(b.fullname || '').replace(/"/g, '""')}"`,
+    `"${(b.phone || '').replace(/"/g, '""')}"`,
+    `"${(b.email || '').replace(/"/g, '""')}"`,
+    `"${(b.case_type || '').replace(/"/g, '""')}"`,
+    `"${(b.booking_date || '').replace(/"/g, '""')}"`,
+    `"${(b.booking_time || '').replace(/"/g, '""')}"`,
+    `"${(b.consult_type || '').replace(/"/g, '""')}"`,
+    `"${(b.status || '').replace(/"/g, '""')}"`,
+    `"${(b.details || '').replace(/"/g, '""').replace(/\n/g, ' ')}"`,
+    `"${(b.created_at || '').replace(/"/g, '""')}"`
+  ]);
+
+  // เติม UTF-8 BOM (\uFEFF) เพื่อให้ Excel ภาษาไทยอ่านตัวอักษรได้ถูกต้อง 100%
+  const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const now = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `appointments_export_${now}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  showToast('ส่งออกไฟล์ CSV สำเร็จแล้ว!');
+  if (typeof logActivity === 'function') {
+    logActivity('ส่งออกไฟล์ CSV', `ส่งออกข้อมูลนัดหมาย ${bookings.length} รายการ`, 'system', '📥');
+  }
+}
+
+// --------------------------------------------------------------------------
+// ฟังก์ชันจัดการ Modal: เปลี่ยนรหัสผ่าน Admin (Change Password)
+// --------------------------------------------------------------------------
+function openChangePasswordModal() {
+  const form = document.getElementById('changePasswordForm');
+  if (form) form.reset();
+  const modal = document.getElementById('changePasswordModal');
+  if (modal) modal.classList.add('active');
+}
+
+function closeChangePasswordModal() {
+  const modal = document.getElementById('changePasswordModal');
+  if (modal) modal.classList.remove('active');
+}
+
+function handleChangePasswordSubmit(event) {
+  event.preventDefault();
+  const currentInput = getVal('currentAdminPassword');
+  const newInput = getVal('newAdminPassword');
+  const confirmInput = getVal('confirmAdminPassword');
+
+  const expectedPassword = localStorage.getItem('lawyer_admin_custom_password') || 'Fee-065702';
+
+  if (currentInput !== expectedPassword) {
+    alert('❌ รหัสผ่านปัจจุบันไม่ถูกต้อง กรุณากรอกใหม่อีกครั้ง');
+    return;
+  }
+
+  if (newInput.length < 6) {
+    alert('❌ รหัสผ่านใหม่ต้องมีความยาวอย่างน้อย 6 ตัวอักษร');
+    return;
+  }
+
+  if (newInput !== confirmInput) {
+    alert('❌ รหัสผ่านใหม่และยืนยันรหัสผ่านไม่ตรงกัน');
+    return;
+  }
+
+  localStorage.setItem('lawyer_admin_custom_password', newInput);
+  closeChangePasswordModal();
+  showToast('✅ เปลี่ยนรหัสผ่านผู้ดูแลสำเร็จแล้ว! คุณสามารถใช้รหัสผ่านใหม่นี้ในการเข้าสู่ระบบครั้งถัดไป');
+  if (typeof logActivity === 'function') {
+    logActivity('เปลี่ยนรหัสผ่านแอดมิน', 'ผู้ดูแลระบบเปลี่ยนรหัสผ่านเข้าสู่ระบบสำเร็จ', 'auth', '🔑');
+  }
+}
+
 // ==========================================================================
 // 2. จัดการการตั้งค่าสายด่วน & ติดต่อ (Hotline & Contacts)
 // ==========================================================================
@@ -484,19 +825,39 @@ async function loadAllSettingsToForm() {
   updateHotlinePreview();
 
   // 2. หมวดเนื้อหา CMS ทุกหน้า
+  // 2.1 หน้าแรก (Home)
   setVal('cmsHomeHeroTitle', settings.home_hero_title);
+  setVal('cmsHomeHeroSubtitle', settings.home_hero_subtitle || '');
   setVal('cmsHomeHeroDesc', settings.home_hero_desc);
   setVal('cmsHomeStartPrice', settings.home_start_price);
   setVal('cmsHomePriceNote', settings.home_price_note);
   setVal('cmsHomeExpYears', settings.home_exp_years);
+  setVal('cmsHomeAreaTag', settings.home_area_tag || '');
+
+  setVal('cmsHomeLicenseTitle', settings.home_license_card_title || '');
+  setVal('cmsHomeLicenseNumber', settings.home_license_number || '');
+  setVal('cmsHomeLicenseIssuer', settings.home_license_issuer || '');
+
+  setVal('cmsHomeFeat1Title', settings.home_feat1_title || '');
+  setVal('cmsHomeFeat1Desc', settings.home_feat1_desc || '');
+  setVal('cmsHomeFeat2Title', settings.home_feat2_title || '');
+  setVal('cmsHomeFeat2Desc', settings.home_feat2_desc || '');
+  setVal('cmsHomeFeat3Title', settings.home_feat3_title || '');
+  setVal('cmsHomeFeat3Desc', settings.home_feat3_desc || '');
+  setVal('cmsHomeFeat4Title', settings.home_feat4_title || '');
+  setVal('cmsHomeFeat4Desc', settings.home_feat4_desc || '');
+
   setVal('cmsHomeCtaTitle', settings.home_cta_title || 'มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?');
   setVal('cmsHomeCtaDesc', settings.home_cta_desc || 'จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์');
   setVal('cmsHomeCtaBtnText', settings.home_cta_btn_text || 'จองคิวออนไลน์ตอนนี้');
   setVal('cmsHomeCtaPhone', settings.home_cta_phone || 'โทรด่วน 081-234-5678');
   updateHomeCtaLivePreview();
 
+  // 2.2 หน้าเกี่ยวกับเรา (About)
   setVal('cmsAboutTitle', settings.about_title);
   setVal('cmsAboutDesc', settings.about_desc);
+  setVal('cmsAboutSectionTitle', settings.about_section_title || '');
+  setVal('cmsAboutSectionDesc', settings.about_section_desc || '');
   setVal('cmsAboutLawyerName', settings.about_lawyer_name);
   setVal('cmsAboutLawyerTitle', settings.about_lawyer_title);
   setVal('cmsAboutLawyerExp', settings.about_lawyer_exp);
@@ -506,13 +867,59 @@ async function loadAllSettingsToForm() {
   setVal('cmsAboutExpItem2', settings.about_exp_item2);
   setVal('cmsAboutExpItem3', settings.about_exp_item3);
   setVal('cmsAboutExpItem4', settings.about_exp_item4);
+  setVal('cmsAboutCtaTitle', settings.about_cta_title || '');
+  setVal('cmsAboutCtaDesc', settings.about_cta_desc || '');
   updateAboutLivePreview();
 
+  // 2.3 หน้าบริการและเรทราคา (Services & 5 หมวดคดี)
+  setVal('cmsServicesTitle', settings.services_title || '');
+  setVal('cmsServicesDesc', settings.services_desc || '');
   setVal('cmsServicesStartPrice', settings.services_start_price);
+  setVal('cmsServicesPriceNote', settings.services_price_note || '');
+  setVal('cmsServicesPriceOutNote', settings.services_price_out_note || '');
+  setVal('cmsServicesAreaHeading', settings.services_area_heading || '');
   setVal('cmsServicesAreaNote', settings.services_area_note);
   setVal('cmsServicesProvinceNote', settings.services_province_note);
 
+  setVal('cmsServicesCat1Title', settings.services_cat1_title || '');
+  setVal('cmsServicesCat1Sub', settings.services_cat1_sub || '');
+  setVal('cmsServicesCat1Desc', settings.services_cat1_desc || '');
+  setVal('cmsServicesCat1Items', settings.services_cat1_items || '');
+
+  setVal('cmsServicesCat2Title', settings.services_cat2_title || '');
+  setVal('cmsServicesCat2Sub', settings.services_cat2_sub || '');
+  setVal('cmsServicesCat2Desc', settings.services_cat2_desc || '');
+  setVal('cmsServicesCat2Items', settings.services_cat2_items || '');
+
+  setVal('cmsServicesCat3Title', settings.services_cat3_title || '');
+  setVal('cmsServicesCat3Sub', settings.services_cat3_sub || '');
+  setVal('cmsServicesCat3Desc', settings.services_cat3_desc || '');
+  setVal('cmsServicesCat3Items', settings.services_cat3_items || '');
+
+  setVal('cmsServicesCat4Title', settings.services_cat4_title || '');
+  setVal('cmsServicesCat4Sub', settings.services_cat4_sub || '');
+  setVal('cmsServicesCat4Desc', settings.services_cat4_desc || '');
+  setVal('cmsServicesCat4Items', settings.services_cat4_items || '');
+
+  setVal('cmsServicesCat5Title', settings.services_cat5_title || '');
+  setVal('cmsServicesCat5Sub', settings.services_cat5_sub || '');
+  setVal('cmsServicesCat5Desc', settings.services_cat5_desc || '');
+  setVal('cmsServicesCat5Items', settings.services_cat5_items || '');
+
+  // 2.4 หน้าติดต่อเรา (Contact)
+  setVal('cmsContactOfficeName', settings.office_name || '');
+  setVal('cmsContactOfficeLawyerName', settings.office_lawyer_name || '');
   setVal('cmsContactNote', settings.contact_note);
+  setVal('cmsContactGpsText', settings.maps_gps_text || '');
+  setVal('cmsContactLineTitle', settings.line_title || '');
+  setVal('cmsContactLineDesc', settings.line_desc || '');
+  setVal('cmsContactLineUrl', settings.line_url || '');
+  setVal('cmsContactQuickPhoneTitle', settings.contact_quick_phone_title || '');
+  setVal('cmsContactQuickPhoneDesc', settings.contact_quick_phone_desc || '');
+
+  // 2.5 ส่วนท้ายและลิขสิทธิ์ (Footer)
+  setVal('cmsFooterDesc', settings.footer_desc || '');
+  setVal('cmsFooterCopyright', settings.footer_copyright || '');
 
   // 3. หมวดจัดลำดับเมนูนำทาง (Navbar)
   editableMenuItems = JSON.parse(JSON.stringify(settings.menu_order || DEFAULT_SITE_SETTINGS.menu_order));
@@ -681,18 +1088,38 @@ async function handleSaveCmsSettings(event) {
   event.preventDefault();
 
   const cmsData = {
+    // 1. หน้าแรก (Home)
     home_hero_title: getVal('cmsHomeHeroTitle'),
+    home_hero_subtitle: getVal('cmsHomeHeroSubtitle'),
     home_hero_desc: getVal('cmsHomeHeroDesc'),
     home_start_price: getVal('cmsHomeStartPrice'),
     home_price_note: getVal('cmsHomePriceNote'),
     home_exp_years: getVal('cmsHomeExpYears'),
+    home_area_tag: getVal('cmsHomeAreaTag'),
+
+    home_license_card_title: getVal('cmsHomeLicenseTitle'),
+    home_license_number: getVal('cmsHomeLicenseNumber'),
+    home_license_issuer: getVal('cmsHomeLicenseIssuer'),
+
+    home_feat1_title: getVal('cmsHomeFeat1Title'),
+    home_feat1_desc: getVal('cmsHomeFeat1Desc'),
+    home_feat2_title: getVal('cmsHomeFeat2Title'),
+    home_feat2_desc: getVal('cmsHomeFeat2Desc'),
+    home_feat3_title: getVal('cmsHomeFeat3Title'),
+    home_feat3_desc: getVal('cmsHomeFeat3Desc'),
+    home_feat4_title: getVal('cmsHomeFeat4Title'),
+    home_feat4_desc: getVal('cmsHomeFeat4Desc'),
+
     home_cta_title: getVal('cmsHomeCtaTitle'),
     home_cta_desc: getVal('cmsHomeCtaDesc'),
     home_cta_btn_text: getVal('cmsHomeCtaBtnText'),
     home_cta_phone: getVal('cmsHomeCtaPhone'),
 
+    // 2. หน้าเกี่ยวกับเรา (About)
     about_title: getVal('cmsAboutTitle'),
     about_desc: getVal('cmsAboutDesc'),
+    about_section_title: getVal('cmsAboutSectionTitle'),
+    about_section_desc: getVal('cmsAboutSectionDesc'),
     about_lawyer_name: getVal('cmsAboutLawyerName'),
     about_lawyer_title: getVal('cmsAboutLawyerTitle'),
     about_lawyer_exp: getVal('cmsAboutLawyerExp'),
@@ -702,12 +1129,58 @@ async function handleSaveCmsSettings(event) {
     about_exp_item2: getVal('cmsAboutExpItem2'),
     about_exp_item3: getVal('cmsAboutExpItem3'),
     about_exp_item4: getVal('cmsAboutExpItem4'),
+    about_cta_title: getVal('cmsAboutCtaTitle'),
+    about_cta_desc: getVal('cmsAboutCtaDesc'),
 
+    // 3. หน้าบริการและ 5 หมวดคดี (Services)
+    services_title: getVal('cmsServicesTitle'),
+    services_desc: getVal('cmsServicesDesc'),
     services_start_price: getVal('cmsServicesStartPrice'),
+    services_price_note: getVal('cmsServicesPriceNote'),
+    services_price_out_note: getVal('cmsServicesPriceOutNote'),
+    services_area_heading: getVal('cmsServicesAreaHeading'),
     services_area_note: getVal('cmsServicesAreaNote'),
     services_province_note: getVal('cmsServicesProvinceNote'),
 
-    contact_note: getVal('cmsContactNote')
+    services_cat1_title: getVal('cmsServicesCat1Title'),
+    services_cat1_sub: getVal('cmsServicesCat1Sub'),
+    services_cat1_desc: getVal('cmsServicesCat1Desc'),
+    services_cat1_items: getVal('cmsServicesCat1Items'),
+
+    services_cat2_title: getVal('cmsServicesCat2Title'),
+    services_cat2_sub: getVal('cmsServicesCat2Sub'),
+    services_cat2_desc: getVal('cmsServicesCat2Desc'),
+    services_cat2_items: getVal('cmsServicesCat2Items'),
+
+    services_cat3_title: getVal('cmsServicesCat3Title'),
+    services_cat3_sub: getVal('cmsServicesCat3Sub'),
+    services_cat3_desc: getVal('cmsServicesCat3Desc'),
+    services_cat3_items: getVal('cmsServicesCat3Items'),
+
+    services_cat4_title: getVal('cmsServicesCat4Title'),
+    services_cat4_sub: getVal('cmsServicesCat4Sub'),
+    services_cat4_desc: getVal('cmsServicesCat4Desc'),
+    services_cat4_items: getVal('cmsServicesCat4Items'),
+
+    services_cat5_title: getVal('cmsServicesCat5Title'),
+    services_cat5_sub: getVal('cmsServicesCat5Sub'),
+    services_cat5_desc: getVal('cmsServicesCat5Desc'),
+    services_cat5_items: getVal('cmsServicesCat5Items'),
+
+    // 4. หน้าติดต่อเรา (Contact)
+    office_name: getVal('cmsContactOfficeName'),
+    office_lawyer_name: getVal('cmsContactOfficeLawyerName'),
+    contact_note: getVal('cmsContactNote'),
+    maps_gps_text: getVal('cmsContactGpsText'),
+    line_title: getVal('cmsContactLineTitle'),
+    line_desc: getVal('cmsContactLineDesc'),
+    line_url: getVal('cmsContactLineUrl'),
+    contact_quick_phone_title: getVal('cmsContactQuickPhoneTitle'),
+    contact_quick_phone_desc: getVal('cmsContactQuickPhoneDesc'),
+
+    // 5. ส่วนท้ายและลิขสิทธิ์ (Footer)
+    footer_desc: getVal('cmsFooterDesc'),
+    footer_copyright: getVal('cmsFooterCopyright')
   };
 
   try {
@@ -962,9 +1435,16 @@ function setupEventListeners() {
     const detailModal = document.getElementById('detailModal');
     const statusModal = document.getElementById('statusModal');
     const supabaseModal = document.getElementById('supabaseModal');
+    const addBookingModal = document.getElementById('addBookingModal');
+    const editBookingModal = document.getElementById('editBookingModal');
+    const changePasswordModal = document.getElementById('changePasswordModal');
+
     if (e.target === detailModal) closeDetailModal();
     if (e.target === statusModal) closeStatusModal();
     if (e.target === supabaseModal) closeSupabaseModal();
+    if (e.target === addBookingModal) closeAddBookingModal();
+    if (e.target === editBookingModal) closeEditBookingModal();
+    if (e.target === changePasswordModal) closeChangePasswordModal();
   });
 
   // ฟัง Custom Event เพื่อรีเฟรช Live Activity Log อัตโนมัติเมื่อเกิดกิจกรรมใหม่
@@ -1129,3 +1609,15 @@ function renderActivityLogs(filterType = currentActivityFilter) {
 // ผูกเข้ากับ window สำหรับเรียกใช้จาก HTML
 window.renderActivityLogs = renderActivityLogs;
 window.filterActivityLogs = filterActivityLogs;
+window.openAddBookingModal = openAddBookingModal;
+window.closeAddBookingModal = closeAddBookingModal;
+window.handleAddBookingSubmit = handleAddBookingSubmit;
+window.openEditBookingModal = openEditBookingModal;
+window.closeEditBookingModal = closeEditBookingModal;
+window.handleEditBookingSubmit = handleEditBookingSubmit;
+window.printBookingSlip = printBookingSlip;
+window.exportAppointmentsCSV = exportAppointmentsCSV;
+window.openChangePasswordModal = openChangePasswordModal;
+window.closeChangePasswordModal = closeChangePasswordModal;
+window.handleChangePasswordSubmit = handleChangePasswordSubmit;
+window.switchCmsSubTab = switchCmsSubTab;

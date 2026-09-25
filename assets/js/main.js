@@ -56,7 +56,7 @@ function logActivity(action, details = '', type = 'system', icon = '⚡') {
     details: details,
     type: type,
     icon: icon,
-    page: window.location.pathname.split('/').pop() || 'index.html'
+    page: (typeof window !== 'undefined' ? window.location.pathname.split('/').pop() : '') || 'index.html'
   };
 
   try {
@@ -69,7 +69,9 @@ function logActivity(action, details = '', type = 'system', icon = '⚡') {
 
   // 3. ยิง CustomEvent เพื่อให้อัปเดตตาราง Feed ทันทีแบบเรียลไทม์
   try {
-    window.dispatchEvent(new CustomEvent('lawyer_activity_logged', { detail: entry }));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('lawyer_activity_logged', { detail: entry }));
+    }
   } catch(e) {}
 
   return entry;
@@ -96,15 +98,18 @@ function clearActivityLogs() {
 }
 
 // ผูกเข้ากับ window สำหรับเรียกใช้ข้ามไฟล์
-window.logActivity = logActivity;
-window.getActivityLogs = getActivityLogs;
-window.clearActivityLogs = clearActivityLogs;
+if (typeof window !== 'undefined') {
+  window.logActivity = logActivity;
+  window.getActivityLogs = getActivityLogs;
+  window.clearActivityLogs = clearActivityLogs;
+}
 
-// รายการนัดหมายเริ่มต้น (Real System: เริ่มต้นจากตารางจริงในฐานข้อมูล Supabase)
+// รายการนัดหมายเริ่มต้น
 const INITIAL_BOOKINGS = [];
 
 // ดึงรายการทั้งหมดจาก Local Cache
 function getBookings() {
+  if (typeof localStorage === 'undefined') return [];
   const data = localStorage.getItem(STORAGE_KEY);
   if (!data) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify([]));
@@ -129,7 +134,7 @@ function formatStatusText(status) {
   }
 }
 
-// เพิ่มรายการจองใหม่
+// เพิ่มหรืออัปเดตรายการจอง
 function addBooking(newBooking) {
   const bookings = getBookings();
   const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -151,7 +156,6 @@ function addBooking(newBooking) {
     created_at: created_at
   };
 
-  // ตรวจสอบว่ามี id นี้อยู่แล้วหรือไม่ ถ้ามีให้อัปเดต ถ้าไม่มีให้เพิ่มใหม่
   const existingIdx = bookings.findIndex(b => b.id === id);
   if (existingIdx !== -1) {
     bookings[existingIdx] = fullBooking;
@@ -161,9 +165,8 @@ function addBooking(newBooking) {
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
 
-  // บันทึกความเคลื่อนไหว
   logActivity(
-    'ยื่นจองคิวใหม่',
+    existingIdx !== -1 ? 'แก้ไขข้อมูลนัดหมาย' : 'ยื่นจองคิวใหม่',
     `รหัส ${fullBooking.id} • คุณ${fullBooking.fullname} (${fullBooking.case_type}) วันที่ ${fullBooking.booking_date}`,
     'booking',
     '📝'
@@ -180,7 +183,6 @@ function updateBookingStatus(id, newStatus) {
     bookings[index].status = newStatus;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
 
-    // บันทึกความเคลื่อนไหว
     logActivity(
       'เปลี่ยนสถานะการนัดหมาย',
       `รหัส ${id} ➔ ${formatStatusText(newStatus)}`,
@@ -200,7 +202,6 @@ function deleteBooking(id) {
   if (bookings.length !== initialLength) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(bookings));
 
-    // บันทึกความเคลื่อนไหว
     logActivity(
       'ลบรายการนัดหมาย',
       `รหัส ${id} ถูกลบออกจากระบบ`,
@@ -245,7 +246,7 @@ function formatStatusBadge(status) {
     case 'cancelled':
       return '<span class="status-badge cancelled">✕ ยกเลิก</span>';
     default:
-      return `<span class="status-badge">${status}</span>`;
+      return `<span class="status-badge">${escapeHtml(status)}</span>`;
   }
 }
 
@@ -262,6 +263,7 @@ function escapeHtml(str) {
 
 // ฟังก์ชัน Toast สวยงาม
 function showToast(message, type = 'success') {
+  if (typeof document === 'undefined') return;
   let toastContainer = document.querySelector('.toast-container');
   if (!toastContainer) {
     toastContainer = document.createElement('div');
@@ -290,7 +292,7 @@ function showToast(message, type = 'success') {
     `;
   }
 
-  toast.innerHTML = `${iconSvg} <span>${message}</span>`;
+  toast.innerHTML = `${iconSvg} <span>${escapeHtml(message)}</span>`;
   toastContainer.appendChild(toast);
 
   setTimeout(() => {
@@ -302,7 +304,7 @@ function showToast(message, type = 'success') {
 }
 
 // ==========================================
-// ระบบจัดการการตั้งค่าหน้าเว็บไซต์แบบครบวงจร (Site Settings, CMS & Menu Sorting)
+// ระบบจัดการการตั้งค่าหน้าเว็บไซต์แบบครบวงจร (Site Settings, Full CMS & Menu)
 // ==========================================
 const SETTINGS_STORAGE_KEY = 'lawyer_site_settings';
 const DEFAULT_SITE_SETTINGS = {
@@ -311,26 +313,54 @@ const DEFAULT_SITE_SETTINGS = {
   business_hours: 'เปิดทุกวัน 06:00 - 18:00 น. (หมายเหตุ: นอกจากไม่ว่างหรือติดธุระส่วนตัวข้างนอก สำนักงานจะปิด)',
   office_phone: '073-xxx-xxx',
   line_id: '@lawyer1th',
+  line_title: 'ปรึกษาคดีด่วนทาง LINE',
+  line_desc: 'แอดไลน์เพื่อส่งรูปเอกสาร สัญญา หรือหมายเรียก ให้ทนายตรวจดูเบื้องต้นได้ทันที',
+  line_url: 'https://line.me',
+  office_name: 'สำนักงานทนายความ รอสนั่น อีซอ (ทนายความชั้น 1 อาวุโส)',
+  office_lawyer_name: 'ทนายความ รอสนั่น อีซอ',
   office_address: 'ทนายความ รอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี (เน้นรับดูแลคดีในพื้นที่ ปัตตานี, นราธิวาส, สงขลา, หาดใหญ่ และยะลา)',
-  visit_note: 'กรุณานัดหมายคิวล่วงหน้าเพื่อเตรียมเอกสารและอำนวยความสะดวกก่อนเดินทางมายังสำนักงาน',
+  visit_note: '🚗 พื้นที่รับงานและการเข้าพบ: ทนายความตั้งมั่นรับงานในเขตปัตตานีและ 4 จังหวัดข้างเคียง เพื่อดูแลคดีอย่างใกล้ชิดและทั่วถึง สำหรับท่านที่ต้องการเดินทางมาปรึกษาที่สำนักงาน กรุณานัดหมายคิวล่วงหน้าเพื่อเตรียมเอกสาร',
   maps_url: 'https://maps.app.goo.gl/2ukUyWUSAMQPn3DYA',
   maps_embed: 'https://maps.google.com/maps?q=6.8506101,101.2548708&hl=th&z=17&output=embed',
+  maps_gps_text: 'พิกัด GPS: 6.8506101, 101.2548708 • ทนายความ รอสนั่น อีซอ',
+  contact_quick_phone_title: 'โทรด่วนติดต่อทนายความ',
+  contact_quick_phone_desc: 'พร้อมให้คำปรึกษาเบื้องต้นเพื่อประเมินแนวทางคดี และความคุ้มค่าก่อนรับว่าความ',
 
-  // 2. ระบบจัดการและแก้ไขเนื้อหาทุกหน้า (เรียงตามลำดับความสำคัญ)
-  // 2.1 หน้าแรก (Home Page)
+  // 2. หน้าแรก (Home Page)
   home_hero_title: 'ทนายความชั้น 1 ใบอนุญาตว่าความทั่วราชอาณาจักร',
-  home_hero_desc: 'ว่าความดำเนินคดีด้วยความรอบคอบ ซื่อสัตย์สุจริต และเปี่ยมด้วยประสบการณ์กว่า 35 ถึงเกือบ 40 ปี ในศาลจังหวัดปัตตานีและพื้นที่ใกล้เคียง',
+  home_hero_subtitle: 'รับว่าความและที่ปรึกษากฎหมาย',
+  home_hero_desc: 'มุ่งมั่นปกป้องสิทธิและผลประโยชน์สูงสุดของลูกความ ดำเนินคดีด้วยความซื่อสัตย์สุจริต โดยทนายความชั้น 1 ผู้มีประสบการณ์ว่าความจริงยาวนานกว่า 35 ถึงเกือบ 40 ปี เชี่ยวชาญคดีแพ่ง คดีอาญา มรดก ครอบครัว และที่ดิน เน้นรับดูแลคดีในพื้นที่จังหวัดปัตตานี และ 4 จังหวัดใกล้เคียงอย่างใกล้ชิด',
   home_start_price: 'เริ่มต้น 7,000 ฿',
   home_price_note: '* ค่าบริการเริ่มต้นที่ 7,000 บาท (ขึ้นอยู่กับประเภทและความยากง่ายของคดี ซึ่งบางคดีราคานี้เป็นไปได้)',
   home_exp_years: 'กว่า 35 - 40 ปี',
+  home_license_issuer: 'สภาทนายความ ในพระบรมราชูปถัมภ์',
+  home_license_lawyer_title: 'ทนายความผู้ดำเนินคดีประจำสำนักงาน',
+  home_license_lawyer_qual: 'นิติศาสตรบัณฑิต, เนติบัณฑิตไทย (น.บ.ท.)',
+  home_license_exp: 'กว่า 35 - 40 ปี',
+  home_license_area: 'ปัตตานี และ 4 จว. ใกล้เคียง',
+  home_license_status: '● ประจำการ / พร้อมให้คำปรึกษา',
+  
+  // จุดเด่น 4 ข้อ (Why Choose Us)
+  home_feat1_title: 'ทนายความชั้น 1 ตัวจริง (35+ ปี)',
+  home_feat1_desc: 'ว่าความโดยทนายความอาวุโสผู้ถือใบอนุญาตตลอดชีพชั้น 1 มีประสบการณ์ตรงในชั้นศาลยาวนานกว่า 35 ถึงเกือบ 40 ปี เชี่ยวชาญกลยุทธ์คดีอย่างรอบคอบ',
+  home_feat2_title: 'เน้นปัตตานี & 4 จังหวัดใกล้เคียง',
+  home_feat2_desc: 'รับดูแลคดีหลักใน จ.ปัตตานี และ 4 พื้นที่ใกล้เคียง: นราธิวาส, สงขลา, หาดใหญ่ และยะลา เพื่อให้เวลาและใส่ใจลูกความได้อย่างเต็มเม็ดเต็มหน่วย',
+  home_feat3_title: 'รักษาความลับ 100%',
+  home_feat3_desc: 'ข้อมูล ข้อเท็จจริง และเอกสารทุกชิ้นของลูกความจะถูกเก็บรักษาเป็นความลับสูงสุดตามมรรยาททนายความอย่างเคร่งครัด',
+  home_feat4_title: 'ค่าบริการเริ่มต้นที่ 7,000 ฿',
+  home_feat4_desc: 'ค่าบริการเริ่มต้นที่ 7,000 บาท ขึ้นอยู่กับประเภทและความยากง่ายของคดี (กรณีออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น)',
+
+  // แบนเนอร์จองคิวด่วนท้ายหน้าแรก
   home_cta_title: 'มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?',
   home_cta_desc: 'จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์',
   home_cta_btn_text: 'จองคิวออนไลน์ตอนนี้',
   home_cta_phone: 'โทรด่วน 081-234-5678',
 
-  // 2.2 หน้าเกี่ยวกับเรา (About Page)
+  // 3. หน้าเกี่ยวกับเรา (About Page)
   about_title: 'ความน่าเชื่อถือและจรรยาบรรณวิชาชีพ',
   about_desc: 'ดำเนินงานโดยทนายความชั้น 1 อาวุโส ผู้มีใบอนุญาตว่าความประเภทตลอดชีพ ประสบการณ์ทำงานด้านกฎหมายยาวนานกว่า 35 ถึงเกือบ 40 ปี',
+  about_section_title: 'ทนายความชั้น 1 อาวุโส ประจำสำนักงาน',
+  about_section_desc: 'ประสบการณ์ว่าความและที่ปรึกษากฎหมายยาวนานกว่า 35 ถึงเกือบ 40 ปี เปี่ยมด้วยความเชี่ยวชาญและจริยธรรม',
   about_lawyer_name: 'ทนายความ ธนบดี นิติสิริ',
   about_lawyer_title: 'ทนายความชั้น 1 อาวุโส (ประเภทตลอดชีพ)',
   about_lawyer_exp: '⚖️ ประสบการณ์ 35+ ถึงเกือบ 40 ปี',
@@ -340,16 +370,53 @@ const DEFAULT_SITE_SETTINGS = {
   about_exp_item2: 'ประสบการณ์ในวิชาชีพยาวนานกว่า 35 ถึงเกือบ 40 ปี: ผ่านการว่าความคดีแพ่ง คดีอาญา คดีที่ดิน และคดีมรดก ในศาลชั้นต้น ศาลอุทธรณ์ และศาลฎีกา มาอย่างยาวนานต่อเนื่อง',
   about_exp_item3: 'ความคุ้นเคยอย่างลึกซึ้งในระบบศาลพื้นที่ภาคใต้: โดยเฉพาะศาลจังหวัดปัตตานี, ศาลจังหวัดสงขลา, ศาลแขวงสงขลา, ศาลจังหวัดนาทวี, ศาลจังหวัดยะลา, และศาลจังหวัดนราธิวาส',
   about_exp_item4: 'เชี่ยวชาญการตรวจเอกสารและวางรูปคดีอย่างรอบคอบ: วิเคราะห์จุดได้เปรียบ-เสียเปรียบ อย่างตรงไปตรงมา คดีไหนควรไกล่เกลี่ยหรือควรฟ้องร้อง ชี้แจงลูกความตามความจริง',
+  about_cta_title: 'พร้อมให้คำปรึกษาและวางแนวทางคดีแก่ท่าน',
+  about_cta_desc: 'สามารถนัดหมายเวลาเพื่อเข้าพบพูดคุยรายละเอียดข้อเท็จจริง หรือส่งเอกสารให้ทนายตรวจดูเบื้องต้นก่อนได้',
 
-  // 2.3 หน้าบริการและเรทราคา (Services Page)
+  // 4. หน้าบริการและเรทราคา (Services Page)
+  services_title: 'บริการทางกฎหมาย & อัตราค่าวิชาชีพ',
+  services_desc: 'ว่าความโดยทนายความชั้น 1 อาวุโส ประสบการณ์ยาวนานกว่า 35 - 40 ปี เน้นดูแลพื้นที่จังหวัดปัตตานี และ 4 จังหวัดใกล้เคียง ด้วยเรทราคาที่โปร่งใส เป็นธรรม และชัดเจน',
+  services_area_heading: 'ขอบเขตพื้นที่รับว่าความและดำเนินคดี',
   services_area_note: 'เน้นรับงานในพื้นที่ปัตตานี และ 4 จังหวัดใกล้เคียง ได้แก่ นราธิวาส, สงขลา, หาดใหญ่, และยะลา เพื่อให้ทนายความสามารถทุ่มเทเวลาและใส่ใจติดตามรายละเอียดข้อเท็จจริงในสำนวนคดีของลูกความทุกท่านได้อย่างใกล้ชิด รัดกุม และมีประสิทธิภาพสูงสุด สำหรับคดีที่ต้องออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น',
   services_start_price: 'เริ่มต้น 7,000 บาท',
+  services_price_note: '* ค่าบริการเริ่มต้นที่ 7,000 บาท (ขึ้นอยู่กับประเภทและความยากง่ายของคดี ซึ่งบางคดีราคานี้เป็นไปได้)',
   services_province_note: '📢 "กรณีออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น"',
+  services_price_out_note: 'พิจารณาตามระยะทาง ค่าพาหนะเดินทาง และจำนวนนัดพิจารณาคดีจริง',
 
-  // 2.4 หน้าติดต่อเรา (Contact Page)
-  contact_note: 'สำนักงานตั้งอยู่ในเขตพื้นที่อำเภอเมืองปัตตานี พร้อมดูแลคดีในพื้นที่ปัตตานี นราธิวาส สงขลา หาดใหญ่ และยะลา',
+  // บริการ 5 หมวดคดีหลัก
+  services_cat1_title: 'คดีแพ่งและพาณิชย์',
+  services_cat1_sub: 'Civil & Commercial Cases',
+  services_cat1_desc: 'รับว่าความฟ้องร้องและแก้ต่างข้อพิพาททางแพ่ง บังคับตามสัญญา เรียกเงินกู้ยืม ติดตามหนี้สิน ละเมิด และบังคับคดี',
+  services_cat1_items: 'ฟ้องคดีสัญญากู้ยืมเงิน สัญญาจะซื้อจะขาย และเช็คเด้ง\nคดีฟ้องขับไล่ ข้อพิพาทเรื่องกรรมสิทธิ์ที่ดิน และภาระจำยอม\nคดีละเมิด อุบัติเหตุจราจร เรียกค่าสินไหมทดแทน\nสืบทรัพย์ บังคับคดี ยึดทรัพย์ และอายัดบัญชี',
 
-  // 3. ระบบจัดลำดับเมนู (Menu Sorting)
+  services_cat2_title: 'คดีอาญาทุกประเภท',
+  services_cat2_sub: 'Criminal Defense & Prosecution',
+  services_cat2_desc: 'ดำเนินคดีอาญาอย่างมืออาชีพ ทั้งในฐานะทนายโจทก์ฟ้องคดี และทนายจำเลยแก้ต่างเพื่อพิสูจน์ความบริสุทธิ์',
+  services_cat2_items: 'คดียักยอก ฉ้อโกง บุกรุก เอกสารเท็จ\nคดีทำร้ายร่างกาย ประมาทเป็นเหตุให้ผู้อื่นถึงแก่ความตาย\nยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัว) ในชั้นสอบสวนและศาล\nคดีความผิดตาม พ.ร.บ.คอมพิวเตอร์ และหมิ่นประมาท',
+
+  services_cat3_title: 'คดีมรดกและพินัยกรรม',
+  services_cat3_sub: 'Inheritance & Wills',
+  services_cat3_desc: 'จัดการเรื่องทรัพย์สินมรดกให้ถูกต้องเรียบร้อย ยื่นคำร้องตั้งผู้จัดการมรดก และระงับข้อพิพาทระหว่างทายาท',
+  services_cat3_items: 'ยื่นคำร้องขอตั้งผู้จัดการมรดกทั่วราชอาณาจักร (รวดเร็ว)\nฟ้องแบ่งทรัพย์มรดก ฟ้องเพิกถอนนิติกรรมโอนมรดกมิชอบ\nร่างพินัยกรรมแบบเขียนเอง หรือพินัยกรรมฝ่ายเมือง\nไกล่เกลี่ยประนีประนอมแบ่งมรดกในครอบครัว',
+
+  services_cat4_title: 'คดีครอบครัวและเยาวชน',
+  services_cat4_sub: 'Family Law Cases',
+  services_cat4_desc: 'ดำเนินคดีด้วยความเข้าใจ ละเอียดอ่อน และเน้นประโยชน์สูงสุดของบุตรผู้เยาว์และสิทธิอันชอบธรรม',
+  services_cat4_items: 'คดีฟ้องหย่า เรียกค่าเลี้ยงดู ค่าอุปการะเลี้ยงดูบุตร\nฟ้องแบ่งสินสมรส และหนี้สินระหว่างสมรส\nคดีขอใช้อำนาจปกครองบุตรแต่เพียงผู้เดียว และรับรองบุตร\nจัดทำบันทึกข้อตกลงการหย่าแนบท้ายทะเบียนหย่า',
+
+  services_cat5_title: 'นิติกรรมสัญญาและที่ปรึกษาธุรกิจ',
+  services_cat5_sub: 'Contracts & Legal Advisor',
+  services_cat5_desc: 'ร่างและตรวจสัญญาเพื่อปิดช่องโหว่ความเสี่ยงทางกฎหมาย ออกหนังสือบอกกล่าวทวงถาม และรับเป็นที่ปรึกษาประจำ',
+  services_cat5_items: 'ตรวจและร่างสัญญาจะซื้อจะขาย สัญญาเช่า สัญญาจ้าง\nทำหนังสือบอกกล่าวทวงถาม (Notice) ก่อนฟ้องคดี\nบริการที่ปรึกษากฎหมายประจำสำนักงานและห้างหุ้นส่วน\nเจรจาต่อรองระงับข้อพิพาททางธุรกิจ',
+
+  // 5. หน้าติดต่อเรา (Contact Page)
+  contact_note: 'สำนักงานตั้งอยู่ในเขตพื้นที่จังหวัดปัตตานี พร้อมดูแลคดีในพื้นที่ปัตตานี นราธิวาส สงขลา หาดใหญ่ และยะลา',
+
+  // 6. ข้อความส่วนท้าย (Footer)
+  footer_desc: 'ให้บริการปรึกษากฎหมายและรับว่าความทั่วราชอาณาจักร ด้วยความซื่อสัตย์สุจริต เที่ยงธรรม และเชี่ยวชาญ',
+  footer_copyright: '© 2026 สำนักงานทนายความชั้น 1 (รับว่าความทั่วราชอาณาจักร). สงวนลิขสิทธิ์ทุกประการ.',
+
+  // 7. ระบบจัดลำดับเมนู (Menu Sorting)
   menu_order: [
     { id: 'home', label: 'หน้าแรก', url: 'index.html', visible: true },
     { id: 'about', label: 'เกี่ยวกับเรา', url: 'about.html', visible: true },
@@ -361,6 +428,7 @@ const DEFAULT_SITE_SETTINGS = {
 
 // ดึงค่าการตั้งค่าจาก LocalStorage (หากไม่มีให้คืนค่าเริ่มต้น)
 function getSiteSettings() {
+  if (typeof localStorage === 'undefined') return { ...DEFAULT_SITE_SETTINGS };
   const data = localStorage.getItem(SETTINGS_STORAGE_KEY);
   if (!data) return { ...DEFAULT_SITE_SETTINGS };
   try {
@@ -378,8 +446,10 @@ function saveSiteSettings(newSettings) {
     ...current,
     ...newSettings
   };
-  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
-  applySiteSettings();
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(updated));
+  }
+  applySiteSettings(updated);
 
   logActivity(
     'บันทึกการตั้งค่าเว็บไซต์',
@@ -393,15 +463,18 @@ function saveSiteSettings(newSettings) {
 
 // รีเซ็ตการตั้งค่ากลับเป็นค่าเริ่มต้น
 function resetSiteSettings() {
-  localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SITE_SETTINGS));
-  applySiteSettings();
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(DEFAULT_SITE_SETTINGS));
+  }
+  applySiteSettings(DEFAULT_SITE_SETTINGS);
   logActivity('คืนค่าการตั้งค่าเริ่มต้น', 'คืนค่าข้อมูลติดต่อและ CMS กลับสู่ค่ามาตรฐาน', 'cms', '↺');
   return { ...DEFAULT_SITE_SETTINGS };
 }
 
 // อัปเดตแสดงผลบนแถบ Topbar, หน้าติดต่อ และทุก element ที่มี data-cms
-function applySiteSettings() {
-  const settings = getSiteSettings();
+function applySiteSettings(customSettings) {
+  if (typeof document === 'undefined') return;
+  const settings = customSettings || getSiteSettings();
 
   // 1. อัปเดตสายด่วน
   const hotlineEls = document.querySelectorAll('#topbarHotline, [data-setting="hotline"], [data-cms="hotline"]');
@@ -426,41 +499,16 @@ function applySiteSettings() {
     if (settings.maps_url) link.href = settings.maps_url;
   });
 
-  // 4. อัปเดต Dynamic CMS ทั่วทั้งเว็บ
-  const cmsMap = {
-    'office_phone': settings.office_phone,
-    'line_id': settings.line_id,
-    'office_address': settings.office_address,
-    'visit_note': settings.visit_note,
-    'maps_url': settings.maps_url,
-    'home_hero_title': settings.home_hero_title,
-    'home_hero_desc': settings.home_hero_desc,
-    'home_start_price': settings.home_start_price,
-    'home_price_note': settings.home_price_note,
-    'home_exp_years': settings.home_exp_years,
-    'home_cta_title': settings.home_cta_title,
-    'home_cta_desc': settings.home_cta_desc,
-    'home_cta_btn_text': settings.home_cta_btn_text,
-    'home_cta_phone': settings.home_cta_phone,
-    'about_title': settings.about_title,
-    'about_desc': settings.about_desc,
-    'about_lawyer_name': settings.about_lawyer_name,
-    'about_lawyer_title': settings.about_lawyer_title,
-    'about_lawyer_exp': settings.about_lawyer_exp,
-    'about_exp_heading': settings.about_exp_heading,
-    'about_exp_item1': settings.about_exp_item1,
-    'about_exp_item2': settings.about_exp_item2,
-    'about_exp_item3': settings.about_exp_item3,
-    'about_exp_item4': settings.about_exp_item4,
-    'services_area_note': settings.services_area_note,
-    'services_start_price': settings.services_start_price,
-    'services_province_note': settings.services_province_note,
-    'contact_note': settings.contact_note
-  };
+  const lineLinks = document.querySelectorAll('[data-cms-link="line_url"]');
+  lineLinks.forEach(link => {
+    if (settings.line_url) link.href = settings.line_url;
+  });
 
-  Object.keys(cmsMap).forEach(key => {
-    const val = cmsMap[key];
+  // 4. อัปเดต Dynamic CMS ทั่วทั้งเว็บ
+  Object.keys(settings).forEach(key => {
+    const val = settings[key];
     if (val !== undefined && val !== null) {
+      // 4.1 ข้อความทั่วไป
       document.querySelectorAll(`[data-cms="${key}"]`).forEach(el => {
         if (el.hasAttribute('data-cms-format-lead') && typeof val === 'string' && val.includes(':')) {
           const colonIdx = val.indexOf(':');
@@ -471,10 +519,25 @@ function applySiteSettings() {
           el.textContent = val;
         }
       });
+
+      // 4.2 รายการหลายบรรทัด (Multiline List Items) เช่น ข้อความบริการ
+      document.querySelectorAll(`[data-cms-list="${key}"]`).forEach(listEl => {
+        if (typeof val === 'string') {
+          const lines = val.split('\n').map(l => l.trim()).filter(Boolean);
+          if (lines.length > 0) {
+            listEl.innerHTML = lines.map(line => `
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                <span>${escapeHtml(line)}</span>
+              </li>
+            `).join('');
+          }
+        }
+      });
     }
   });
 
-  // 4.2 อัปเดตรูปภาพทนายความในหน้าเกี่ยวกับเรา (Lawyer Profile Photo)
+  // 4.3 อัปเดตรูปภาพทนายความในหน้าเกี่ยวกับเรา (Lawyer Profile Photo)
   const lawyerImgUrl = settings.about_lawyer_image && typeof settings.about_lawyer_image === 'string' ? settings.about_lawyer_image.trim() : '';
   const lawyerImgs = document.querySelectorAll('#aboutLawyerPhoto, [data-cms-img="about_lawyer_image"]');
   const lawyerSvgs = document.querySelectorAll('#aboutLawyerDefaultIcon, [data-cms-default-icon="about_lawyer_image"]');
@@ -497,14 +560,19 @@ function applySiteSettings() {
     }
   });
 
-  // 4.3 ระบบจัดการเบอร์โทรศัพท์จุดเดียวทั้งเว็บไซต์ (Centralized Universal Phone System)
+  // 4.4 ระบบจัดการเบอร์โทรศัพท์จุดเดียวทั้งเว็บไซต์ (Centralized Universal Phone System)
   const phoneSource = settings.hotline || settings.office_phone || '081-234-5678';
   const phoneDigitsMatch = phoneSource.match(/0[0-9]{1,2}-?[0-9]{3}-?[0-9]{4}|0[0-9]{8,9}/);
   const cleanPhone = phoneDigitsMatch ? phoneDigitsMatch[0].replace(/[^0-9]/g, '') : '0812345678';
+  const displayPhone = phoneDigitsMatch ? phoneDigitsMatch[0] : '081-234-5678';
 
   // อัปเดตทุกลิงก์โทรศัพท์ที่เป็น href="tel:..." ให้โทรติดเบอร์จริงทันที
   document.querySelectorAll('a[href^="tel:"], [data-cms-tel]').forEach(link => {
     link.href = `tel:${cleanPhone}`;
+  });
+
+  document.querySelectorAll('[data-cms-phone-only]').forEach(el => {
+    el.textContent = displayPhone;
   });
 
   // 5. แสดงผลแถบเมนูนำทางแบบจัดลำดับไดนามิก (Dynamic Navbar)
@@ -621,7 +689,6 @@ function initMobileNavbar() {
     }
   }
 
-  // 1. คลิกปุ่มแฮมเบอร์เกอร์เพื่อสลับ เปิด/ปิด
   menuToggles.forEach(btn => {
     btn.addEventListener('click', (e) => {
       e.stopPropagation();
@@ -629,7 +696,6 @@ function initMobileNavbar() {
     });
   });
 
-  // 2. คลิกพื้นที่ด้านนอก (Outside click) ให้ปิดเมนูดรอปดาวน์อัตโนมัติ
   document.addEventListener('click', (e) => {
     const isClickInsideMenu = Array.from(navMenus).some(m => m.contains(e.target));
     const isClickInsideToggle = Array.from(menuToggles).some(btn => btn.contains(e.target));
@@ -638,14 +704,12 @@ function initMobileNavbar() {
     }
   });
 
-  // 3. ปิดเมนูเมื่อกดปุ่ม ESC บนคีย์บอร์ด
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
       closeMenu();
     }
   });
 
-  // 4. หากปรับขนาดหน้าจอขยายกลับเป็น Desktop (> 992px) ให้ปิดสถานะ active
   window.addEventListener('resize', () => {
     if (window.innerWidth > 992) {
       closeMenu();
@@ -667,10 +731,8 @@ function initActivityAutoTracker() {
   else if (path.includes('dashboard')) pageName = 'แดชบอร์ดจัดการระบบ (Admin Dashboard)';
   else if (path.includes('login')) pageName = 'หน้าเข้าสู่ระบบผู้ดูแล (Admin Login)';
 
-  // บันทึกการเข้าชมหน้าเว็บ
   logActivity('เข้าชมหน้าเว็บ', pageName, 'visit', '🌐');
 
-  // ตรวจจับการกดโทรสายด่วน และการเปิดแผนที่ Google Maps
   document.addEventListener('click', (e) => {
     const telLink = e.target.closest('a[href^="tel:"]');
     if (telLink) {
@@ -685,21 +747,24 @@ function initActivityAutoTracker() {
 }
 
 // ตัวควบคุม Navbar Hamburger และอัปเดตข้อมูลไดนามิกเมื่อหน้าเว็บโหลด
-document.addEventListener('DOMContentLoaded', () => {
-  // เริ่มระบบติดตามความเคลื่อนไหว
-  initActivityAutoTracker();
+if (typeof document !== 'undefined') {
+  document.addEventListener('DOMContentLoaded', () => {
+    initActivityAutoTracker();
+    initMobileNavbar();
+    applySiteSettings();
 
-  // ติดตั้งระบบควบคุม Navbar บนมือถือ
-  initMobileNavbar();
+    // ฟังการซิงค์ข้อมูลข้ามแท็บ
+    window.addEventListener('storage', (e) => {
+      if (e.key === SETTINGS_STORAGE_KEY) {
+        applySiteSettings();
+      }
+    });
 
-  // นำค่าการตั้งค่ามาแสดงผลทันทีเมื่อเปิดหน้า
-  applySiteSettings();
-
-  // หากมีการโหลด supabase-config.js ให้พยายามซิงค์ค่าล่าสุดจาก Supabase
-  if (typeof fetchSiteSettingsFromSupabase === 'function') {
-    fetchSiteSettingsFromSupabase().then(() => {
-      applySiteSettings();
-    }).catch(() => {});
-  }
-});
-
+    // หากมีการโหลด supabase-config.js ให้พยายามซิงค์ค่าล่าสุดจาก Supabase
+    if (typeof fetchSiteSettingsFromSupabase === 'function') {
+      fetchSiteSettingsFromSupabase().then((settings) => {
+        applySiteSettings(settings);
+      }).catch(() => {});
+    }
+  });
+}

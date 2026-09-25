@@ -44,12 +44,24 @@ ON CONFLICT (id) DO NOTHING;
 ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
 ALTER TABLE site_settings ENABLE ROW LEVEL SECURITY;
 
--- นโยบาย (Policies) สำหรับ appointments
+-- ลบนโยบายเดิมหากมีอยู่ เพื่อสร้างใหม่ให้สมบูรณ์
+DROP POLICY IF EXISTS "Allow public select appointments" ON appointments;
+DROP POLICY IF EXISTS "Allow public insert appointments" ON appointments;
+DROP POLICY IF EXISTS "Allow public update appointments" ON appointments;
+DROP POLICY IF EXISTS "Allow public delete appointments" ON appointments;
+DROP POLICY IF EXISTS "Allow public select site_settings" ON site_settings;
+DROP POLICY IF EXISTS "Allow public insert/update site_settings" ON site_settings;
+DROP POLICY IF EXISTS "Allow public all site_settings" ON site_settings;
+
+-- นโยบาย (Policies) สำหรับ appointments: อนุญาตให้ select, insert, update, delete ได้อย่างอิสระ
 CREATE POLICY "Allow public select appointments" ON appointments FOR SELECT USING (true);
 CREATE POLICY "Allow public insert appointments" ON appointments FOR INSERT WITH CHECK (true);
-CREATE POLICY "Allow public update appointments" ON appointments FOR UPDATE USING (true);
+CREATE POLICY "Allow public update appointments" ON appointments FOR UPDATE USING (true) WITH CHECK (true);
 CREATE POLICY "Allow public delete appointments" ON appointments FOR DELETE USING (true);
 
--- นโยบาย (Policies) สำหรับ site_settings
+-- นโยบาย (Policies) สำหรับ site_settings: อนุญาตให้อ่านและบันทึก/upsert ได้ 100%
 CREATE POLICY "Allow public select site_settings" ON site_settings FOR SELECT USING (true);
-CREATE POLICY "Allow public insert/update site_settings" ON site_settings FOR ALL USING (true);
+CREATE POLICY "Allow public insert site_settings" ON site_settings FOR INSERT WITH CHECK (true);
+CREATE POLICY "Allow public update site_settings" ON site_settings FOR UPDATE USING (true) WITH CHECK (true);
+CREATE POLICY "Allow public all site_settings" ON site_settings FOR ALL USING (true) WITH CHECK (true);
+
