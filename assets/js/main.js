@@ -535,6 +535,10 @@ function applySiteSettings(customSettings) {
     if (val !== undefined && val !== null) {
       // 4.1 ข้อความทั่วไป
       document.querySelectorAll(`[data-cms="${key}"]`).forEach(el => {
+        // ห้ามแตะต้อง .hero-stats ในลูปทั่วไปเด็ดขาด (มีระบบ Strict Safeguard ควบคุมแยกต่างหาก)
+        if (el.closest('.hero-stats') || el.closest('.stat-item')) {
+          return;
+        }
         if (el.hasAttribute('data-cms-format-lead') && typeof val === 'string' && val.includes(':')) {
           const colonIdx = val.indexOf(':');
           const lead = val.slice(0, colonIdx + 1);
@@ -570,6 +574,20 @@ function applySiteSettings(customSettings) {
   document.querySelectorAll('[data-cms="home_exp_years"]').forEach(el => { el.textContent = safeExpYears; });
   document.querySelectorAll('[data-cms="home_area_stat"], .stat-item [data-cms="home_area_tag"]').forEach(el => { el.textContent = safeAreaStat; });
   document.querySelectorAll('[data-cms="home_start_price"]').forEach(el => { el.textContent = safeStartPrice; });
+
+  // ล็อกค่าตามลำดับช่องโดยตรง เพื่อความเสถียร 100% บนมือถือทุกเครื่อง
+  const heroStatH3s = document.querySelectorAll('.hero-stats .stat-item h3');
+  if (heroStatH3s.length >= 3) {
+    heroStatH3s[0].textContent = safeExpYears;
+    heroStatH3s[1].textContent = safeAreaStat;
+    heroStatH3s[2].textContent = safeStartPrice;
+  }
+  const heroStatPs = document.querySelectorAll('.hero-stats .stat-item p');
+  if (heroStatPs.length >= 3) {
+    heroStatPs[0].textContent = 'ประสบการณ์ว่าความจริง';
+    heroStatPs[1].textContent = 'พื้นที่ดูแลคดีอย่างใกล้ชิด';
+    heroStatPs[2].textContent = 'ค่าบริการเริ่มต้นคดีทั่วไป';
+  }
 
   // 4.3 อัปเดตรูปภาพทนายความในหน้าเกี่ยวกับเรา (Lawyer Profile Photo)
   const lawyerImgUrl = settings.about_lawyer_image && typeof settings.about_lawyer_image === 'string' ? settings.about_lawyer_image.trim() : '';
