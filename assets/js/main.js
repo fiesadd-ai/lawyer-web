@@ -643,8 +643,101 @@ function applySiteSettings(customSettings) {
   // 5. แสดงผลแถบเมนูนำทางแบบจัดลำดับไดนามิก (Dynamic Navbar)
   renderDynamicNavbar(settings);
 
-  // 6. ระบบแสดงผลแบบทยอยโชว์รายการบริการ 5 หมวดคดี (Load More / Show More)
+  // 6. ระบบแสดงผลแบบทยอยโชว์รายการบริการ 10 หมวดคดีหลัก (Load More / Show More)
+  initCategoryCardsLoadMore();
   initServiceCategoryLoadMore();
+}
+
+// ระบบแสดงผลแบบทยอยโชว์ 10 หมวดคดีหลัก (Load More 10 Categories - เริ่มต้น 3 ข้อ เพิ่มทีละ 3 ข้อ)
+function initCategoryCardsLoadMore() {
+  if (typeof document === 'undefined') return;
+  const grid = document.querySelector('.services-category-grid');
+  if (!grid) return;
+
+  const cards = Array.from(grid.querySelectorAll('.service-card'));
+  const totalCards = cards.length;
+  if (totalCards <= 3) return;
+
+  let wrap = document.getElementById('categoryLoadMoreWrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.className = 'category-load-more-wrap';
+    wrap.id = 'categoryLoadMoreWrap';
+    grid.insertAdjacentElement('afterend', wrap);
+  }
+
+  // กำหนดจำนวนเริ่มต้นที่แสดง (3 ข้อ)
+  let visibleCards = parseInt(grid.getAttribute('data-visible-cards'), 10);
+  if (isNaN(visibleCards) || visibleCards < 3) {
+    visibleCards = 3;
+  }
+  visibleCards = Math.min(visibleCards, totalCards);
+  grid.setAttribute('data-visible-cards', visibleCards);
+
+  function renderCardsState(animateNew = false) {
+    cards.forEach((card, idx) => {
+      if (idx < visibleCards) {
+        if (card.style.display === 'none' && animateNew) {
+          card.classList.add('item-reveal');
+        }
+        card.style.display = '';
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('item-reveal');
+      }
+    });
+
+    const isAllShown = visibleCards >= totalCards;
+    const nextStep = Math.min(3, totalCards - visibleCards);
+
+    wrap.innerHTML = `
+      <button type="button" class="btn-category-load-more ${isAllShown ? 'is-expanded' : ''}" id="btnCategoryLoadMore" aria-expanded="${isAllShown}">
+        <span>${isAllShown ? 'ย่อหัวข้อกลับ' : `ดูเพิ่มเติม (+${nextStep} ข้อ)`}</span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+          ${isAllShown 
+            ? '<polyline points="18 15 12 9 6 15"></polyline>' 
+            : '<polyline points="6 9 12 15 18 9"></polyline>'}
+        </svg>
+      </button>
+      <span class="category-load-more-count" id="categoryLoadMoreCount">
+        ${isAllShown ? `แสดงครบทั้งหมด ${totalCards} ข้อแล้ว` : `แสดง ${visibleCards} จาก ${totalCards} ข้อ`}
+      </span>
+    `;
+
+    const btn = wrap.querySelector('#btnCategoryLoadMore');
+    if (btn) {
+      btn.onclick = () => {
+        if (visibleCards < totalCards) {
+          visibleCards = Math.min(totalCards, visibleCards + 3);
+          grid.setAttribute('data-visible-cards', visibleCards);
+          renderCardsState(true);
+          if (typeof logActivity === 'function') {
+            logActivity('ดูหัวข้อคดีเพิ่มเติม', `เปิดดูเพิ่ม (แสดง ${visibleCards}/${totalCards} ข้อ)`, 'click', '📂');
+          }
+        } else {
+          visibleCards = 3;
+          grid.setAttribute('data-visible-cards', visibleCards);
+          renderCardsState(false);
+          const sectionHeader = document.querySelector('#legal-services-section') || grid;
+          sectionHeader.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      };
+    }
+  }
+
+  // หากผู้ใช้เข้ามาทาง URL Hash เช่น #eviction-lawsuit หรือ #embezzlement ให้ขยายจนถึงการ์ดนั้นทันที
+  if (window.location.hash) {
+    const targetEl = document.querySelector(window.location.hash);
+    if (targetEl && targetEl.classList.contains('service-card')) {
+      const targetIdx = cards.indexOf(targetEl);
+      if (targetIdx >= visibleCards) {
+        visibleCards = Math.min(totalCards, Math.ceil((targetIdx + 1) / 3) * 3);
+        grid.setAttribute('data-visible-cards', visibleCards);
+      }
+    }
+  }
+
+  renderCardsState(false);
 }
 
 // ระบบแสดงผลแบบทยอยโชว์รายการบริการ 5 หมวดคดีหลัก (Load More / Show More - ครั้งละ 3 ข้อ)
@@ -910,6 +1003,8 @@ if (typeof document !== 'undefined') {
     initActivityAutoTracker();
     initMobileNavbar();
     applySiteSettings();
+    initCategoryCardsLoadMore();
+    initServiceCategoryLoadMore();
 
     // ฟังการซิงค์ข้อมูลข้ามแท็บ
     window.addEventListener('storage', (e) => {
