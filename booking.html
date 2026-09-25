@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>จองคิวปรึกษากฎหมาย | สำนักงานทนายความชั้น 1</title>
+  <meta name="description" content="แบบฟอร์มจองคิวนัดหมายปรึกษากฎหมายกับทนายความชั้น 1 ปรึกษาได้ทั้งที่สำนักงาน วิดีโอคอล หรือทางโทรศัพท์">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- แถบข้อมูลด้านบน (Topbar) -->
+  <header class="site-header">
+    <div class="topbar">
+      <div class="container topbar-content">
+        <div class="topbar-items">
+          <div class="topbar-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>สายด่วนปรึกษา: <span id="topbarHotline" data-cms="hotline">081-234-5678, 073-xxx-xxx</span></span>
+          </div>
+          <div class="topbar-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>เวลาทำการ: <span id="topbarHours" data-cms="business_hours">จันทร์ - เสาร์ 08:30 - 18:00 น.</span></span>
+          </div>
+        </div>
+        <div class="topbar-badge">
+          ⚖️ ใบอนุญาตว่าความประเภทตลอดชีพ (ชั้น 1) สภาทนายความ
+        </div>
+      </div>
+    </div>
+
+    <!-- เมนูนำทางหลัก (Navbar) -->
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v18"></path>
+              <path d="m3 7 9-4 9 4"></path>
+              <path d="M3 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+              <path d="M11 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title">สำนักงานทนายความชั้น 1</div>
+            <div class="brand-subtitle">รับว่าความทั่วราชอาณาจักร • สภาทนายความฯ</div>
+          </div>
+        </a>
+
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
+          <li><a href="about.html" class="nav-link">เกี่ยวกับเรา</a></li>
+          <li><a href="services.html" class="nav-link">บริการและราคา</a></li>
+          <li><a href="booking.html" class="nav-link active">จองคิว</a></li>
+          <li><a href="contact.html" class="nav-link">ติดต่อเรา</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="booking.html" class="btn btn-primary btn-nav-cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>จองคิวปรึกษา</span>
+          </a>
+          <button class="menu-toggle" aria-label="Toggle navigation">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ส่วนหัวหน้าเว็บ (Header) -->
+  <section style="background: radial-gradient(circle at center, #e8f5ec, #f3f8f5); padding: 50px 0; text-align: center; border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+      <span class="section-tag">นัดหมายเวลาล่วงหน้า</span>
+      <h1 style="font-size: 2.4rem; color: var(--primary-dark); font-weight: 700; margin-top: 8px;">
+        ฟอร์มจองคิวปรึกษากฎหมาย
+      </h1>
+      <p style="color: var(--text-muted); max-width: 650px; margin: 10px auto 0; font-size: 1.05rem;">
+        กรอกข้อมูลเพื่อนัดหมายเวลาปรึกษาคดีกับทนายความชั้น 1 ข้อมูลทุกอย่างได้รับการคุ้มครองเป็นความลับ
+      </p>
+    </div>
+  </section>
+
+  <!-- ฟอร์มการจองคิว -->
+  <section class="section">
+    <div class="container">
+      <div class="form-container">
+        
+        <form id="bookingForm" onsubmit="handleBookingSubmit(event)">
+          
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="fullname">ชื่อ - นามสกุล <span class="required">*</span></label>
+              <input type="text" id="fullname" name="fullname" class="form-control" placeholder="เช่น นายสมชาย ใจดี" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="phone">เบอร์โทรศัพท์มือถือ <span class="required">*</span></label>
+              <input type="tel" id="phone" name="phone" class="form-control" placeholder="เช่น 081-234-5678" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="email">อีเมล (ถ้ามี)</label>
+              <input type="email" id="email" name="email" class="form-control" placeholder="example@domain.com">
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="case_type">ประเภทคดีความที่ต้องการปรึกษา <span class="required">*</span></label>
+              <select id="case_type" name="case_type" class="form-control" required>
+                <option value="" disabled selected>-- กรุณาเลือกประเภทคดี --</option>
+                <option value="คดีแพ่งและพาณิชย์">คดีแพ่งและพาณิชย์ (กู้ยืม, ละเมิด, ผิดสัญญา, บังคับคดี)</option>
+                <option value="คดีอาญา">คดีอาญา (ฉ้อโกง, ยักยอก, ลักทรัพย์, ประกันตัว, ต่อสู้คดี)</option>
+                <option value="คดีมรดกและพินัยกรรม">คดีมรดกและพินัยกรรม (ขอตั้งผู้จัดการมรดก, แบ่งมรดก)</option>
+                <option value="คดีครอบครัวและเยาวชน">คดีครอบครัว (ฟ้องหย่า, แบ่งสินสมรส, อำนาจปกครองบุตร)</option>
+                <option value="นิติกรรมสัญญาและที่ปรึกษาธุรกิจ">นิติกรรมสัญญาและที่ปรึกษาธุรกิจ (ตรวจร่างสัญญา, โนตารี)</option>
+                <option value="คดีอื่นๆ">คดีอื่นๆ / ยังไม่แน่ใจประเภทคดี</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- ช่องทางที่สะดวกในการรับคำปรึกษา -->
+          <div class="form-group">
+            <label class="form-label">ช่องทางที่สะดวกในการรับคำปรึกษา <span class="required">*</span></label>
+            <div class="radio-group-cards">
+              <label class="radio-card-label">
+                <input type="radio" name="consult_type" value="office" checked>
+                <div class="radio-card-body">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"></path><path d="M9 8h1"></path><path d="M9 12h1"></path><path d="M9 16h1"></path><path d="M14 8h1"></path><path d="M14 12h1"></path><path d="M14 16h1"></path><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"></path></svg>
+                  <span>เข้าพบที่สำนักงาน</span>
+                </div>
+              </label>
+
+              <label class="radio-card-label">
+                <input type="radio" name="consult_type" value="online">
+                <div class="radio-card-body">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                  <span>วิดีโอคอลออนไลน์ (Zoom/LINE)</span>
+                </div>
+              </label>
+
+              <label class="radio-card-label">
+                <input type="radio" name="consult_type" value="phone">
+                <div class="radio-card-body">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                  <span>โทรศัพท์สายด่วน</span>
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="booking_date">วันที่ต้องการนัดหมาย <span class="required">*</span></label>
+              <input type="date" id="booking_date" name="booking_date" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="booking_time">ช่วงเวลาที่สะดวก <span class="required">*</span></label>
+              <select id="booking_time" name="booking_time" class="form-control" required>
+                <option value="" disabled>-- เลือกช่วงเวลา --</option>
+                <option value="09:30 - 10:30" selected>ช่วงเช้า: 09:30 - 10:30 น.</option>
+                <option value="11:00 - 12:00">ช่วงเช้า: 11:00 - 12:00 น.</option>
+                <option value="13:30 - 14:30">ช่วงบ่าย: 13:30 - 14:30 น.</option>
+                <option value="15:00 - 16:00">ช่วงบ่าย: 15:00 - 16:00 น.</option>
+                <option value="16:30 - 17:30">ช่วงเย็น: 16:30 - 17:30 น.</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="details">รายละเอียดข้อเท็จจริงเบื้องต้น / เอกสารที่มี</label>
+            <textarea id="details" name="details" class="form-control" placeholder="อธิบายข้อเท็จจริง เหตุการณ์ หรือคำถามที่ต้องการปรึกษาโดยย่อ (ข้อมูลนี้จะถูกเก็บรักษาเป็นความลับตามมรรยาททนายความ)"></textarea>
+          </div>
+
+          <div class="form-group" style="display: flex; align-items: flex-start; gap: 10px; margin-top: 25px;">
+            <input type="checkbox" id="privacyConsent" required style="width: 18px; height: 18px; margin-top: 3px; accent-color: var(--primary);">
+            <label for="privacyConsent" style="font-size: 0.88rem; color: var(--text-muted); cursor: pointer;">
+              ข้าพเจ้ายินยอมให้สำนักงานทนายความติดต่อกลับเพื่อนัดหมายเวลา และรับทราบว่าข้อมูลข้อเท็จจริงข้างต้นจะได้รับการปกป้องตามจรรยาบรรณวิชาชีพ
+            </label>
+          </div>
+
+          <div style="margin-top: 30px;">
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              ยืนยันการจองคิวปรึกษากฎหมาย
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- หน้าต่างป๊อปอัปแจ้งผลการจองสำเร็จ (Client-side Modal) -->
+  <div class="modal-overlay" id="successModal">
+    <div class="modal-content">
+      <div style="text-align: center; padding: 10px 0;">
+        <div style="width: 68px; height: 68px; background: #d1fae5; color: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 18px;">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+        </div>
+        <h3 style="font-size: 1.5rem; color: var(--primary-dark); margin-bottom: 8px;">จองคิวสำเร็จเรียบร้อย!</h3>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin-bottom: 20px;">
+          ระบบบันทึกข้อมูลนัดหมายของท่านเรียบร้อยแล้ว เจ้าหน้าที่หรือทนายความจะติดต่อกลับเพื่อยืนยันคิวภายในเวลาทำการ
+        </p>
+
+        <div style="background: var(--primary-bg); border-radius: var(--radius-md); padding: 16px; margin-bottom: 24px; text-align: left; font-size: 0.9rem;">
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">รหัสการจอง:</span>
+            <strong style="color: var(--primary);" id="resBookingId">-</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">ชื่อผู้จอง:</span>
+            <strong id="resFullname">-</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+            <span style="color: var(--text-muted);">ประเภทคดี:</span>
+            <span id="resCaseType">-</span>
+          </div>
+          <div style="display: flex; justify-content: space-between;">
+            <span style="color: var(--text-muted);">วันและเวลานัดหมาย:</span>
+            <span id="resDateTime">-</span>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+          <a href="admin/dashboard.html" class="btn btn-primary" style="flex: 1; min-width: 180px;">
+            🔍 ดูในระบบแอดมิน (Dashboard)
+          </a>
+          <button type="button" class="btn btn-secondary" onclick="closeSuccessModal()" style="flex: 1; min-width: 140px;">
+            ปิดหน้าต่างนี้
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ส่วนท้ายเว็บไซต์ (Footer) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>สำนักงานทนายความชั้น 1</h4>
+          <p>ให้บริการปรึกษากฎหมายและรับว่าความทั่วราชอาณาจักร ด้วยความซื่อสัตย์สุจริต เที่ยงธรรม และเชี่ยวชาญ</p>
+          <div class="footer-badge">
+            ✓ สภาทนายความในพระบรมราชูปถัมภ์
+          </div>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">เมนูหลัก</h5>
+          <ul class="footer-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="about.html">เกี่ยวกับเรา</a></li>
+            <li><a href="services.html">บริการและราคา</a></li>
+            <li><a href="booking.html">จองคิว</a></li>
+            <li><a href="contact.html">ติดต่อเรา</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">บริการกฎหมาย</h5>
+          <ul class="footer-links">
+            <li><a href="services.html#civil">คดีแพ่งและพาณิชย์</a></li>
+            <li><a href="services.html#criminal">คดีอาญาทุกประเภท</a></li>
+            <li><a href="services.html#inheritance">คดีมรดกและพินัยกรรม</a></li>
+            <li><a href="services.html#family">คดีครอบครัวและฟ้องหย่า</a></li>
+            <li><a href="services.html#contracts">ร่างสัญญาและที่ปรึกษา</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">ติดต่อสำนักงาน</h5>
+          <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 8px;">
+            อำเภอเมืองปัตตานี จังหวัดปัตตานี (ดูแลคดีปัตตานี, นราธิวาส, สงขลา, หาดใหญ่, ยะลา)
+          </p>
+          <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 8px;">
+            โทรศัพท์: <span data-cms="hotline">081-234-5678, 073-xxx-xxx</span>
+          </p>
+          <p style="font-size: 0.88rem; color: #94a3b8;">
+            LINE Official: @lawyer1th
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 สำนักงานทนายความชั้น 1 (รับว่าความทั่วราชอาณาจักร). สงวนลิขสิทธิ์ทุกประการ.
+        </div>
+        <div class="footer-admin-wrap">
+          <a href="admin/login.html" class="footer-admin-link" title="ระบบบริหารจัดการสำหรับผู้ดูแลสำนักงาน">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 4px; opacity: 0.7;">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Admin Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/main.js"></script>
+  <script>
+    // ตั้งค่าเริ่มต้นวันที่นัดหมายเป็นวันพรุ่งนี้
+    document.addEventListener('DOMContentLoaded', () => {
+      const tomorrow = new Date();
+      tomorrow.setDate(tomorrow.getDate() + 1);
+      const tomorrowStr = tomorrow.toISOString().split('T')[0];
+      const todayStr = new Date().toISOString().split('T')[0];
+      
+      const dateInput = document.getElementById('booking_date');
+      if (dateInput) {
+        dateInput.value = tomorrowStr;
+        dateInput.min = todayStr;
+      }
+
+      // ดึงพารามิเตอร์ case จาก URL ถ้ามี
+      const urlParams = new URLSearchParams(window.location.search);
+      const caseParam = urlParams.get('case');
+      if (caseParam) {
+        const caseSelect = document.getElementById('case_type');
+        const caseMap = {
+          'civil': 'คดีแพ่งและพาณิชย์',
+          'criminal': 'คดีอาญา',
+          'inheritance': 'คดีมรดกและพินัยกรรม',
+          'family': 'คดีครอบครัวและเยาวชน',
+          'contracts': 'นิติกรรมสัญญาและที่ปรึกษาธุรกิจ'
+        };
+        if (caseMap[caseParam]) {
+          caseSelect.value = caseMap[caseParam];
+        }
+      }
+    });
+
+    // ฟังก์ชันจัดการส่งฟอร์มจองคิว บันทึกลง Supabase Table 'appointments' 100%
+    async function handleBookingSubmit(event) {
+      event.preventDefault();
+
+      const form = document.getElementById('bookingForm');
+      const submitBtn = form.querySelector('button[type="submit"]');
+      const originalBtnHtml = submitBtn ? submitBtn.innerHTML : '';
+
+      const fullname = document.getElementById('fullname').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const case_type = document.getElementById('case_type').value;
+      const consult_type = document.querySelector('input[name="consult_type"]:checked').value;
+      const booking_date = document.getElementById('booking_date').value;
+      const booking_time = document.getElementById('booking_time').value;
+      const details = document.getElementById('details').value.trim();
+
+      if (!fullname || !phone || !case_type || !booking_date || !booking_time) {
+        alert('กรุณากรอกข้อมูลที่จำเป็นให้ครบถ้วน');
+        return;
+      }
+
+      // แสดงสถานะกำลังบันทึก
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = `
+          <svg style="animation: spin 1s linear infinite; width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-opacity="0.8"></path>
+          </svg>
+          กำลังบันทึกข้อมูลลงฐานข้อมูล Supabase...
+        `;
+      }
+
+      try {
+        // บันทึกข้อมูลลง Supabase (Table: appointments) 100%
+        const savedBooking = await insertAppointmentToSupabase({
+          fullname,
+          phone,
+          email,
+          case_type,
+          consult_type,
+          booking_date,
+          booking_time,
+          details
+        });
+
+        // นำข้อมูลแสดงใน Modal แจ้งผล
+        document.getElementById('resBookingId').textContent = savedBooking.id;
+        document.getElementById('resFullname').textContent = savedBooking.fullname;
+        document.getElementById('resCaseType').textContent = savedBooking.case_type;
+        document.getElementById('resDateTime').textContent = `${savedBooking.booking_date} (${savedBooking.booking_time} น.)`;
+
+        // แสดง Modal
+        document.getElementById('successModal').classList.add('active');
+        showToast('จองคิวสำเร็จ! ข้อมูลถูกบันทึกลงฐานข้อมูล Supabase เรียบร้อยแล้ว');
+
+        // ล้างข้อมูลฟอร์ม
+        form.reset();
+        const tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+        document.getElementById('booking_date').value = tomorrow.toISOString().split('T')[0];
+      } catch (err) {
+        console.error('Submit error:', err);
+        alert('เกิดข้อผิดพลาดในการบันทึกข้อมูลลง Supabase: ' + (err.message || 'โปรดตรวจสอบการเชื่อมต่ออินเทอร์เน็ต'));
+      } finally {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalBtnHtml;
+        }
+      }
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.remove('active');
+    }
+  </script>
+</body>
+</html>

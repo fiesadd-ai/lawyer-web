@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>บริการทางกฎหมาย & อัตราค่าบริการ | สำนักงานทนายความชั้น 1</title>
+  <meta name="description" content="บริการว่าความโดยทนายความชั้น 1 อาวุโส ประสบการณ์กว่า 35 - 40 ปี เน้นพื้นที่จังหวัดปัตตานี สงขลา หาดใหญ่ ยะลา และนราธิวาส ค่าบริการเริ่มต้นที่ 7,000 บาท โปร่งใส ชัดเจน">
+  <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+
+  <!-- แถบข้อมูลด้านบน (Topbar) -->
+  <header class="site-header">
+    <div class="topbar">
+      <div class="container topbar-content">
+        <div class="topbar-items">
+          <div class="topbar-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+            <span>สายด่วนปรึกษา: <span id="topbarHotline" data-cms="hotline">081-234-5678, 073-xxx-xxx</span></span>
+          </div>
+          <div class="topbar-item">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            <span>เวลาทำการ: <span id="topbarHours" data-cms="business_hours">จันทร์ - เสาร์ 08:30 - 18:00 น.</span></span>
+          </div>
+        </div>
+        <div class="topbar-badge">
+          ⚖️ ใบอนุญาตว่าความประเภทตลอดชีพ (ชั้น 1) สภาทนายความ
+        </div>
+      </div>
+    </div>
+
+    <!-- เมนูนำทางหลัก (Navbar) -->
+    <div class="container">
+      <nav class="navbar">
+        <a href="index.html" class="brand-logo">
+          <div class="brand-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 3v18"></path>
+              <path d="m3 7 9-4 9 4"></path>
+              <path d="M3 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+              <path d="M11 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title">สำนักงานทนายความชั้น 1</div>
+            <div class="brand-subtitle">รับว่าความทั่วราชอาณาจักร • สภาทนายความฯ</div>
+          </div>
+        </a>
+
+        <ul class="nav-menu">
+          <li><a href="index.html" class="nav-link">หน้าแรก</a></li>
+          <li><a href="about.html" class="nav-link">เกี่ยวกับเรา</a></li>
+          <li><a href="services.html" class="nav-link active">บริการและราคา</a></li>
+          <li><a href="booking.html" class="nav-link">จองคิว</a></li>
+          <li><a href="contact.html" class="nav-link">ติดต่อเรา</a></li>
+        </ul>
+
+        <div class="nav-actions">
+          <a href="booking.html" class="btn btn-primary btn-nav-cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>จองคิวปรึกษา</span>
+          </a>
+          <button class="menu-toggle" aria-label="Toggle navigation">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+          </button>
+        </div>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ส่วนหัวหน้าเว็บ (Header) -->
+  <section style="background: radial-gradient(circle at center, #e8f5ec, #f3f8f5); padding: 50px 0; text-align: center; border-bottom: 1px solid var(--border-color);">
+    <div class="container">
+      <span class="section-tag">ความเชี่ยวชาญเฉพาะทาง & ขอบเขตพื้นที่</span>
+      <h1 style="font-size: 2.35rem; color: var(--primary-dark); font-weight: 700; margin-top: 8px;">
+        บริการทางกฎหมาย & อัตราค่าวิชาชีพ
+      </h1>
+      <p style="color: var(--text-muted); max-width: 720px; margin: 10px auto 0; font-size: 1.05rem; line-height: 1.7;">
+        ว่าความโดยทนายความชั้น 1 อาวุโส ประสบการณ์ยาวนานกว่า 35 - 40 ปี เน้นดูแลพื้นที่จังหวัดปัตตานี และ 4 จังหวัดใกล้เคียง ด้วยเรทราคาที่โปร่งใส เป็นธรรม และชัดเจน
+      </p>
+    </div>
+  </section>
+
+  <!-- ส่วนที่ 1: ขอบเขตพื้นที่ให้บริการ (Service Area Scope) -->
+  <section class="section" style="padding-bottom: 20px;">
+    <div class="container">
+      <div class="area-coverage-card">
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+          <div style="width: 36px; height: 36px; background: var(--primary-soft); color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.1rem;">
+            📍
+          </div>
+          <div>
+            <h2 style="font-size: 1.4rem; color: var(--primary-dark); font-weight: 700; margin: 0;">
+              ขอบเขตพื้นที่รับว่าความและดำเนินคดี
+            </h2>
+            <span style="font-size: 0.85rem; color: var(--text-muted);">
+              เน้นรับงานในพื้นที่จังหวัดปัตตานีเป็นหลัก และ 4 จังหวัด/พื้นที่ใกล้เคียงเท่านั้น
+            </span>
+          </div>
+        </div>
+
+        <p style="color: var(--text-main); font-size: 0.98rem; line-height: 1.7; margin: 15px 0;">
+          สำนักงานทนายความของเรามุ่งเน้นการดูแลคดีอย่างทั่วถึง ละเอียดรอบคอบ และติดตามกระบวนพิจารณาในชั้นศาลด้วยตนเองทุกนัด จึงกำหนดขอบเขตพื้นที่ให้บริการหลักดังนี้:
+        </p>
+
+        <div class="area-pills">
+          <div class="area-pill primary">
+            ★ พื้นที่หลัก: จังหวัดปัตตานี (ศาลจังหวัดปัตตานี)
+          </div>
+          <div class="area-pill">
+            ✓ จังหวัดนราธิวาส
+          </div>
+          <div class="area-pill">
+            ✓ จังหวัดสงขลา
+          </div>
+          <div class="area-pill">
+            ✓ อำเภอหาดใหญ่
+          </div>
+          <div class="area-pill">
+            ✓ จังหวัดยะลา
+          </div>
+        </div>
+
+        <div style="background: #fefce8; border: 1.5px solid #fef08a; border-radius: var(--radius-md); padding: 16px 20px; margin-top: 18px; display: flex; align-items: flex-start; gap: 12px;">
+          <span style="font-size: 1.3rem; line-height: 1;">ℹ️</span>
+          <div style="font-size: 0.92rem; color: #854d0e; line-height: 1.7;">
+            <strong>ชี้แจงเพื่อความโปร่งใสและประโยชน์สูงสุดของลูกความ:</strong> 
+            เน้นรับงานในพื้นที่ปัตตานี และ 4 จังหวัดใกล้เคียง ได้แก่ นราธิวาส, สงขลา, หาดใหญ่, และยะลา เพื่อให้ทนายความสามารถทุ่มเทเวลาและใส่ใจติดตามรายละเอียดข้อเท็จจริงในสำนวนคดีของลูกความทุกท่านได้อย่างใกล้ชิด รัดกุม และมีประสิทธิภาพสูงสุด สำหรับคดีที่ต้องออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ส่วนที่ 2: อัตราค่าบริการวิชาชีพที่ชัดเจนและโปร่งใส (Fee Schedule) -->
+  <section class="section" style="background-color: var(--white); padding-top: 30px;">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">อัตราค่าวิชาชีพที่โปร่งใส</span>
+        <h2 class="section-title">เรทค่าบริการว่าความและดำเนินคดี</h2>
+        <p class="section-desc">กำหนดอัตราค่าวิชาชีพอย่างตรงไปตรงมา ยุติธรรมตามปริมาณงานจริง ไม่มีค่าใช้จ่ายแอบแฝง</p>
+      </div>
+
+      <div class="pricing-grid">
+
+        <!-- เรท 1: คดีทั่วไปในพื้นที่ (Highlight) -->
+        <div class="pricing-card featured">
+          <span class="pricing-badge">คดีทั่วไปในพื้นที่</span>
+          <div class="pricing-header">
+            <h3>คดีทั่วไปในพื้นที่ (ปัตตานี)</h3>
+            <p>การดำเนินคดีและงานเอกสารในพื้นที่จังหวัดปัตตานี</p>
+            <div class="pricing-amount" style="margin-top: 12px;">
+              เริ่มต้น <span data-cms="services_start_price">7,000</span> <span>บาท</span>
+            </div>
+            <div style="font-size: 0.85rem; color: var(--primary); font-weight: 600; line-height: 1.5; margin-top: 6px;">
+              * ค่าบริการเริ่มต้นที่ 7,000 บาท (ขึ้นอยู่กับประเภทและความยากง่ายของคดี ซึ่งบางคดีราคานี้เป็นไปได้)
+            </div>
+          </div>
+
+          <ul class="pricing-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ยื่นคำร้องขอตั้งผู้จัดการมรดก / แบ่งมรดกเบื้องต้น</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>คดีแพ่งผิดสัญญา สัญญากู้ยืมเงิน ติดตามหนี้สิน</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>คดีครอบครัว ฟ้องหย่า อำนาจปกครองบุตร รับรองบุตร</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ไกล่เกลี่ยประนีประนอมยอมความในชั้นศาล</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ทำหนังสือทวงถาม (Notice) และร่างนิติกรรมสัญญา</span>
+            </li>
+          </ul>
+
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">
+            จองคิวปรึกษาคดีทั่วไป
+          </a>
+        </div>
+
+        <!-- เรท 2: ออกนอกสถานที่ หรือเดินทางไปต่างจังหวัด (หมวดหมู่แยกต่างหาก) -->
+        <div class="pricing-card" style="border: 2px solid #fdba74; background: #fffaf5;">
+          <span class="pricing-badge" style="background: #ea580c; color: #fff;">ออกนอกสถานที่ / ต่างจังหวัด</span>
+          <div class="pricing-header">
+            <h3>ออกนอกสถานที่ / ต่างจังหวัด</h3>
+            <p>พื้นที่: นราธิวาส, สงขลา, หาดใหญ่, และยะลา</p>
+            <div style="background: #fee2e2; border: 1.5px solid #f87171; border-radius: var(--radius-md); padding: 12px; margin: 12px 0; text-align: left;">
+              <div data-cms="services_province_note" style="color: #991b1b; font-size: 0.92rem; font-weight: 700; line-height: 1.55;">
+                📢 "กรณีออกนอกพื้นที่หรือต่างจังหวัด ลูกค้าต้องเข้ามาพูดคุยตกลงรายละเอียดและราคากับทนายความโดยตรงที่สำนักงานเท่านั้น"
+              </div>
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              พิจารณาตามระยะทาง ค่าพาหนะเดินทาง และจำนวนนัดพิจารณาคดีจริง
+            </div>
+          </div>
+
+          <ul class="pricing-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ว่าความศาลในพื้นที่จังหวัดนราธิวาส</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ว่าความศาลในพื้นที่จังหวัดสงขลา และอำเภอหาดใหญ่</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ว่าความศาลในพื้นที่จังหวัดยะลา</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>วิเคราะห์รูปคดีและตรวจสำนวนร่วมกับทนายความตัวจริง</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ทำสัญญาจ้างว่าความระบุเงื่อนไขอย่างชัดเจนที่สำนักงาน</span>
+            </li>
+          </ul>
+
+          <a href="booking.html" class="btn btn-outline" style="margin-top: auto; width: 100%; border-color: #ea580c; color: #c2410c;">
+            นัดหมายเข้ามาพบทนายที่สำนักงาน
+          </a>
+        </div>
+
+        <!-- เรท 3: คดีใหญ่ & คดีพิเศษ -->
+        <div class="pricing-card">
+          <div class="pricing-header">
+            <h3>คดีใหญ่ & คดีพิเศษอื่นๆ</h3>
+            <p>คดีอาญาสำคัญ คดีเร่งด่วน หรือคดีธุรกิจเฉพาะด้าน</p>
+            <div class="pricing-amount" style="font-size: 1.45rem; color: #dc2626; margin-top: 12px;">
+              ตกลงกับทนายโดยตรง
+            </div>
+            <div style="font-size: 0.82rem; color: var(--text-muted);">
+              สายตรงทนายความอาวุโสเพื่อความรวดเร็วและเป็นความลับ
+            </div>
+          </div>
+
+          <ul class="pricing-features">
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>คดีอาญาที่มีอัตราโทษสูง หรือถูกดำเนินคดีอย่างไม่เป็นธรรม</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัวเร่งด่วน) ในชั้นศาล</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ร่วมรับฟังการสอบสวนกับพนักงานสอบสวนในคดีสำคัญ</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>ข้อพิพาทระหว่างหุ้นส่วน สัญญาธุรกิจ และการฟ้องคดีบริษัท</span>
+            </li>
+            <li>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              <span>รับคำแนะนำแนวทางการต่อสู้คดีจากทนายความอาวุโสโดยตรง</span>
+            </li>
+          </ul>
+
+          <a href="tel:0812345678" class="btn btn-secondary" style="margin-top: auto; width: 100%; border: 1px solid var(--border-color);" data-cms-tel="hotline">
+            📞 โทร <span data-cms-phone-only="hotline">081-234-5678</span> (สายตรง)
+          </a>
+        </div>
+
+      </div>
+
+      <!-- แถบการันตีความโปร่งใส -->
+      <div style="margin-top: 35px; background: var(--primary-bg); border-radius: var(--radius-md); padding: 18px 24px; text-align: center; border: 1px solid var(--border-color);">
+        <p style="font-size: 0.95rem; color: var(--primary-dark); font-weight: 500; margin: 0;">
+          ⚖️ <strong>หลักการคิดค่าวิชาชีพ:</strong> สำนักงานเราชี้แจงค่าบริการวิชาชีพและค่าธรรมเนียมศาลอย่างตรงไปตรงมาก่อนเริ่มงาน มีสัญญาจ้างว่าความชัดเจน ไม่มีค่าใช้จ่ายแอบแฝง
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ส่วนที่ 3: รายละเอียดบริการทั้ง 5 หมวดคดี -->
+  <section class="section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-tag">ประเภทคดีที่รับดูแล</span>
+        <h2 class="section-title">บริการด้านกฎหมาย 5 หมวดหลัก</h2>
+        <p class="section-desc">ว่าความด้วยความรอบคอบและประสบการณ์สูงในศาลยุติธรรม</p>
+      </div>
+
+      <div class="services-grid services-category-grid">
+
+        <!-- บริการ 1: คดีแพ่งและพาณิชย์ -->
+        <div class="service-card" id="civil">
+          <div class="service-header">
+            <div class="service-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+            </div>
+            <div>
+              <h3 class="service-title">คดีแพ่งและพาณิชย์</h3>
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Civil & Commercial Cases</span>
+            </div>
+          </div>
+          <p class="service-desc">
+            รับว่าความฟ้องร้องและแก้ต่างข้อพิพาททางแพ่ง บังคับตามสัญญา เรียกเงินกู้ยืม ติดตามหนี้สิน ละเมิด และบังคับคดี
+          </p>
+          <ul class="service-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ฟ้องคดีสัญญากู้ยืมเงิน สัญญาจะซื้อจะขาย และเช็คเด้ง</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีฟ้องขับไล่ ข้อพิพาทเรื่องกรรมสิทธิ์ที่ดิน และภาระจำยอม</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีละเมิด อุบัติเหตุจราจร เรียกค่าสินไหมทดแทน</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> สืบทรัพย์ บังคับคดี ยึดทรัพย์ และอายัดบัญชี</li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">จองคิวปรึกษาคดีแพ่ง</a>
+        </div>
+
+        <!-- บริการ 2: คดีอาญา -->
+        <div class="service-card" id="criminal">
+          <div class="service-header">
+            <div class="service-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+            </div>
+            <div>
+              <h3 class="service-title">คดีอาญาทุกประเภท</h3>
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Criminal Defense & Prosecution</span>
+            </div>
+          </div>
+          <p class="service-desc">
+            ดำเนินคดีอาญาอย่างมืออาชีพ ทั้งในฐานะทนายโจทก์ฟ้องคดี และทนายจำเลยแก้ต่างเพื่อพิสูจน์ความบริสุทธิ์
+          </p>
+          <ul class="service-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดียักยอก ฉ้อโกง บุกรุก เอกสารเท็จ</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีทำร้ายร่างกาย ประมาทเป็นเหตุให้ผู้อื่นถึงแก่ความตาย</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ยื่นคำร้องขอปล่อยชั่วคราว (ประกันตัว) ในชั้นสอบสวนและศาล</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีความผิดตาม พ.ร.บ.คอมพิวเตอร์ และหมิ่นประมาท</li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">จองคิวปรึกษาคดีอาญา</a>
+        </div>
+
+        <!-- บริการ 3: มรดกและพินัยกรรม -->
+        <div class="service-card" id="inheritance">
+          <div class="service-header">
+            <div class="service-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+            </div>
+            <div>
+              <h3 class="service-title">คดีมรดกและพินัยกรรม</h3>
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Inheritance & Wills</span>
+            </div>
+          </div>
+          <p class="service-desc">
+            จัดการเรื่องทรัพย์สินมรดกให้ถูกต้องเรียบร้อย ยื่นคำร้องตั้งผู้จัดการมรดก และระงับข้อพิพาทระหว่างทายาท
+          </p>
+          <ul class="service-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ยื่นคำร้องขอตั้งผู้จัดการมรดกทั่วราชอาณาจักร (รวดเร็ว)</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ฟ้องแบ่งทรัพย์มรดก ฟ้องเพิกถอนนิติกรรมโอนมรดกมิชอบ</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ร่างพินัยกรรมแบบเขียนเอง หรือพินัยกรรมฝ่ายเมือง</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ไกล่เกลี่ยประนีประนอมแบ่งมรดกในครอบครัว</li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">จองคิวปรึกษาคดีมรดก</a>
+        </div>
+
+        <!-- บริการ 4: ครอบครัวและเยาวชน -->
+        <div class="service-card" id="family">
+          <div class="service-header">
+            <div class="service-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+            </div>
+            <div>
+              <h3 class="service-title">คดีครอบครัวและเยาวชน</h3>
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Family Law Cases</span>
+            </div>
+          </div>
+          <p class="service-desc">
+            ดำเนินคดีด้วยความเข้าใจ ละเอียดอ่อน และเน้นประโยชน์สูงสุดของบุตรผู้เยาว์และสิทธิอันชอบธรรม
+          </p>
+          <ul class="service-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีฟ้องหย่า เรียกค่าเลี้ยงดู ค่าอุปการะเลี้ยงดูบุตร</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ฟ้องแบ่งสินสมรส และหนี้สินระหว่างสมรส</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> คดีขอใช้อำนาจปกครองบุตรแต่เพียงผู้เดียว และรับรองบุตร</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> จัดทำบันทึกข้อตกลงการหย่าแนบท้ายทะเบียนหย่า</li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">จองคิวปรึกษาคดีครอบครัว</a>
+        </div>
+
+        <!-- บริการ 5: นิติกรรมสัญญาและที่ปรึกษาธุรกิจ -->
+        <div class="service-card" id="contracts">
+          <div class="service-header">
+            <div class="service-icon-wrap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+            </div>
+            <div>
+              <h3 class="service-title">ร่างสัญญาและที่ปรึกษา</h3>
+              <span style="font-size: 0.8rem; color: var(--primary); font-weight: 600;">Contracts & Legal Advisor</span>
+            </div>
+          </div>
+          <p class="service-desc">
+            ร่างและตรวจสัญญาเพื่อปิดช่องโหว่ความเสี่ยงทางกฎหมาย ออกหนังสือบอกกล่าวทวงถาม และรับเป็นที่ปรึกษาประจำ
+          </p>
+          <ul class="service-list">
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ตรวจและร่างสัญญาจะซื้อจะขาย สัญญาเช่า สัญญาจ้าง</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> ทำหนังสือบอกกล่าวทวงถาม (Notice) ก่อนฟ้องคดี</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> บริการที่ปรึกษากฎหมายประจำสำนักงานและห้างหุ้นส่วน</li>
+            <li><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg> เจรจาต่อรองระงับข้อพิพาททางธุรกิจ</li>
+          </ul>
+          <a href="booking.html" class="btn btn-primary" style="margin-top: auto; width: 100%;">จองคิวปรึกษาตรวจร่างสัญญา</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ส่วนท้ายเว็บไซต์ (Footer) -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <h4>สำนักงานทนายความชั้น 1</h4>
+          <p>ให้บริการปรึกษากฎหมายและรับว่าความทั่วราชอาณาจักร ด้วยความซื่อสัตย์สุจริต เที่ยงธรรม และเชี่ยวชาญ</p>
+          <div class="footer-badge">
+            ✓ สภาทนายความในพระบรมราชูปถัมภ์
+          </div>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">เมนูหลัก</h5>
+          <ul class="footer-links">
+            <li><a href="index.html">หน้าแรก</a></li>
+            <li><a href="about.html">เกี่ยวกับเรา</a></li>
+            <li><a href="services.html">บริการและราคา</a></li>
+            <li><a href="booking.html">จองคิว</a></li>
+            <li><a href="contact.html">ติดต่อเรา</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">บริการกฎหมาย</h5>
+          <ul class="footer-links">
+            <li><a href="services.html#civil">คดีแพ่งและพาณิชย์</a></li>
+            <li><a href="services.html#criminal">คดีอาญาทุกประเภท</a></li>
+            <li><a href="services.html#inheritance">คดีมรดกและพินัยกรรม</a></li>
+            <li><a href="services.html#family">คดีครอบครัวและฟ้องหย่า</a></li>
+            <li><a href="services.html#contracts">ร่างสัญญาและที่ปรึกษา</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h5 class="footer-heading">ติดต่อสำนักงาน</h5>
+          <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 8px;">
+            อำเภอเมืองปัตตานี จังหวัดปัตตานี (ดูแลคดีปัตตานี, นราธิวาส, สงขลา, หาดใหญ่, ยะลา)
+          </p>
+          <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 8px;">
+            โทรศัพท์: <span data-cms="hotline">081-234-5678, 073-xxx-xxx</span>
+          </p>
+          <p style="font-size: 0.88rem; color: #94a3b8;">
+            LINE Official: @lawyer1th
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          © 2026 สำนักงานทนายความชั้น 1 (รับว่าความทั่วราชอาณาจักร). สงวนลิขสิทธิ์ทุกประการ.
+        </div>
+        <div class="footer-admin-wrap">
+          <a href="admin/login.html" class="footer-admin-link" title="ระบบบริหารจัดการสำหรับผู้ดูแลสำนักงาน">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="vertical-align: -1px; margin-right: 4px; opacity: 0.7;">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>Admin Login</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="assets/js/supabase-config.js"></script>
+  <script src="assets/js/main.js"></script>
+</body>
+</html>

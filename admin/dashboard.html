@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบบริหารจัดการเว็บไซต์ (Admin Dashboard) | สำนักงานทนายความชั้น 1</title>
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="stylesheet" href="../assets/css/admin.css">
+  <script>
+    // Route Protection: ตรวจสอบสถานะการเข้าสู่ระบบทันทีก่อนเรนเดอร์หน้าเว็บ
+    (function() {
+      const isAuth = localStorage.getItem('lawyer_admin_authenticated');
+      if (isAuth !== 'true') {
+        window.location.replace('login.html');
+      }
+    })();
+  </script>
+</head>
+<body class="admin-app-layout">
+
+  <!-- ฉากหลังสำหรับ Mobile Drawer (Backdrop) -->
+  <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeMobileSidebar()"></div>
+
+  <!-- ============================================================== -->
+  <!-- SIDEBAR NAVIGATION (แถบเมนูด้านข้าง)                             -->
+  <!-- ============================================================== -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <!-- ส่วนหัว Sidebar -->
+    <div class="sidebar-header">
+      <a href="dashboard.html" class="sidebar-brand">
+        <div class="sidebar-brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 3v18"></path>
+            <path d="m3 7 9-4 9 4"></path>
+            <path d="M3 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+            <path d="M11 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
+          </svg>
+        </div>
+        <div class="sidebar-brand-text">
+          <h1>สนง.ทนายความชั้น 1</h1>
+          <span>Admin Portal</span>
+        </div>
+      </a>
+      <button type="button" class="sidebar-close-btn" onclick="closeMobileSidebar()" title="ปิดแถบเมนู">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+
+    <!-- แถบแสดงสถานะระบบ Supabase -->
+    <div class="sidebar-status-banner" id="sidebarStatusBanner" onclick="openSupabaseModal()" style="cursor: pointer;" title="คลิกเพื่อตรวจสอบหรือตั้งค่าการเชื่อมต่อ Supabase">
+      <div class="status-dot-pulse" id="sidebarStatusDot"></div>
+      <div class="status-banner-text" id="sidebarStatusText">
+        Supabase Cloud Synced 🟢
+      </div>
+    </div>
+
+    <!-- รายการเมนูหลัก 4 หมวดหมู่ตามที่กำหนด -->
+    <nav class="sidebar-nav">
+      <div class="nav-section-label">เมนูการจัดการหลัก</div>
+
+      <!-- เมนูที่ 1: จัดการคิวปรึกษา -->
+      <button type="button" class="sidebar-nav-item active" data-section="appointments" onclick="switchAdminSection('appointments')">
+        <div class="nav-item-content">
+          <div class="nav-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+          </div>
+          <span>จัดการคิวปรึกษา</span>
+        </div>
+        <span class="sidebar-badge" id="sidebarPendingBadge" style="display: none;">0</span>
+      </button>
+
+      <!-- เมนูที่ 2: ตั้งค่าการติดต่อ & เวลาทำการ -->
+      <button type="button" class="sidebar-nav-item" data-section="contact" onclick="switchAdminSection('contact')">
+        <div class="nav-item-content">
+          <div class="nav-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+            </svg>
+          </div>
+          <span>การติดต่อ & เวลาทำการ</span>
+        </div>
+      </button>
+
+      <!-- เมนูที่ 3: จัดการเนื้อหาหน้าเว็บไซต์ (CMS) -->
+      <button type="button" class="sidebar-nav-item" data-section="cms" onclick="switchAdminSection('cms')">
+        <div class="nav-item-content">
+          <div class="nav-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+            </svg>
+          </div>
+          <span>จัดการเนื้อหาเว็บไซต์</span>
+        </div>
+      </button>
+
+      <!-- เมนูที่ 4: จัดลำดับหน้า/เมนู -->
+      <button type="button" class="sidebar-nav-item" data-section="menu" onclick="switchAdminSection('menu')">
+        <div class="nav-item-content">
+          <div class="nav-item-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="8" y1="6" x2="21" y2="6"></line>
+              <line x1="8" y1="12" x2="21" y2="12"></line>
+              <line x1="8" y1="18" x2="21" y2="18"></line>
+              <line x1="3" y1="6" x2="3.01" y2="6"></line>
+              <line x1="3" y1="12" x2="3.01" y2="12"></line>
+              <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+          </div>
+          <span>จัดลำดับหน้า / เมนู</span>
+        </div>
+      </button>
+    </nav>
+
+    <!-- ส่วนท้าย Sidebar -->
+    <div class="sidebar-footer">
+      <!-- ข้อมูลผู้ดูแลระบบที่กำลังเข้าสู่ระบบ -->
+      <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: var(--radius-md); padding: 10px 12px; margin-bottom: 4px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+          <span style="font-size: 0.72rem; color: #065f46; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700;">
+            🟢 ผู้ดูแลระบบออนไลน์
+          </span>
+          <span style="font-size: 0.7rem; color: #047857; font-weight: 600; background: #d1fae5; padding: 1px 6px; border-radius: 4px;">Admin</span>
+        </div>
+        <div style="font-size: 0.86rem; font-weight: 700; color: var(--primary-dark); overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" id="currentAdminEmail">
+          ผู้ดูแลระบบ (Admin)
+        </div>
+      </div>
+
+      <div class="sidebar-footer-links">
+        <a href="../index.html" target="_blank" class="btn-sidebar-action" title="เปิดดูหน้าแรกของเว็บไซต์">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          เว็บจริง
+        </a>
+        <button type="button" class="btn-sidebar-action" onclick="handleAdminLogout()" style="background: #fee2e2; border-color: #fca5a5; color: #b91c1c; cursor: pointer;" title="ออกจากระบบผู้ดูแล">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+          ออกระบบ
+        </button>
+      </div>
+      <div class="sidebar-version">
+        สำนักงานทนายความชั้น 1 • v2.0
+      </div>
+    </div>
+  </aside>
+
+  <!-- ============================================================== -->
+  <!-- MAIN CONTENT AREA (พื้นที่แสดงเนื้อหาหลักฝั่งขวา)               -->
+  <!-- ============================================================== -->
+  <div class="admin-main-wrapper">
+    <!-- แถบด้านบนของเนื้อหา (Topbar Header) -->
+    <header class="admin-topbar-header">
+      <div class="topbar-container">
+        <div class="topbar-left">
+          <!-- ปุ่มเปิด Hamburger บนมือถือ -->
+          <button type="button" class="sidebar-toggle-btn" onclick="toggleMobileSidebar()" title="เปิด/ปิด แถบเมนูด้านข้าง">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+          </button>
+          
+          <div class="topbar-page-info">
+            <h2 class="topbar-page-title" id="topbarPageTitle">📋 จัดการคิวปรึกษาคดีความ</h2>
+            <div class="topbar-page-desc" id="topbarPageDesc">
+              ตรวจสอบรายชื่อลูกความ นัดหมายปรึกษา อัปเดตสถานะ และเชื่อมต่อฐานข้อมูล Supabase
+            </div>
+          </div>
+        </div>
+
+        <div class="topbar-actions">
+          <button type="button" class="btn btn-outline btn-sm" onclick="refreshAllAdminData()" title="ดึงข้อมูลล่าสุดจาก Supabase">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="23 4 23 10 17 10"></polyline>
+              <polyline points="1 20 1 14 7 14"></polyline>
+              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+            </svg>
+            <span>ซิงค์ข้อมูล</span>
+          </button>
+          <a href="../index.html" target="_blank" class="btn btn-primary btn-sm">
+            <span>ดูหน้าเว็บหลัก</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          </a>
+          <button type="button" class="btn btn-outline btn-sm" onclick="handleAdminLogout()" style="color: #dc2626; border-color: rgba(220, 38, 38, 0.4);" title="ออกจากระบบผู้ดูแล">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+            <span>ออกจากระบบ</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- พื้นที่คอนเทนต์เนื้อหาแต่ละหมวดหมู่ (Section Containers) -->
+    <main class="admin-content-body">
+
+      <!-- ============================================================== -->
+      <!-- SECTION 1: จัดการคิวปรึกษา (Appointments)                      -->
+      <!-- ============================================================== -->
+      <section id="section-appointments" class="admin-section active">
+        <div class="section-banner-card">
+          <div>
+            <h3 class="section-banner-title">ระบบจัดการคิวและนัดหมายปรึกษากฎหมาย</h3>
+            <p class="section-banner-desc">
+              ข้อมูลที่บันทึกผ่านหน้าเว็บไซต์จะส่งตรงเข้ามายังตารางนี้แบบอัตโนมัติ คุณสามารถตรวจสอบรายละเอียดข้อเท็จจริง เปลี่ยนสถานะ และจัดการข้อมูลได้แบบเรียลไทม์
+            </p>
+          </div>
+          <div>
+            <button type="button" class="btn btn-outline btn-sm" style="background: rgba(255,255,255,0.18); color: #ffffff; border-color: rgba(255,255,255,0.5); font-weight: 600;" onclick="openSupabaseModal()">
+              ⚙️ ตั้งค่าเชื่อมต่อ Supabase
+            </button>
+          </div>
+        </div>
+
+        <!-- การ์ดสรุปตัวเลขสถิติ (Stat Cards) -->
+        <div class="stats-grid" style="margin-top: 0; margin-bottom: 24px;">
+          <div class="stat-card">
+            <div class="stat-icon-wrap slate">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            </div>
+            <div>
+              <div class="stat-card-number" id="statTotal">0</div>
+              <div class="stat-card-label">การจองทั้งหมด</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap amber">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </div>
+            <div>
+              <div class="stat-card-number" id="statPending">0</div>
+              <div class="stat-card-label">รอดำเนินการ / ติดต่อกลับ</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap green">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+            </div>
+            <div>
+              <div class="stat-card-number" id="statConfirmed">0</div>
+              <div class="stat-card-label">ยืนยันนัดหมายแล้ว</div>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon-wrap blue">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            </div>
+            <div>
+              <div class="stat-card-number" id="statCompleted">0</div>
+              <div class="stat-card-label">ปรึกษาเสร็จสิ้น</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- แถบค้นหาและตัวกรองสถานะ -->
+        <div class="dashboard-actions-bar">
+          <div class="search-box">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            <input type="text" id="searchInput" class="search-input" placeholder="ค้นหาตามชื่อลูกความ, เบอร์โทร, หรือประเภทคดี..." oninput="handleSearch(this.value)">
+          </div>
+
+          <div class="filter-pills" id="filterPillsContainer">
+            <span style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-right: 4px;">ตัวกรอง:</span>
+            <button type="button" class="filter-pill active" onclick="setFilter('all')">ทั้งหมด (<span id="filterCountAll">0</span>)</button>
+            <button type="button" class="filter-pill" onclick="setFilter('pending')">รอดำเนินการ (<span id="filterCountPending">0</span>)</button>
+            <button type="button" class="filter-pill" onclick="setFilter('confirmed')">ยืนยันแล้ว (<span id="filterCountConfirmed">0</span>)</button>
+            <button type="button" class="filter-pill" onclick="setFilter('completed')">เสร็จสิ้น (<span id="filterCountCompleted">0</span>)</button>
+          </div>
+        </div>
+
+        <!-- ตารางรายการข้อมูลการจองคิว -->
+        <div class="table-card">
+          <div class="table-responsive">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>รหัสการจอง</th>
+                  <th>ข้อมูลลูกความ</th>
+                  <th>ประเภทคดี</th>
+                  <th>วันและเวลานัดหมาย</th>
+                  <th>ช่องทางปรึกษา</th>
+                  <th>สถานะ</th>
+                  <th style="text-align: center;">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody id="bookingsTableBody">
+                <!-- เรนเดอร์ผ่าน JavaScript admin.js -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- การ์ดบันทึกและแจ้งเตือนความเคลื่อนไหวล่าสุดในระบบ (Live Activity Feed) -->
+        <div class="activity-feed-card" style="margin-top: 28px; background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); overflow: hidden;">
+          <div style="padding: 18px 24px; border-bottom: 1px solid var(--border-color); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; background: linear-gradient(to right, #f8fafc, #ffffff);">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 40px; height: 40px; border-radius: 10px; background: #e0f2fe; color: #0284c7; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; box-shadow: 0 1px 3px rgba(2,132,199,0.15);">
+                📜
+              </div>
+              <div>
+                <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+                  <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--primary-dark); margin: 0;">
+                    บันทึกความเคลื่อนไหวล่าสุดในระบบ (Live Activity Feed)
+                  </h3>
+                  <span class="live-pulse-badge" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 600; padding: 2px 10px; border-radius: 999px; background: #dcfce7; color: #15803d; border: 1px solid #86efac;">
+                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 2px rgba(34,197,94,0.3);"></span>
+                    ตรวจจับสด Real-time
+                  </span>
+                </div>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin: 3px 0 0 0;">
+                  แสดงทุกความเคลื่อนไหว: เปิดหน้าเว็บ, กดโทรสายด่วน, กดเปิดแผนที่, จองคิว และการทำงานของแอดมิน (บันทึกอัตโนมัติ & แจ้งเตือนใน Console)
+                </p>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 8px; align-items: center;">
+              <button type="button" class="btn btn-outline btn-sm" onclick="renderActivityLogs()" title="รีเฟรชประวัติความเคลื่อนไหว">
+                🔄 ซิงค์รีเฟรช
+              </button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="if(confirm('ต้องการล้างประวัติความเคลื่อนไหวในระบบใช่หรือไม่?')) clearActivityLogs();" style="color: #dc2626; border-color: rgba(220,38,38,0.3);" title="ล้างประวัติความเคลื่อนไหว">
+                🗑️ ล้างประวัติ
+              </button>
+            </div>
+          </div>
+
+          <!-- แถบกรองประเภทความเคลื่อนไหว -->
+          <div style="padding: 12px 24px; background: #fafbfc; border-bottom: 1px solid var(--border-light); display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <span style="font-size: 0.82rem; color: var(--text-muted); font-weight: 600;">ตัวกรอง:</span>
+            <button type="button" class="activity-filter-btn active" onclick="filterActivityLogs('all', this)">ทั้งหมด (<span id="actCountAll">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('visit', this)">🌐 เข้าชมเว็บ (<span id="actCountVisit">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('click', this)">📞 กดโทร/แผนที่ (<span id="actCountClick">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('booking', this)">📝 ยื่นจองคิว (<span id="actCountBooking">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('status', this)">⚙️ จัดการคิว (<span id="actCountStatus">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('cms', this)">💾 บันทึก CMS (<span id="actCountCms">0</span>)</button>
+            <button type="button" class="activity-filter-btn" onclick="filterActivityLogs('auth', this)">🔐 แอดมินล็อกอิน (<span id="actCountAuth">0</span>)</button>
+          </div>
+
+          <!-- รายการความเคลื่อนไหว (Stream Container) -->
+          <div id="activityLogsContainer" style="max-height: 420px; overflow-y: auto; padding: 6px 16px;">
+            <!-- เรนเดอร์สดผ่าน JavaScript admin.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 2: ตั้งค่าการติดต่อ & เวลาทำการ (Contact & Office)      -->
+      <!-- ============================================================== -->
+      <section id="section-contact" class="admin-section">
+        <div class="cms-card">
+          <div class="cms-card-header">
+            <div>
+              <h3 class="cms-card-title">
+                <span style="font-size: 1.4rem;">📞</span>
+                ระบบจัดการเบอร์โทรและช่องทางติดต่อ (ปลอดภัยสำหรับทนายความ)
+              </h3>
+              <span style="font-size: 0.84rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                ข้อมูลในส่วนนี้จะถูกส่งไปแสดงผลบนแถบ Top Bar ด้านบนสุดของเว็บไซต์ทุกหน้า และที่หน้าติดต่อเรา (contact.html)
+              </span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="handleResetSiteSettings()">
+              ↺ คืนค่าเริ่มต้น
+            </button>
+          </div>
+
+          <!-- ข้อความเตือนความปลอดภัยของทนายความ -->
+          <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: var(--radius-md); padding: 16px 20px; margin-bottom: 24px; display: flex; gap: 14px; align-items: flex-start;">
+            <span style="font-size: 1.5rem; line-height: 1;">🛡️</span>
+            <div style="font-size: 0.9rem; color: #065f46; line-height: 1.6;">
+              <strong>คำแนะนำด้านความปลอดภัยสำหรับทนายความ:</strong>
+              เพื่อความปลอดภัยและความเป็นส่วนตัว แนะนำให้ใช้ <strong>"เบอร์สำนักงานกลาง"</strong> หรือ <strong>"เบอร์เฉพาะกิจสำหรับรับสายนัดหมาย" (เช่น 073-xxx-xxx)</strong> แทนเบอร์โทรศัพท์ส่วนตัว เพื่อป้องกันการถูกนำข้อมูลส่วนบุคคลไปเผยแพร่หรือใช้งานในทางที่ไม่เหมาะสม ข้อมูลที่บันทึกตรงนี้จะแสดงบน <strong>Top Bar ทุกหน้า</strong> ทันที
+            </div>
+          </div>
+
+          <form id="hotlineSettingsForm" onsubmit="handleSaveHotlineSettings(event)">
+            <div class="cms-grid-2" style="margin-bottom: 20px;">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingHotline">
+                  📞 เบอร์โทรศัพท์สายด่วน (Hotline):
+                </label>
+                <input type="text" id="settingHotline" class="form-control" placeholder="เช่น 073-xxx-xxx, 081-234-5678 (เบอร์กลางสำนักงาน)" required>
+                <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                  แสดงบน Top Bar ทุกหน้า และในการ์ดโทรศัพท์ติดต่อด่วน
+                </span>
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingHours">
+                  ⏰ เวลาทำการของสำนักงาน (Business Hours):
+                </label>
+                <input type="text" id="settingHours" class="form-control" placeholder="เช่น เปิดทุกวัน 06:00 - 18:00 น. (หมายเหตุ: นอกจากไม่ว่างหรือติดธุระส่วนตัวข้างนอก สำนักงานจะปิด)" required>
+                <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                  แสดงบน Top Bar ทุกหน้า และในกล่องเวลาเปิดทำการ
+                </span>
+              </div>
+            </div>
+
+            <div class="cms-grid-2" style="margin-bottom: 20px;">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingOfficePhone">
+                  ☎️ โทรศัพท์สำนักงาน / นัดหมาย:
+                </label>
+                <input type="text" id="settingOfficePhone" class="form-control" placeholder="เช่น 073-xxx-xxx">
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingLineId">
+                  💬 LINE Official ID:
+                </label>
+                <input type="text" id="settingLineId" class="form-control" placeholder="เช่น @lawyer1th">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 20px;">
+              <label class="form-label" for="settingAddress">
+                📍 ที่ตั้งสำนักงาน (Office Address):
+              </label>
+              <input type="text" id="settingAddress" class="form-control" placeholder="เช่น ทนายความ รอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี">
+            </div>
+
+            <div class="cms-grid-2" style="margin-bottom: 20px;">
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingMapsUrl">
+                  🗺️ ลิงก์ Google Maps สำหรับปุ่มนำทาง:
+                </label>
+                <input type="url" id="settingMapsUrl" class="form-control" placeholder="เช่น https://maps.app.goo.gl/2ukUyWUSAMQPn3DYA">
+                <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                  ลิงก์ที่ผู้ใช้งานคลิกเพื่อเปิดแอป Google Maps นำทางมายังสำนักงานจริง
+                </span>
+              </div>
+
+              <div class="form-group" style="margin: 0;">
+                <label class="form-label" for="settingMapsEmbed">
+                  📌 แผนที่ Embed URL (Google Maps iframe):
+                </label>
+                <input type="text" id="settingMapsEmbed" class="form-control" placeholder="เช่น https://maps.google.com/maps?q=6.8506101,101.2548708&hl=th&z=17&output=embed">
+                <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                  URL สำหรับแสดงแผนที่แบบโต้ตอบได้ในหน้า contact.html
+                </span>
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="form-label" for="settingVisitNote">
+                🚗 ข้อความหมายเหตุการเข้าพบ / ขอบเขตพื้นที่:
+              </label>
+              <textarea id="settingVisitNote" class="form-control" rows="2" placeholder="ข้อความชี้แจงการนัดหมายก่อนเข้าพบสำนักงาน"></textarea>
+            </div>
+
+            <!-- ตัวอย่างการแสดงผลแบบเรียลไทม์ (Live Preview Box) -->
+            <div class="live-preview-box">
+              <strong style="color: var(--primary-dark); display: block; margin-bottom: 8px;">
+                👁️ ตัวอย่างการแสดงผลบน Top Bar และหน้าติดต่อ:
+              </strong>
+              <div style="font-size: 0.9rem; color: var(--text-main); line-height: 1.7;">
+                • สายด่วน: <span id="previewHotline" style="font-weight: 700; color: var(--primary);">-</span><br>
+                • เวลาทำการ: <span id="previewHours" style="font-weight: 700; color: #b45309;">-</span><br>
+                • LINE ID: <span id="previewLine" style="font-weight: 700; color: #06c755;">-</span>
+              </div>
+            </div>
+
+            <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+              <button type="submit" class="btn btn-primary" style="padding: 12px 28px;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                บันทึกข้อมูลช่องทางติดต่อ (Save Settings)
+              </button>
+            </div>
+          </form>
+        </div>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 3: จัดการเนื้อหาหน้าเว็บไซต์ (Dynamic Content CMS)      -->
+      <!-- ============================================================== -->
+      <section id="section-cms" class="admin-section">
+        <form id="cmsContentForm" onsubmit="handleSaveCmsSettings(event)">
+          
+          <!-- แถบเลือกหน้าสำหรับแก้ไขเนื้อหา (CMS Sub-tabs) -->
+          <div class="cms-subnav">
+            <button type="button" class="cms-subnav-btn active" id="btn-cms-home" onclick="switchCmsSubTab('home')">
+              🏠 1. หน้าแรก (Home Page)
+            </button>
+            <button type="button" class="cms-subnav-btn" id="btn-cms-about" onclick="switchCmsSubTab('about')">
+              ⚖️ 2. หน้าเกี่ยวกับเรา (About Page)
+            </button>
+            <button type="button" class="cms-subnav-btn" id="btn-cms-services" onclick="switchCmsSubTab('services')">
+              💼 3. หน้าบริการและเรทราคา (Services)
+            </button>
+            <button type="button" class="cms-subnav-btn" id="btn-cms-contact" onclick="switchCmsSubTab('contact')">
+              📬 4. หน้าติดต่อเรา (Contact Page)
+            </button>
+          </div>
+
+          <!-- 3.1 ฟอร์มหน้าแรก (Home Page) -->
+          <div class="cms-subpane active" id="pane-cms-home">
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <div>
+                  <h3 class="cms-card-title">
+                    <span class="cms-priority-badge">ลำดับความสำคัญ 1</span>
+                    🏠 ตั้งค่าหน้าแรก (index.html)
+                  </h3>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                    ข้อความเด่นในส่วน Hero Banner และตัวเลขจุดขายสำคัญของสำนักงาน
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsHomeHeroTitle">สโลแกนหลัก / หัวเรื่องเด่น (Hero Title):</label>
+                <input type="text" id="cmsHomeHeroTitle" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsHomeHeroDesc">คำบรรยายสรุปใต้สโลแกน (Hero Subtitle):</label>
+                <textarea id="cmsHomeHeroDesc" class="form-control" rows="2" required></textarea>
+              </div>
+
+              <div class="cms-grid-3">
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsHomeStartPrice">ข้อความเรทราคาเริ่มต้น:</label>
+                  <input type="text" id="cmsHomeStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 ฿" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsHomeExpYears">จำนวนปีประสบการณ์:</label>
+                  <input type="text" id="cmsHomeExpYears" class="form-control" placeholder="เช่น กว่า 35 - 40 ปี" required>
+                </div>
+                <div class="form-group" style="margin: 0;">
+                  <label class="form-label" for="cmsHomePriceNote">หมายเหตุเรทราคา (สั้น):</label>
+                  <input type="text" id="cmsHomePriceNote" class="form-control" placeholder="* ขึ้นอยู่กับประเภทและความยากง่ายของคดี" required>
+                </div>
+              </div>
+
+              <!-- แบนเนอร์จองคิวด่วนท้ายหน้าแรก (Quick CTA Banner) ตามรูปต้นฉบับ -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 22px; margin-top: 22px;">
+                <h4 style="font-size: 1.05rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+                  <span>📢</span> แบนเนอร์จองคิวด่วนท้ายหน้าแรก (Quick CTA Banner)
+                </h4>
+                <p style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 16px; line-height: 1.4;">
+                  จัดการข้อความแถบสีเขียวเข้มท้ายหน้าแรก เพื่อกระตุ้นให้ลูกค้าติดต่อหรือจองคิว (หากแก้ไขเบอร์โทรศัพท์ที่เมนู "ตั้งค่าการติดต่อ" เบอร์ทั้งเว็บจะซิงค์ให้อัตโนมัติด้วย)
+                </p>
+
+                <div class="form-group">
+                  <label class="form-label" for="cmsHomeCtaTitle">หัวข้อแบนเนอร์ (CTA Heading):</label>
+                  <input type="text" id="cmsHomeCtaTitle" class="form-control" placeholder="เช่น มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="cmsHomeCtaDesc">คำบรรยายใต้หัวข้อ (CTA Description):</label>
+                  <textarea id="cmsHomeCtaDesc" class="form-control" rows="2" placeholder="เช่น จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์" required></textarea>
+                </div>
+
+                <div class="cms-grid-2" style="margin-bottom: 18px;">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeCtaBtnText">ข้อความปุ่มจองคิว (ปุ่มสีขาว):</label>
+                    <input type="text" id="cmsHomeCtaBtnText" class="form-control" placeholder="เช่น จองคิวออนไลน์ตอนนี้" required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsHomeCtaPhone">ข้อความปุ่มโทรด่วน (ปุ่มกรอบเส้น):</label>
+                    <input type="text" id="cmsHomeCtaPhone" class="form-control" placeholder="เช่น โทรด่วน 081-234-5678" required>
+                  </div>
+                </div>
+
+                <!-- กล่องตัวอย่างแสดงผลสด (Live Preview) เหมือนในหน้าแรกเป๊ะ 100% -->
+                <div style="background: #f8fafc; border: 1.5px dashed var(--primary-light); border-radius: var(--radius-lg); padding: 20px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; gap: 8px;">
+                    <strong style="color: var(--primary-dark); font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                      <span>👁️</span> ตัวอย่างแบนเนอร์แสดงผลจริงบนหน้าแรก (Live Preview):
+                    </strong>
+                    <span style="font-size: 0.78rem; color: #065f46; background: #d1fae5; border: 1px solid #a7f3d0; padding: 2px 10px; border-radius: var(--radius-full); font-weight: 600;">
+                      อัปเดตตามการพิมพ์ทันที
+                    </span>
+                  </div>
+
+                  <!-- จำลองแบนเนอร์สีเขียวเข้มพร้อมปุ่ม 2 ปุ่มตามรูปภาพ -->
+                  <div style="background: #1b4332; border-radius: var(--radius-md); padding: 34px 20px; text-align: center; color: var(--white); box-shadow: 0 4px 16px rgba(27, 67, 50, 0.25);">
+                    <h3 id="previewHomeCtaTitle" style="font-size: 1.35rem; font-weight: 700; margin-bottom: 10px; color: #ffffff;">
+                      มีปัญหาทางกฎหมาย หรือต้องการปรึกษาคดีด่วน?
+                    </h3>
+                    <p id="previewHomeCtaDesc" style="color: rgba(255,255,255,0.88); font-size: 0.92rem; max-width: 640px; margin: 0 auto 20px; line-height: 1.6;">
+                      จองคิวรับคำปรึกษากับทนายความชั้น 1 ได้ทันที ทั้งแบบเดินทางมาที่สำนักงาน หรือทางวิดีโอคอลออนไลน์และโทรศัพท์
+                    </p>
+                    <div style="display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; align-items: center;">
+                      <span id="previewHomeCtaBtnText" style="background: #ffffff; color: #1b4332; font-weight: 700; padding: 9px 22px; border-radius: var(--radius-md); font-size: 0.9rem; display: inline-block; box-shadow: 0 2px 8px rgba(0,0,0,0.15);">
+                        จองคิวออนไลน์ตอนนี้
+                      </span>
+                      <span id="previewHomeCtaPhone" style="background: transparent; color: #ffffff; border: 1.5px solid rgba(255,255,255,0.7); font-weight: 600; padding: 9px 22px; border-radius: var(--radius-md); font-size: 0.9rem; display: inline-block;">
+                        โทรด่วน 081-234-5678
+                      </span>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.2 ฟอร์มหน้าเกี่ยวกับเรา (About Page) -->
+          <div class="cms-subpane" id="pane-cms-about">
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <div>
+                  <h3 class="cms-card-title">
+                    <span class="cms-priority-badge">ลำดับความสำคัญ 2</span>
+                    ⚖️ หน้าเกี่ยวกับเรา (about.html)
+                  </h3>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                    เน้นข้อมูลประสบการณ์ 35-40 ปี และใบอนุญาตว่าความชั้น 1 ประเภทตลอดชีพ
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsAboutTitle">หัวข้อแนะนำสำนักงาน (Page Heading):</label>
+                <input type="text" id="cmsAboutTitle" class="form-control" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsAboutDesc">คำบรรยายหลัก (About Summary):</label>
+                <textarea id="cmsAboutDesc" class="form-control" rows="2" required></textarea>
+              </div>
+
+              <!-- ข้อมูลทนายความและประสบการณ์ว่าความ (ตามภาพต้นฉบับ) -->
+              <div style="border-top: 1px solid var(--border-color); padding-top: 22px; margin-top: 22px;">
+                <h4 style="font-size: 1.05rem; color: var(--primary-dark); font-weight: 700; margin-bottom: 14px; display: flex; align-items: center; gap: 8px;">
+                  <span>👤</span> ข้อมูลทนายความและประสบการณ์ว่าความด้านกฎหมาย (About Section)
+                </h4>
+
+                <div class="cms-grid-3" style="margin-bottom: 18px;">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutLawyerName">ชื่อทนายความ:</label>
+                    <input type="text" id="cmsAboutLawyerName" class="form-control" placeholder="เช่น ทนายความ ธนบดี นิติสิริ" required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutLawyerTitle">ตำแหน่ง / คุณวุฒิวิชาชีพ:</label>
+                    <input type="text" id="cmsAboutLawyerTitle" class="form-control" placeholder="เช่น ทนายความชั้น 1 อาวุโส (ประเภทตลอดชีพ)" required>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutLawyerExp">ป้ายประสบการณ์ (Badge):</label>
+                    <input type="text" id="cmsAboutLawyerExp" class="form-control" placeholder="เช่น ⚖️ ประสบการณ์ 35+ ถึงเกือบ 40 ปี" required>
+                  </div>
+                </div>
+
+                <!-- ช่องจัดการรูปภาพทนายความจริง -->
+                <div style="background: #f1f8f4; border: 1.5px solid #bbf7d0; border-radius: var(--radius-md); padding: 16px; margin-bottom: 18px;">
+                  <label class="form-label" style="font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+                    <span>📷</span> รูปภาพประจำตัวทนายความ (Profile Photo):
+                  </label>
+                  <p style="font-size: 0.83rem; color: var(--text-muted); margin-bottom: 12px; line-height: 1.4;">
+                    สามารถอัปโหลดไฟล์รูปภาพจริงจากเครื่อง หรือวางลิงก์รูปภาพ (URL) ได้ ระบบจะย่อขนาดให้คมชัดพอเหมาะ และแสดงในตัวอย่างสดทันที
+                  </p>
+                  
+                  <div style="display: flex; gap: 12px; align-items: center; flex-wrap: wrap;">
+                    <div style="flex: 1; min-width: 220px;">
+                      <label class="btn btn-outline btn-sm" style="display: inline-flex; align-items: center; gap: 6px; cursor: pointer; background: var(--white); width: 100%; justify-content: center; border-style: dashed; padding: 8px 14px; font-weight: 600;">
+                        <span>📁 เลือกไฟล์รูปภาพจากเครื่อง</span>
+                        <input type="file" id="cmsAboutLawyerPhotoFile" accept="image/*" style="display: none;">
+                      </label>
+                    </div>
+                    <div style="flex: 1.6; min-width: 260px;">
+                      <input type="text" id="cmsAboutLawyerImage" class="form-control" placeholder="หรือวางลิงก์ URL รูปภาพ เช่น https://... หรือ data:image/..." style="font-size: 0.88rem;">
+                    </div>
+                    <div>
+                      <button type="button" id="btnRemoveLawyerPhoto" class="btn btn-outline btn-sm" style="color: #dc2626; border-color: #fca5a5; white-space: nowrap;">
+                        🗑️ ลบรูป / ใช้ไอคอน
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="form-group" style="margin-bottom: 18px;">
+                  <label class="form-label" for="cmsAboutExpHeading">หัวข้อส่วนประสบการณ์ (Experience Heading):</label>
+                  <input type="text" id="cmsAboutExpHeading" class="form-control" placeholder="เช่น ประสบการณ์ว่าความและการทำงานด้านกฎหมาย" required>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 14px;">
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutExpItem1">✓ ประสบการณ์ข้อที่ 1 (ใบอนุญาตว่าความ/คุณวุฒิ):</label>
+                    <textarea id="cmsAboutExpItem1" class="form-control" rows="2" placeholder="เช่น ทนายความชั้น 1 (ใบอนุญาตว่าความประเภทตลอดชีพ): สภาทนายความในพระบรมราชูปถัมภ์ มีสิทธิว่าความดำเนินคดีทุกศาลทั่วราชอาณาจักร" required></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutExpItem2">✓ ประสบการณ์ข้อที่ 2 (ระยะเวลาและประเภทคดี):</label>
+                    <textarea id="cmsAboutExpItem2" class="form-control" rows="2" placeholder="เช่น ประสบการณ์ในวิชาชีพยาวนานกว่า 35 ถึงเกือบ 40 ปี: ผ่านการว่าความคดีแพ่ง คดีอาญา คดีที่ดิน และคดีมรดก ในศาลชั้นต้น ศาลอุทธรณ์ และศาลฎีกา มาอย่างยาวนานต่อเนื่อง" required></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutExpItem3">✓ ประสบการณ์ข้อที่ 3 (ความคุ้นเคยระบบศาลภาคใต้):</label>
+                    <textarea id="cmsAboutExpItem3" class="form-control" rows="2" placeholder="เช่น ความคุ้นเคยอย่างลึกซึ้งในระบบศาลพื้นที่ภาคใต้: โดยเฉพาะศาลจังหวัดปัตตานี, ศาลจังหวัดสงขลา, ศาลแขวงสงขลา, ศาลจังหวัดนาทวี, ศาลจังหวัดยะลา, และศาลจังหวัดนราธิวาส" required></textarea>
+                  </div>
+                  <div class="form-group" style="margin: 0;">
+                    <label class="form-label" for="cmsAboutExpItem4">✓ ประสบการณ์ข้อที่ 4 (ความเชี่ยวชาญและการวางรูปคดี):</label>
+                    <textarea id="cmsAboutExpItem4" class="form-control" rows="2" placeholder="เช่น เชี่ยวชาญการตรวจเอกสารและวางรูปคดีอย่างรอบคอบ: วิเคราะห์จุดได้เปรียบ-เสียเปรียบ อย่างตรงไปตรงมา คดีไหนควรไกล่เกลี่ยหรือควรฟ้องร้อง ชี้แจงลูกความตามความจริง" required></textarea>
+                  </div>
+                </div>
+
+                <!-- กล่องตัวอย่างแสดงผลจริง (Live Preview Card) แบบเดียวกับหน้าเว็บและภาพถ่าย -->
+                <div style="margin-top: 26px; background: #f8fafc; border: 1.5px dashed var(--primary-light); border-radius: var(--radius-lg); padding: 22px;">
+                  <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px;">
+                    <strong style="color: var(--primary-dark); font-size: 0.95rem; display: flex; align-items: center; gap: 8px;">
+                      <span>👁️</span> ตัวอย่างแสดงผลจริงบนหน้าเว็บ (Live Preview):
+                    </strong>
+                    <span style="font-size: 0.78rem; color: #065f46; background: #d1fae5; border: 1px solid #a7f3d0; padding: 2px 10px; border-radius: var(--radius-full); font-weight: 600;">
+                      อัปเดตตามการพิมพ์ทันที
+                    </span>
+                  </div>
+
+                  <!-- จำลองการแสดงผลเหมือนในรูปที่ผู้ใช้ส่งมาเป๊ะ -->
+                  <div style="background: var(--white); border-radius: var(--radius-lg); padding: 28px; border: 1px solid var(--border-color); box-shadow: var(--shadow-sm); display: grid; grid-template-columns: 240px 1fr; gap: 28px; align-items: center;">
+                    
+                    <!-- การ์ดฝั่งซ้าย: โปรไฟล์ทนายความ -->
+                    <div style="background: var(--primary-bg); border-radius: var(--radius-lg); padding: 24px 16px; text-align: center; border: 1.5px solid var(--border-color);">
+                      <div id="previewAboutLawyerAvatarBox" style="width: 80px; height: 80px; background: linear-gradient(135deg, var(--primary-soft), #bbf7d0); border-radius: 50%; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; color: var(--primary-dark); box-shadow: 0 4px 10px rgba(45, 106, 79, 0.15); overflow: hidden; position: relative;">
+                        <img id="previewAboutLawyerImg" src="" alt="ภาพทนายความ" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%; display: none;">
+                        <svg id="previewAboutLawyerSvg" width="42" height="42" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                      </div>
+                      <h3 style="font-size: 1.15rem; color: var(--primary-dark); margin-bottom: 4px; font-weight: 700;" id="previewAboutLawyerName">ทนายความ ธนบดี นิติสิริ</h3>
+                      <p style="color: var(--primary); font-size: 0.84rem; font-weight: 600; line-height: 1.4;" id="previewAboutLawyerTitle">ทนายความชั้น 1 อาวุโส (ประเภทตลอดชีพ)</p>
+                      <div style="display: inline-block; margin-top: 10px; background: #fef3c7; color: #92400e; padding: 4px 10px; border-radius: var(--radius-full); font-size: 0.76rem; font-weight: 600; border: 1px solid #fde68a;" id="previewAboutLawyerExp">
+                        ⚖️ ประสบการณ์ 35+ ถึงเกือบ 40 ปี
+                      </div>
+                    </div>
+
+                    <!-- รายการฝั่งขวา: ประสบการณ์ 4 ข้อ -->
+                    <div>
+                      <h4 style="font-size: 1.2rem; color: var(--primary-dark); margin-bottom: 14px; font-weight: 700;" id="previewAboutExpHeading">
+                        ประสบการณ์ว่าความและการทำงานด้านกฎหมาย
+                      </h4>
+                      <ul style="list-style: none; line-height: 1.75; color: var(--text-main); font-size: 0.88rem; padding: 0; margin: 0;">
+                        <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="color: var(--primary); font-weight: 700; font-size: 1rem; line-height: 1.4;">✓</span>
+                          <span id="previewAboutExpItem1"><strong>ทนายความชั้น 1 (ใบอนุญาตว่าความประเภทตลอดชีพ):</strong> สภาทนายความในพระบรมราชูปถัมภ์ มีสิทธิว่าความดำเนินคดีทุกศาลทั่วราชอาณาจักร</span>
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="color: var(--primary); font-weight: 700; font-size: 1rem; line-height: 1.4;">✓</span>
+                          <span id="previewAboutExpItem2"><strong>ประสบการณ์ในวิชาชีพยาวนานกว่า 35 ถึงเกือบ 40 ปี:</strong> ผ่านการว่าความคดีแพ่ง คดีอาญา คดีที่ดิน และคดีมรดก ในศาลชั้นต้น ศาลอุทธรณ์ และศาลฎีกา มาอย่างยาวนานต่อเนื่อง</span>
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="color: var(--primary); font-weight: 700; font-size: 1rem; line-height: 1.4;">✓</span>
+                          <span id="previewAboutExpItem3"><strong>ความคุ้นเคยอย่างลึกซึ้งในระบบศาลพื้นที่ภาคใต้:</strong> โดยเฉพาะศาลจังหวัดปัตตานี, ศาลจังหวัดสงขลา, ศาลแขวงสงขลา, ศาลจังหวัดนาทวี, ศาลจังหวัดยะลา, และศาลจังหวัดนราธิวาส</span>
+                        </li>
+                        <li style="margin-bottom: 10px; display: flex; gap: 10px; align-items: flex-start;">
+                          <span style="color: var(--primary); font-weight: 700; font-size: 1rem; line-height: 1.4;">✓</span>
+                          <span id="previewAboutExpItem4"><strong>เชี่ยวชาญการตรวจเอกสารและวางรูปคดีอย่างรอบคอบ:</strong> วิเคราะห์จุดได้เปรียบ-เสียเปรียบ อย่างตรงไปตรงมา คดีไหนควรไกล่เกลี่ยหรือควรฟ้องร้อง ชี้แจงลูกความตามความจริง</span>
+                        </li>
+                      </ul>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.3 ฟอร์มหน้าบริการและเรทราคา (Services Page) -->
+          <div class="cms-subpane" id="pane-cms-services">
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <div>
+                  <h3 class="cms-card-title">
+                    <span class="cms-priority-badge">ลำดับความสำคัญ 3</span>
+                    💼 หน้าบริการและเรทราคา (services.html)
+                  </h3>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                    กำหนดเรทราคาเริ่มต้น 7,000 บาท และเงื่อนไขต่างจังหวัด/นอกพื้นที่ต้องมาคุยที่สำนักงาน
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsServicesStartPrice">เรทค่าบริการว่าความเริ่มต้น:</label>
+                <input type="text" id="cmsServicesStartPrice" class="form-control" placeholder="เช่น เริ่มต้น 7,000 บาท" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsServicesAreaNote">คำชี้แจงขอบเขตพื้นที่ให้บริการ (ปัตตานี + 4 จังหวัด):</label>
+                <textarea id="cmsServicesAreaNote" class="form-control" rows="3" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsServicesProvinceNote">เงื่อนไขกรณีออกนอกพื้นที่/ต่างจังหวัด (ต้องมาพบที่ สนง.):</label>
+                <textarea id="cmsServicesProvinceNote" class="form-control" rows="2" required></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- 3.4 ฟอร์มหน้าติดต่อเรา (Contact Page) -->
+          <div class="cms-subpane" id="pane-cms-contact">
+            <div class="cms-card">
+              <div class="cms-card-header">
+                <div>
+                  <h3 class="cms-card-title">
+                    <span class="cms-priority-badge">ลำดับความสำคัญ 4</span>
+                    📬 หน้าติดต่อเรา (contact.html)
+                  </h3>
+                  <span style="font-size: 0.82rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                    ข้อความกำกับใต้หัวข้อหน้าติดต่อและการเดินทางมายังสำนักงาน
+                  </span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="cmsContactNote">ข้อความสรุปพื้นที่ดูแลคดีใต้หัวข้อหน้า:</label>
+                <textarea id="cmsContactNote" class="form-control" rows="2" required></textarea>
+              </div>
+            </div>
+          </div>
+
+          <!-- ปุ่มบันทึกเนื้อหาทั้งหมด -->
+          <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 24px;">
+            <button type="submit" class="btn btn-primary" style="padding: 12px 32px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              บันทึกเนื้อหาทุกหน้า (Save All Content)
+            </button>
+          </div>
+        </form>
+      </section>
+
+      <!-- ============================================================== -->
+      <!-- SECTION 4: จัดลำดับหน้า / เมนู (Navbar Menu Sorting)           -->
+      <!-- ============================================================== -->
+      <section id="section-menu" class="admin-section">
+        <div class="cms-card">
+          <div class="cms-card-header">
+            <div>
+              <h3 class="cms-card-title">
+                <span style="font-size: 1.4rem;">🔀</span>
+                ระบบจัดลำดับเมนูนำทาง (Navbar Menu Sorting)
+              </h3>
+              <span style="font-size: 0.84rem; color: var(--text-muted); display: block; margin-top: 4px;">
+                กดปุ่ม ⬆️ เลื่อนขึ้น หรือ ⬇️ เลื่อนลง เพื่อสลับลำดับหน้าเว็บที่ต้องการให้แสดงก่อน-หลัง บน Navbar
+              </span>
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="handleResetMenuOrder()">
+              ↺ คืนค่าลำดับเริ่มต้น
+            </button>
+          </div>
+
+          <!-- รายการเมนูสำหรับจัดลำดับ (Sort List) -->
+          <div class="menu-sort-list" id="menuSortListContainer">
+            <!-- เรนเดอร์ผ่าน JavaScript admin.js -->
+          </div>
+
+          <!-- ตัวอย่างเมนู Navbar ที่ได้จากการจัดลำดับ (Live Navbar Preview) -->
+          <div class="live-preview-box" style="margin-top: 24px;">
+            <div style="font-weight: 700; color: var(--primary-dark); margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">
+              <span>👁️ ตัวอย่างการแสดงผลเมนูบนแถบ Navbar จริง:</span>
+            </div>
+            <div style="background: var(--white); border: 1px solid var(--border-color); border-radius: var(--radius-md); padding: 12px 18px; display: flex; gap: 16px; flex-wrap: wrap; align-items: center;" id="navbarLivePreview">
+              <!-- แสดงปุ่มเมนูตัวอย่าง -->
+            </div>
+          </div>
+
+          <div style="margin-top: 24px; display: flex; justify-content: flex-end;">
+            <button type="button" class="btn btn-primary" onclick="handleSaveMenuOrder()" style="padding: 12px 28px;">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+              บันทึกลำดับเมนูนำทาง (Save Menu Order)
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: รายละเอียดคดี (View Details Modal)                      -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="detailModal">
+    <div class="modal-content" style="max-width: 620px;">
+      <div class="modal-header">
+        <h3 class="modal-title">รายละเอียดคำขอปรึกษากฎหมาย</h3>
+        <button class="modal-close" onclick="closeDetailModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      
+      <div id="modalDetailBody" style="font-size: 0.92rem; color: var(--text-main);">
+        <!-- แสดงเนื้อหาคดี -->
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-size: 0.85rem; color: var(--text-muted);">
+          รหัสเอกสาร: <strong id="modalDetailId" style="color: var(--primary);"></strong>
+        </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="closeDetailModal()">ปิดหน้าต่าง</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: เปลี่ยนสถานะการนัดหมาย (Change Status Modal)           -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="statusModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="modal-title">ปรับปรุงสถานะการนัดหมาย</h3>
+        <button class="modal-close" onclick="closeStatusModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+      
+      <form onsubmit="handleUpdateStatus(event)">
+        <input type="hidden" id="statusBookingId">
+        
+        <p style="font-size: 0.95rem; color: var(--text-muted); margin-bottom: 16px;">
+          เลือกระบุสถานะปัจจุบันสำหรับคิวของ: <strong id="statusClientName" style="color: var(--primary-dark);"></strong>
+        </p>
+
+        <div class="form-group">
+          <label class="form-label" for="newStatusSelect">สถานะใหม่</label>
+          <select id="newStatusSelect" class="form-control" required>
+            <option value="pending">⏳ รอดำเนินการ (รอเจ้าหน้าที่ติดต่อกลับ)</option>
+            <option value="confirmed">✓ ยืนยันแล้ว (นัดหมายเรียบร้อย รอพบทนาย)</option>
+            <option value="completed">★ เสร็จสิ้น (ได้รับคำปรึกษาแล้ว)</option>
+            <option value="cancelled">✕ ยกเลิก (ลูกค้ายกเลิกหรือไม่สะดวก)</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+          <button type="button" class="btn btn-secondary" onclick="closeStatusModal()">ยกเลิก</button>
+          <button type="submit" class="btn btn-primary">บันทึกการเปลี่ยนแปลง</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ============================================================== -->
+  <!-- MODAL: ตั้งค่าการเชื่อมต่อ Supabase Database (Real Connection)  -->
+  <!-- ============================================================== -->
+  <div class="modal-overlay" id="supabaseModal">
+    <div class="modal-content" style="max-width: 580px;">
+      <div class="modal-header">
+        <h3 class="modal-title">⚙️ ตั้งค่าการเชื่อมต่อ Supabase Database</h3>
+        <button class="modal-close" onclick="closeSupabaseModal()">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+      </div>
+
+      <form onsubmit="handleSaveSupabaseConfig(event)">
+        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 18px; line-height: 1.6;">
+          ระบบนี้เชื่อมต่อกับ <strong>Supabase 100%</strong> เพื่อดึงข้อมูลการจองคิวจริง ลบข้อมูลจริง และอัปเดตสถานะจริงแบบ Real-time
+        </p>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label class="form-label" for="modalSupabaseUrl">
+            🌐 Supabase Project URL:
+          </label>
+          <input type="url" id="modalSupabaseUrl" class="form-control" placeholder="เช่น https://your-project.supabase.co" required>
+          <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+            หาได้จาก Supabase Dashboard > Project Settings > API > Project URL
+          </span>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 18px;">
+          <label class="form-label" for="modalSupabaseKey">
+            🔑 Publishable / Anon Key:
+          </label>
+          <input type="text" id="modalSupabaseKey" class="form-control" required readonly style="background: #f8fafc; font-family: monospace; font-size: 0.85rem;">
+          <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 4px;">
+            คีย์ Publishable Key ที่ผู้ใช้ระบุ: <code>sb_publishable_JPYOtwszq1Alcx7ec3Uong_4PLEXijR</code>
+          </span>
+        </div>
+
+        <div id="supabaseTestResult" style="display: none; padding: 12px 14px; border-radius: var(--radius-md); background: #f8fafc; border: 1px solid var(--border-color); font-size: 0.88rem; margin-bottom: 16px;">
+        </div>
+
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: var(--radius-md); padding: 12px 16px; margin-bottom: 20px; font-size: 0.82rem; color: #065f46; line-height: 1.5;">
+          💡 <strong>การสร้างตารางบน Supabase:</strong> สามารถคัดลอกคำสั่ง SQL จากไฟล์ <code>supabase_schema.sql</code> ในโปรเจกต์ ไปรันใน <strong>Supabase SQL Editor</strong> ได้ทันที
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap;">
+          <button type="button" class="btn btn-outline" onclick="handleTestSupabaseConnection()">
+            ⚡ ทดสอบการเชื่อมต่อ (Test Connection)
+          </button>
+          <button type="submit" class="btn btn-primary">
+            💾 บันทึกการเชื่อมต่อ (Save)
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- สคริปต์การทำงาน -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../assets/js/supabase-config.js"></script>
+  <script src="../assets/js/main.js"></script>
+  <script src="../assets/js/admin.js"></script>
+</body>
+</html>
