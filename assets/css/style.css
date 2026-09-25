@@ -415,10 +415,19 @@ img {
 }
 
 .hero-grid {
-  display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  gap: 50px;
+  display: flex;
+  flex-direction: column;
   align-items: center;
+  text-align: center;
+  max-width: 880px;
+  margin: 0 auto;
+}
+
+.hero-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
 }
 
 .hero-badge {
@@ -442,11 +451,11 @@ img {
 }
 
 .hero-title {
-  font-size: 2.75rem;
+  font-size: clamp(2.2rem, 4vw, 3.1rem);
   font-weight: 700;
   color: var(--primary-dark);
   line-height: 1.25;
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .hero-title .highlight {
@@ -456,28 +465,31 @@ img {
 }
 
 .hero-desc {
-  font-size: 1.1rem;
+  font-size: 1.12rem;
   color: var(--text-muted);
-  line-height: 1.7;
-  margin-bottom: 30px;
-  max-width: 580px;
+  line-height: 1.75;
+  margin-bottom: 32px;
+  max-width: 760px;
 }
 
 .hero-cta {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 16px;
-  margin-bottom: 40px;
+  margin-bottom: 42px;
   flex-wrap: wrap;
 }
 
 .hero-stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  padding-top: 24px;
+  gap: 24px;
+  padding-top: 26px;
   border-top: 1px solid rgba(82, 183, 136, 0.25);
   align-items: stretch;
+  width: 100%;
+  max-width: 740px;
 }
 
 .stat-item {
@@ -485,6 +497,8 @@ img {
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  align-items: center;
+  text-align: center;
   position: relative;
 }
 
@@ -492,7 +506,7 @@ img {
 .stat-item:not(:last-child)::after {
   content: '';
   position: absolute;
-  right: -10px;
+  right: -12px;
   top: 15%;
   height: 70%;
   width: 1px;
@@ -501,7 +515,7 @@ img {
 }
 
 .stat-item h3 {
-  font-size: clamp(1.15rem, 1.65vw, 1.45rem);
+  font-size: clamp(1.2rem, 1.8vw, 1.55rem);
   font-weight: 700;
   color: var(--primary-dark);
   line-height: 1.25;
@@ -512,123 +526,11 @@ img {
 }
 
 .stat-item p {
-  font-size: 0.85rem;
+  font-size: 0.88rem;
   color: var(--text-muted);
   line-height: 1.4;
   white-space: nowrap;
   margin: 0;
-}
-
-/* Hero Certificate / Seal Card */
-.hero-card-wrapper {
-  position: relative;
-}
-
-.license-preview-card {
-  background: var(--white);
-  border-radius: var(--radius-lg);
-  padding: 30px;
-  box-shadow: var(--shadow-lg);
-  border: 1.5px solid rgba(82, 183, 136, 0.3);
-  position: relative;
-  overflow: hidden;
-}
-
-.license-preview-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light), #d4af37);
-}
-
-.card-seal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 20px;
-}
-
-.gold-seal-badge {
-  width: 60px;
-  height: 60px;
-  background: radial-gradient(circle, #ffeaa7, #fdcb6e);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed #d4af37;
-  color: #b7791f;
-  box-shadow: 0 4px 10px rgba(212, 175, 55, 0.25);
-}
-
-.gold-seal-badge svg {
-  width: 32px;
-  height: 32px;
-}
-
-.seal-text {
-  text-align: right;
-}
-
-.seal-text .seal-sub {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-}
-
-.seal-text .seal-no {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--primary-dark);
-}
-
-.license-details {
-  background: var(--primary-bg);
-  border-radius: var(--radius-md);
-  padding: 16px;
-  margin: 16px 0;
-  border: 1px solid rgba(82, 183, 136, 0.2);
-}
-
-.license-detail-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.9rem;
-  padding: 6px 0;
-  border-bottom: 1px dashed rgba(0,0,0,0.06);
-}
-
-.license-detail-row:last-child {
-  border-bottom: none;
-}
-
-.license-detail-row .label {
-  color: var(--text-muted);
-}
-
-.license-detail-row .value {
-  font-weight: 600;
-  color: var(--text-main);
-}
-
-.verified-stamp {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--primary);
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 15px;
-}
-
-.verified-stamp svg {
-  width: 20px;
-  height: 20px;
-  stroke: var(--primary-light);
 }
 
 /* ==========================================================================

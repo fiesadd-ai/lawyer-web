@@ -835,10 +835,6 @@ async function loadAllSettingsToForm() {
   setVal('cmsHomeAreaStat', settings.home_area_stat || 'ปัตตานี & 4 จว.');
   setVal('cmsHomeAreaTag', settings.home_area_tag || '');
 
-  setVal('cmsHomeLicenseTitle', settings.home_license_card_title || '');
-  setVal('cmsHomeLicenseNumber', settings.home_license_number || '');
-  setVal('cmsHomeLicenseIssuer', settings.home_license_issuer || '');
-
   setVal('cmsHomeFeat1Title', settings.home_feat1_title || '');
   setVal('cmsHomeFeat1Desc', settings.home_feat1_desc || '');
   setVal('cmsHomeFeat2Title', settings.home_feat2_title || '');
@@ -1099,10 +1095,6 @@ async function handleSaveCmsSettings(event) {
     home_exp_years: getVal('cmsHomeExpYears'),
     home_area_stat: getVal('cmsHomeAreaStat') || 'ปัตตานี & 4 จว.',
     home_area_tag: getVal('cmsHomeAreaTag'),
-
-    home_license_card_title: getVal('cmsHomeLicenseTitle'),
-    home_license_number: getVal('cmsHomeLicenseNumber'),
-    home_license_issuer: getVal('cmsHomeLicenseIssuer'),
 
     home_feat1_title: getVal('cmsHomeFeat1Title'),
     home_feat1_desc: getVal('cmsHomeFeat1Desc'),

@@ -335,14 +335,6 @@ const DEFAULT_SITE_SETTINGS = {
   home_exp_years: 'กว่า 35 - 40 ปี',
   home_area_stat: 'ปัตตานี & 4 จว.',
   home_area_tag: '📍 ประจำจังหวัดปัตตานี • รับว่าความ 4 จังหวัดและทั่วประเทศ',
-  home_license_card_title: 'ใบอนุญาตทนายความชั้น 1',
-  home_license_number: 'ประเภทตลอดชีพ (สภาทนายความฯ)',
-  home_license_issuer: 'สภาทนายความ ในพระบรมราชูปถัมภ์',
-  home_license_lawyer_title: 'ทนายความผู้ดำเนินคดีประจำสำนักงาน',
-  home_license_lawyer_qual: 'นิติศาสตรบัณฑิต, เนติบัณฑิตไทย (น.บ.ท.)',
-  home_license_exp: 'กว่า 35 - 40 ปี',
-  home_license_area: 'ปัตตานี และ 4 จว. ใกล้เคียง',
-  home_license_status: '● ประจำการ / พร้อมให้คำปรึกษา',
   
   // จุดเด่น 4 ข้อ (Why Choose Us)
   home_feat1_title: 'ทนายความชั้น 1 ตัวจริง (35+ ปี)',
