@@ -155,6 +155,23 @@ img {
   flex-shrink: 0;
 }
 
+.brand-logo-img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+  border: 2px solid rgba(82, 183, 136, 0.4);
+  background: #ffffff;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.brand-logo:hover .brand-logo-img {
+  transform: scale(1.06);
+  box-shadow: 0 4px 14px rgba(45, 106, 79, 0.28);
+}
+
 .brand-icon {
   width: 42px;
   height: 42px;
@@ -2594,4 +2611,336 @@ textarea.form-control {
     box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
   }
 }
+
+/* ============================================================== */
+/* 10 LEGAL SERVICES GRID & LOAD MORE STYLES                      */
+/* จัดระเบียบการแสดงผล 10 หมวดหมู่บริการกฎหมาย แถวละ 3 กล่องอย่างสวยงาม */
+/* ============================================================== */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.services-category-grid {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr) !important;
+  gap: 24px !important;
+  margin-top: 28px !important;
+  margin-bottom: 34px !important;
+  align-items: stretch !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+}
+
+.service-card {
+  background: #ffffff;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.28s ease;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  position: relative;
+  overflow: hidden;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 14px 28px rgba(45, 106, 79, 0.12);
+  border-color: rgba(82, 183, 136, 0.55);
+}
+
+.service-card:hover::before {
+  opacity: 1;
+}
+
+.service-card.is-hidden {
+  display: none !important;
+}
+
+.service-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 14px;
+}
+
+.service-icon-wrap {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(82, 183, 136, 0.14);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: transform 0.25s ease, background-color 0.25s ease;
+}
+
+.service-card:hover .service-icon-wrap {
+  transform: scale(1.08);
+  background: rgba(82, 183, 136, 0.22);
+}
+
+.service-icon-wrap svg {
+  width: 24px;
+  height: 24px;
+}
+
+.service-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 4px;
+}
+
+.service-num-pill {
+  background: var(--primary-dark);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: 12px;
+  line-height: 1.4;
+  letter-spacing: 0.2px;
+}
+
+.service-law-pill {
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  line-height: 1.4;
+}
+
+.service-title {
+  font-size: 1.22rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin: 3px 0 1px;
+  line-height: 1.35;
+}
+
+.service-sub-title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  letter-spacing: 0.4px;
+  display: block;
+}
+
+.service-desc {
+  font-size: 0.92rem;
+  color: #334155;
+  line-height: 1.68;
+  margin: 0 0 16px 0;
+}
+
+.service-details-block {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 0.86rem;
+  margin-bottom: 20px;
+  flex-grow: 1;
+}
+
+.service-detail-item strong {
+  display: block;
+  color: #0f172a;
+  font-size: 0.86rem;
+  margin-bottom: 2px;
+}
+
+.service-detail-item span {
+  display: block;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.service-card .btn {
+  margin-top: auto;
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+  padding: 11px 16px;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+/* Category Load More UI */
+.category-load-more-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 10px auto 42px;
+  gap: 10px;
+  width: 100%;
+}
+
+.btn-category-load-more {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #ffffff;
+  border: none;
+  border-radius: 999px;
+  padding: 13px 36px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s ease;
+  box-shadow: 0 4px 16px rgba(45, 106, 79, 0.25);
+  font-family: inherit;
+}
+
+.btn-category-load-more svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.2s ease;
+}
+
+.btn-category-load-more:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45, 106, 79, 0.35);
+  background: linear-gradient(135deg, var(--primary-light), var(--primary));
+}
+
+.btn-category-load-more:hover svg {
+  transform: translateY(2px);
+}
+
+.category-load-more-count {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Services Notice Box */
+.services-notice-box {
+  background: #f0fdf4;
+  border: 1.5px solid rgba(82, 183, 136, 0.45);
+  border-radius: var(--radius-lg);
+  padding: 22px 26px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  box-shadow: 0 4px 16px rgba(45, 106, 79, 0.06);
+  margin-top: 10px;
+}
+
+.notice-icon-badge {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(82, 183, 136, 0.2);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.notice-icon-badge svg {
+  width: 26px;
+  height: 26px;
+}
+
+.notice-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.notice-badge {
+  display: inline-block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--primary-dark);
+  margin-bottom: 4px;
+}
+
+.notice-text {
+  font-size: 0.96rem;
+  color: #1e3a2f;
+  line-height: 1.65;
+  margin: 0;
+  font-weight: 500;
+}
+
+.notice-actions {
+  flex-shrink: 0;
+}
+
+.notice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 18px;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 992px) {
+  .services-category-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 20px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .services-notice-box {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px 20px;
+  }
+  .notice-actions {
+    width: 100%;
+  }
+  .notice-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 640px) {
+  .services-category-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+}
+
 

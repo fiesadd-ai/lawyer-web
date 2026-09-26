@@ -992,6 +992,70 @@ function initActivityAutoTracker() {
   });
 }
 
+// ==========================================================================
+// ระบบทยอยแสดงผลหมวดหมู่บริการกฎหมาย 10 หัวข้อ (Load More - ทีละ 3 หัวข้อ)
+// ==========================================================================
+function initServiceCategoryLoadMore() {
+  const grids = document.querySelectorAll('.services-category-grid');
+  if (!grids.length) return;
+
+  grids.forEach((grid) => {
+    const cards = Array.from(grid.querySelectorAll('.service-card'));
+    if (!cards.length) return;
+
+    const parentSection = grid.closest('section') || grid.parentElement;
+    const btn = parentSection ? parentSection.querySelector('.btn-category-load-more') : null;
+    const wrap = parentSection ? parentSection.querySelector('.category-load-more-wrap') : null;
+    const countLabel = parentSection ? parentSection.querySelector('.category-load-more-count') : null;
+
+    const total = cards.length;
+    let visibleCount = 3; // แสดงเริ่มต้น 3 ข้อแรก
+
+    function renderVisibility() {
+      cards.forEach((card, index) => {
+        if (index < visibleCount) {
+          card.classList.remove('is-hidden');
+        } else {
+          card.classList.add('is-hidden');
+        }
+      });
+
+      if (countLabel) {
+        countLabel.textContent = `แสดง ${Math.min(visibleCount, total)} จาก ${total} หัวข้อ`;
+      }
+
+      if (btn && wrap) {
+        if (visibleCount >= total) {
+          wrap.style.display = 'none';
+        } else {
+          wrap.style.display = 'flex';
+          const remaining = total - visibleCount;
+          const nextAdd = Math.min(3, remaining);
+          const btnSpan = btn.querySelector('span');
+          if (btnSpan) {
+            btnSpan.textContent = `ดูเพิ่มเติม (+${nextAdd} หัวข้อ)`;
+          }
+        }
+      }
+    }
+
+    // เรียกแสดงผลเริ่มต้น 3 ข้อ
+    renderVisibility();
+
+    if (btn && !btn.dataset.loadMoreBound) {
+      btn.dataset.loadMoreBound = 'true';
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        visibleCount += 3;
+        renderVisibility();
+        logActivity('กดดูบริการกฎหมายเพิ่มเติม', `แสดงหมวดหมู่เพิ่มเป็น ${Math.min(visibleCount, total)} จาก ${total} หัวข้อ`, 'click', '📂');
+      });
+    }
+  });
+}
+window.initServiceCategoryLoadMore = initServiceCategoryLoadMore;
+window.initCategoryCardsLoadMore = initServiceCategoryLoadMore;
+
 // ตัวควบคุม Navbar Hamburger และอัปเดตข้อมูลไดนามิกเมื่อหน้าเว็บโหลด
 if (typeof document !== 'undefined') {
   document.addEventListener('DOMContentLoaded', () => {

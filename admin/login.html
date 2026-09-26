@@ -5,7 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>เข้าสู่ระบบผู้ดูแลระบบ (Admin Login) | สำนักงานทนายความชั้น 1</title>
   <meta name="description" content="ระบบเข้าสู่ระบบสำหรับผู้ดูแลสำนักงานทนายความชั้น 1 ปลอดภัย รัดกุม">
-  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="icon" type="image/png" href="../img/1.png">
+  <link rel="stylesheet" href="../assets/css/style.css?v=20260925-05">
   <script>
     // หากมีการส่งคำสั่ง logout มา ให้ล้าง session ทันที
     (function() {
@@ -68,6 +69,23 @@
     .login-brand-header {
       text-align: center;
       margin-bottom: 28px;
+    }
+
+    .login-brand-img {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: inline-block;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(45, 106, 79, 0.28);
+      border: 3px solid rgba(82, 183, 136, 0.5);
+      background: #ffffff;
+      transition: transform 0.25s ease;
+    }
+
+    .login-brand-img:hover {
+      transform: scale(1.05);
     }
 
     .login-brand-icon {
@@ -272,14 +290,7 @@
         
         <!-- ส่วนหัวแบรนด์ -->
         <div class="login-brand-header">
-          <div class="login-brand-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M12 3v18"></path>
-              <path d="m3 7 9-4 9 4"></path>
-              <path d="M3 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
-              <path d="M11 7v2c0 2.8 2.2 5 5 5s5-2.2 5-5V7"></path>
-            </svg>
-          </div>
+          <img src="../img/1.png" alt="ตราสัญลักษณ์สำนักงานทนายความ รอสนัน อีซอ" class="login-brand-img">
           <h1 class="login-title">ระบบผู้ดูแลสำนักงาน</h1>
           <p class="login-subtitle">สำนักงานทนายความชั้น 1 • จัดการคิวและเนื้อหาเว็บไซต์</p>
         </div>
