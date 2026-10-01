@@ -316,13 +316,13 @@ const DEFAULT_SITE_SETTINGS = {
   line_title: 'ปรึกษาคดีด่วนทาง LINE',
   line_desc: 'แอดไลน์เพื่อส่งรูปเอกสาร สัญญา หรือหมายเรียก ให้ทนายตรวจดูเบื้องต้นได้ทันที',
   line_url: 'https://line.me',
-  office_name: 'สำนักงานทนายความ รอสนั่น อีซอ (ทนายความชั้น 1 อาวุโส)',
+  office_name: 'สำนักงานทนายความนายรอสนั่น อีซอ',
   office_lawyer_name: 'ทนายความ รอสนั่น อีซอ',
-  office_address: 'ทนายความ รอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี (เน้นรับดูแลคดีในพื้นที่ ปัตตานี, นราธิวาส, สงขลา, หาดใหญ่ และยะลา)',
+  office_address: 'สำนักงานทนายความนายรอสนั่น อีซอ อำเภอเมืองปัตตานี จังหวัดปัตตานี (เน้นรับดูแลคดีในพื้นที่ ปัตตานี, นราธิวาส, สงขลา, หาดใหญ่ และยะลา)',
   visit_note: 'กรุณานัดหมายคิวล่วงหน้าเพื่อเตรียมเอกสารและอำนวยความสะดวกก่อนเดินทางมายังสำนักงาน',
   maps_url: 'https://maps.app.goo.gl/2ukUyWUSAMQPn3DYA',
   maps_embed: 'https://maps.google.com/maps?q=6.8506101,101.2548708&hl=th&z=17&output=embed',
-  maps_gps_text: 'พิกัด GPS: 6.8506101, 101.2548708 • ทนายความ รอสนั่น อีซอ',
+  maps_gps_text: 'พิกัด GPS: 6.8506101, 101.2548708 • สำนักงานทนายความนายรอสนั่น อีซอ',
   contact_quick_phone_title: 'โทรด่วนติดต่อทนายความ',
   contact_quick_phone_desc: 'พร้อมให้คำปรึกษาเบื้องต้นเพื่อประเมินแนวทางคดี และความคุ้มค่าก่อนรับว่าความ',
 
@@ -413,7 +413,7 @@ const DEFAULT_SITE_SETTINGS = {
 
   // 6. ข้อความส่วนท้าย (Footer)
   footer_desc: 'ให้บริการปรึกษากฎหมายและรับว่าความทั่วราชอาณาจักร ด้วยความซื่อสัตย์สุจริต เที่ยงธรรม และเชี่ยวชาญ',
-  footer_copyright: '© 2026 สำนักงานทนายความชั้น 1 (รับว่าความทั่วราชอาณาจักร). สงวนลิขสิทธิ์ทุกประการ.',
+  footer_copyright: '© 2026 สำนักงานทนายความนายรอสนั่น อีซอ (รับว่าความทั่วราชอาณาจักร). สงวนลิขสิทธิ์ทุกประการ.',
 
   // 7. ระบบจัดลำดับเมนู (Menu Sorting)
   menu_order: [
@@ -433,6 +433,12 @@ function getSiteSettings() {
   try {
     const parsed = JSON.parse(data);
     // อัปเกรดค่าเริ่มต้นเก่า (Auto-migrate) ให้ตรงกับข้อมูลจริงของสำนักงาน
+    if (!parsed.office_name || parsed.office_name.includes('ชั้น 1') || !parsed.office_name.includes('นายรอสนั่น')) {
+      parsed.office_name = DEFAULT_SITE_SETTINGS.office_name;
+    }
+    if (!parsed.footer_copyright || parsed.footer_copyright.includes('ชั้น 1') || !parsed.footer_copyright.includes('นายรอสนั่น')) {
+      parsed.footer_copyright = DEFAULT_SITE_SETTINGS.footer_copyright;
+    }
     if (parsed.hotline && (parsed.hotline.includes('081-234-5678') || parsed.hotline === '073-xxx-xxx, 081-234-5678 (เบอร์กลางสำนักงาน)')) {
       parsed.hotline = DEFAULT_SITE_SETTINGS.hotline;
       parsed.home_cta_phone = DEFAULT_SITE_SETTINGS.home_cta_phone;
@@ -506,13 +512,31 @@ function applySiteSettings(customSettings) {
   if (typeof document === 'undefined') return;
   const settings = customSettings || getSiteSettings();
 
-  // 1. อัปเดตสายด่วน
+  // 1.0 อัปเดตชื่อสำนักงานใน navbar, footer, และทุกจุดให้เป็นแบบเรียลไทม์ 100%
+  const officeName = settings.office_name || DEFAULT_SITE_SETTINGS.office_name;
+  document.querySelectorAll('.brand-title, [data-cms="office_name"], .site-footer .footer-brand h4, .sidebar-brand-text h1, .slip-title').forEach(el => {
+    el.textContent = officeName;
+  });
+
+  // อัปเดตข้อความลิขสิทธิ์
+  const footerCopyright = settings.footer_copyright || DEFAULT_SITE_SETTINGS.footer_copyright;
+  document.querySelectorAll('.footer-bottom > div:first-child, [data-cms="footer_copyright"]').forEach(el => {
+    el.textContent = footerCopyright;
+  });
+
+  // อัปเดตข้อความแจ้งเตือนบริการ
+  const servicesNotice = settings.services_notice_text || DEFAULT_SITE_SETTINGS.services_notice_text;
+  document.querySelectorAll('[data-cms="services_notice_text"]').forEach(el => {
+    el.textContent = servicesNotice;
+  });
+
+  // 1.1 อัปเดตสายด่วน
   const hotlineEls = document.querySelectorAll('#topbarHotline, [data-setting="hotline"], [data-cms="hotline"]');
   hotlineEls.forEach(el => {
     el.textContent = settings.hotline;
   });
 
-  // 2. อัปเดตเวลาทำการ
+  // 1.2 อัปเดตเวลาทำการ
   const hoursEls = document.querySelectorAll('#topbarHours, [data-setting="hours"], [data-cms="business_hours"]');
   hoursEls.forEach(el => {
     el.textContent = settings.business_hours;
@@ -637,7 +661,6 @@ function applySiteSettings(customSettings) {
 
   // 6. ระบบแสดงผลแบบทยอยโชว์รายการบริการ 10 หมวดคดีหลัก (Load More / Show More)
   initCategoryCardsLoadMore();
-  initServiceCategoryLoadMore();
 }
 
 // ระบบแสดงผลแบบทยอยโชว์ 10 หมวดคดีหลัก (Load More 10 Categories - เริ่มต้น 3 ข้อ เพิ่มทีละ 3 ข้อ)
@@ -672,11 +695,13 @@ function initCategoryCardsLoadMore() {
     function renderCardsState(animateNew = false) {
       cards.forEach((card, idx) => {
         if (idx < visibleCards) {
-          if (card.style.display === 'none' && animateNew) {
+          card.classList.remove('is-hidden');
+          card.style.display = '';
+          if (animateNew) {
             card.classList.add('item-reveal');
           }
-          card.style.display = '';
         } else {
+          card.classList.add('is-hidden');
           card.style.display = 'none';
           card.classList.remove('item-reveal');
         }
@@ -686,16 +711,16 @@ function initCategoryCardsLoadMore() {
       const nextStep = Math.min(3, totalCards - visibleCards);
 
       wrap.innerHTML = `
-        <button type="button" class="btn-category-load-more ${isAllShown ? 'is-expanded' : ''}" aria-expanded="${isAllShown}">
-          <span>${isAllShown ? 'ย่อหัวข้อกลับ' : `ดูเพิ่มเติม (+${nextStep} ข้อ)`}</span>
+        <button type="button" class="btn-category-load-more ${isAllShown ? 'is-expanded' : ''}" aria-expanded="${isAllShown}" id="btnCategoryLoadMore">
+          <span>${isAllShown ? 'ย่อหัวข้อกลับ' : `ดูเพิ่มเติม (+${nextStep} หัวข้อ)`}</span>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
             ${isAllShown 
               ? '<polyline points="18 15 12 9 6 15"></polyline>' 
               : '<polyline points="6 9 12 15 18 9"></polyline>'}
           </svg>
         </button>
-        <span class="category-load-more-count">
-          ${isAllShown ? `แสดงครบทั้งหมด ${totalCards} ข้อแล้ว` : `แสดง ${visibleCards} จาก ${totalCards} ข้อ`}
+        <span class="category-load-more-count" id="categoryLoadMoreCount">
+          ${isAllShown ? `แสดงครบทั้งหมด ${totalCards} หัวข้อแล้ว` : `แสดง ${visibleCards} จาก ${totalCards} หัวข้อ`}
         </span>
       `;
 
@@ -992,69 +1017,9 @@ function initActivityAutoTracker() {
   });
 }
 
-// ==========================================================================
-// ระบบทยอยแสดงผลหมวดหมู่บริการกฎหมาย 10 หัวข้อ (Load More - ทีละ 3 หัวข้อ)
-// ==========================================================================
-function initServiceCategoryLoadMore() {
-  const grids = document.querySelectorAll('.services-category-grid');
-  if (!grids.length) return;
-
-  grids.forEach((grid) => {
-    const cards = Array.from(grid.querySelectorAll('.service-card'));
-    if (!cards.length) return;
-
-    const parentSection = grid.closest('section') || grid.parentElement;
-    const btn = parentSection ? parentSection.querySelector('.btn-category-load-more') : null;
-    const wrap = parentSection ? parentSection.querySelector('.category-load-more-wrap') : null;
-    const countLabel = parentSection ? parentSection.querySelector('.category-load-more-count') : null;
-
-    const total = cards.length;
-    let visibleCount = 3; // แสดงเริ่มต้น 3 ข้อแรก
-
-    function renderVisibility() {
-      cards.forEach((card, index) => {
-        if (index < visibleCount) {
-          card.classList.remove('is-hidden');
-        } else {
-          card.classList.add('is-hidden');
-        }
-      });
-
-      if (countLabel) {
-        countLabel.textContent = `แสดง ${Math.min(visibleCount, total)} จาก ${total} หัวข้อ`;
-      }
-
-      if (btn && wrap) {
-        if (visibleCount >= total) {
-          wrap.style.display = 'none';
-        } else {
-          wrap.style.display = 'flex';
-          const remaining = total - visibleCount;
-          const nextAdd = Math.min(3, remaining);
-          const btnSpan = btn.querySelector('span');
-          if (btnSpan) {
-            btnSpan.textContent = `ดูเพิ่มเติม (+${nextAdd} หัวข้อ)`;
-          }
-        }
-      }
-    }
-
-    // เรียกแสดงผลเริ่มต้น 3 ข้อ
-    renderVisibility();
-
-    if (btn && !btn.dataset.loadMoreBound) {
-      btn.dataset.loadMoreBound = 'true';
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        visibleCount += 3;
-        renderVisibility();
-        logActivity('กดดูบริการกฎหมายเพิ่มเติม', `แสดงหมวดหมู่เพิ่มเป็น ${Math.min(visibleCount, total)} จาก ${total} หัวข้อ`, 'click', '📂');
-      });
-    }
-  });
-}
-window.initServiceCategoryLoadMore = initServiceCategoryLoadMore;
-window.initCategoryCardsLoadMore = initServiceCategoryLoadMore;
+// มั่นใจว่าฟังก์ชันการทำงานพร้อมใช้งานแบบ Global
+window.initCategoryCardsLoadMore = initCategoryCardsLoadMore;
+window.initServiceCategoryLoadMore = initCategoryCardsLoadMore;
 
 // ตัวควบคุม Navbar Hamburger และอัปเดตข้อมูลไดนามิกเมื่อหน้าเว็บโหลด
 if (typeof document !== 'undefined') {
@@ -1063,7 +1028,6 @@ if (typeof document !== 'undefined') {
     initMobileNavbar();
     applySiteSettings();
     initCategoryCardsLoadMore();
-    initServiceCategoryLoadMore();
 
     // ฟังการซิงค์ข้อมูลข้ามแท็บ
     window.addEventListener('storage', (e) => {

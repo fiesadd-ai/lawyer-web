@@ -2034,22 +2034,39 @@ textarea.form-control {
     display: none !important;
   }
 
-  /* 2. ปรับขนาดโลโก้และชื่อสำนักงานบนมือถือให้พอดี ไม่เบียดปุ่ม 3 ขีด */
+  /* 2. ปรับขนาดโลโก้และชื่อสำนักงานบนมือถือให้แสดงผลเต็ม 100% ห้ามตกหล่นหรือถูกตัดทอนเด็ดขาด */
   .brand-logo {
-    max-width: calc(100% - 55px);
+    max-width: calc(100% - 50px);
     min-width: 0;
     display: flex;
     align-items: center;
     gap: 10px;
+    text-decoration: none;
+  }
+  .brand-logo-img {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
   }
   .brand-title {
-    font-size: 1.05rem;
+    font-size: clamp(0.85rem, 3.6vw, 1.02rem);
+    white-space: normal;
+    overflow: visible;
+    text-overflow: clip;
+    word-break: break-word;
+    line-height: 1.25;
+    font-weight: 700;
+    color: var(--primary-dark);
+  }
+  .brand-subtitle {
+    display: block;
+    font-size: 0.68rem;
+    color: var(--text-muted);
+    line-height: 1.2;
+    margin-top: 1px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-  .brand-subtitle {
-    display: none;
   }
 
   .nav-actions {
@@ -2243,11 +2260,16 @@ textarea.form-control {
 }
 
 @media (max-width: 576px) {
-  .brand-subtitle {
-    display: none;
-  }
   .brand-title {
-    font-size: 1.05rem;
+    font-size: clamp(0.82rem, 3.8vw, 0.98rem);
+    white-space: normal;
+    word-break: break-word;
+    line-height: 1.25;
+  }
+  .brand-subtitle {
+    display: block;
+    font-size: 0.65rem;
+    color: var(--text-muted);
   }
   .brand-icon {
     width: 36px;

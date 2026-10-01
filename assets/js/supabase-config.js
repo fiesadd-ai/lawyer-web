@@ -8,6 +8,30 @@
  * 3. ระบบ Real-time Cross-tab Sync: แจ้งเตือนทุกแท็บหน้าบ้านให้อัปเดตทันทีที่แอดมินบันทึก
  */
 
+// ระบบซิงค์ข้อมูลข้ามเครื่องอัตโนมัติ (URL Parameter Sync Engine for Mobile)
+try {
+  if (typeof window !== 'undefined' && window.location && window.location.search) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sbUrlParam = urlParams.get('sb_url');
+    const sbKeyParam = urlParams.get('sb_key');
+    if (sbUrlParam && typeof localStorage !== 'undefined') {
+      localStorage.setItem('supabase_project_url', sbUrlParam.trim());
+    }
+    if (sbKeyParam && typeof localStorage !== 'undefined') {
+      localStorage.setItem('supabase_publishable_key', sbKeyParam.trim());
+    }
+    const syncDataParam = urlParams.get('sync_data');
+    if (syncDataParam && typeof localStorage !== 'undefined') {
+      try {
+        const decoded = JSON.parse(decodeURIComponent(escape(atob(syncDataParam))));
+        if (decoded && typeof localStorage !== 'undefined') {
+          localStorage.setItem('lawyer_site_settings', JSON.stringify(decoded));
+        }
+      } catch(e) {}
+    }
+  }
+} catch(e) {}
+
 // โหลดค่า Project URL และ Key จาก LocalStorage หรือใช้ค่าเริ่มต้น
 const SUPABASE_CONFIG = {
   // ผู้ใช้สามารถระบุ Project URL เช่น https://xxxx.supabase.co

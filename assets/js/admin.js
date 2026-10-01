@@ -656,7 +656,7 @@ function printBookingSlip(id) {
     <body>
       <div class="slip-header">
         <div>
-          <h1 class="slip-title">⚖️ สำนักงานทนายความชั้น 1</h1>
+          <h1 class="slip-title">⚖️ สำนักงานทนายความนายรอสนั่น อีซอ</h1>
           <div class="slip-sub">ใบนัดหมายรับคำปรึกษาทางกฎหมายและว่าความคดี</div>
         </div>
         <div class="slip-badge">
